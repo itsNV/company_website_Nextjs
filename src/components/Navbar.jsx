@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
+import { usePathname } from "next/navigation";
 
 export default function Navbar({ activeSection }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,13 @@ export default function Navbar({ activeSection }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "About Us", href: "/about" },
+    { label: "Services", href: "/services" },
+    { label: "Blog", href: "/blog" },
+  ];
 
   return (
     <header
@@ -33,7 +42,7 @@ export default function Navbar({ activeSection }) {
       >
         
         {/* Apple-style Geometric Lettermark Logo */}
-        <a href="#home" className="flex items-center gap-2 group">
+        <a href="/" className="flex items-center gap-2 group">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm font-outfit shadow-sm group-hover:bg-primary transition-colors duration-300 
             ${ scrolled ? "bg-grey-300 text-slate-900" : "bg-slate-900 text-white" }`}>
             <Image src={logo} alt="Yunawise Logo" className={`w-full h-full object-contain ${scrolled ? "duration-115" : " bg-gray-300  duration-300"}`} />
@@ -47,16 +56,8 @@ export default function Navbar({ activeSection }) {
 
         {/* Premium Quiet Nav Links with Left-to-Right Draw & Active Highlight */}
         <nav className="hidden xl:flex items-center gap-8">
-          {[
-            { label: "Home", href: "#home" },
-            { label: "About Us", href: "#about" },
-            { label: "Services", href: "#services" },
-            { label: "Tech Stack", href: "#technologies" },
-            { label: "Works", href: "#works" },
-            { label: "Testimonials", href: "#testimonials" },
-            { label: "Blog", href: "#blog" },
-          ].map((link, idx) => {
-            const isActive = activeSection === link.href.substring(1);
+          {links.map((link, idx) => {
+            const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
             return (
               <a
                 key={idx}
@@ -68,7 +69,7 @@ export default function Navbar({ activeSection }) {
                     ?
                     "text-white after:scale-x-100 after:bg-gradient-to-r after:from-indigo-600 after:via-sky-500 after:to-emerald-400"
                     : "text-black after:scale-x-100 after:bg-gradient-to-r after:from-indigo-600 after:via-sky-500 after:to-emerald-400"
-                    : "text-slate-500 hover:text-slate-950 after:scale-x-0 hover:after:scale-x-100 after:bg-blue-600"
+                    : "text-slate-500  after:scale-x-0 hover:after:scale-x-100 after:bg-blue-600"
                 }`}
               >
                 {link.label}
@@ -80,7 +81,7 @@ export default function Navbar({ activeSection }) {
         {/* Right Ultra-Minimal CTA */}
         <div className="hidden xl:flex items-center gap-4">
           <a
-            href="#contact"
+            href="/contact"
             className={`hover-btn px-4.5 py-1.5 rounded-full hover:bg-primary text-[12px] font-extrabold tracking-wider uppercase flex items-center gap-1 shadow-sm transition-all
               ${ scrolled ? "bg-white text-slate-900 hover:bg-primary/90" : "bg-slate-900 text-white hover:bg-primary" }`}
           >
@@ -105,16 +106,8 @@ export default function Navbar({ activeSection }) {
           }`}
         >
           <div className="flex flex-col gap-4 text-center">
-            {[
-              { label: "Home", href: "#home" },
-              { label: "About Us", href: "#about" },
-              { label: "Services", href: "#services" },
-              { label: "Tech Stack", href: "#technologies" },
-              { label: "Works", href: "#works" },
-              { label: "Testimonials", href: "#testimonials" },
-              { label: "Blog", href: "#blog" },
-            ].map((link, idx) => {
-              const isActive = activeSection === link.href.substring(1);
+            {links.map((link, idx) => {
+              const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
               return (
                 <a
                   key={idx}
@@ -129,7 +122,7 @@ export default function Navbar({ activeSection }) {
               );
             })}
             <a
-              href="#contact"
+              href="/contact"
               onClick={() => setIsOpen(false)}
               className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white font-bold hover:bg-primary transition-colors mt-4 shadow-md"
             >

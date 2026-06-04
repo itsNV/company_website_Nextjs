@@ -5,10 +5,8 @@ const SECTIONS = [
   { id: "home", label: "Home" },
   { id: "about", label: "About" },
   { id: "services", label: "Services" },
-  { id: "technologies", label: "Tech Stack" },
   { id: "works", label: "Works" },
   { id: "testimonials", label: "Reviews" },
-  { id: "blog", label: "Blog" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -39,19 +37,19 @@ export default function SectionNavigator() {
   const activeIdx = SECTIONS.findIndex((s) => s.id === activeId);
   const activeIdxSafe = activeIdx !== -1 ? activeIdx : 0;
 
-  // 7 segments * sqrt(20^2 + 40^2) = 7 * 44.72136 = 313.05px total path length
-  const pathLength = 313.05;
+  // 5 segments * sqrt(20^2 + 40^2) = 5 * 44.72136 = 223.6px total path length
+  const pathLength = 223.6;
   const strokeDashoffset = pathLength - activeIdxSafe * 44.72136;
 
   return (
     <nav
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block w-10 h-[300px]"
+      className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block w-10 h-[220px]"
       aria-label="Page sections"
     >
       {/* SVG Zigzag Tracks */}
       <svg 
         className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" 
-        viewBox="0 0 40 300"
+        viewBox="0 0 40 220"
         fill="none"
       >
         <defs>
@@ -65,19 +63,19 @@ export default function SectionNavigator() {
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
-
+ 
         {/* Faint Background Zigzag Line */}
         <path
-          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210 L 10 250 L 30 290"
+          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210"
           stroke="rgba(148, 163, 184, 0.2)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-
+ 
         {/* Glowing Active Scroll Progress Line */}
         <path
-          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210 L 10 250 L 30 290"
+          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210"
           stroke="url(#navGradient)"
           strokeWidth="2.5"
           strokeLinecap="round"

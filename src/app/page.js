@@ -4,10 +4,8 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Services from "@/components/Services";
-import Technologies from "@/components/Technologies";
 import Projects from "@/components/Projects";
 import Testimonials from "@/components/Testimonials";
-import Blog from "@/components/Blog";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import BackgroundParticles from "@/components/BackgroundParticles";
@@ -139,13 +137,9 @@ export default function Home() {
         <SectionDivider />
         <Services />
         <SectionDivider />
-        <Technologies />
-        <SectionDivider />
         <Projects />
         <SectionDivider />
         <Testimonials />
-        <SectionDivider />
-        <Blog />
         <SectionDivider />
         <Contact />
       </main>
