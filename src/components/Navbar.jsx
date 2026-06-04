@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowUpRight, Menu, X, ArrowRight } from "lucide-react";
+import { ArrowUpRight, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
 import { usePathname } from "next/navigation";
@@ -26,6 +26,7 @@ export default function Navbar({ activeSection }) {
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     { label: "Services", href: "/services" },
+    { label: "Solutions", href: "/solutions/crm-software-ahmedabad" },
     { label: "Blog", href: "/blog" },
   ];
 
@@ -58,6 +59,39 @@ export default function Navbar({ activeSection }) {
         <nav className="hidden xl:flex items-center gap-8">
           {links.map((link, idx) => {
             const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
+            
+            if (link.label === "Solutions") {
+              const isSolutionsActive = pathname.startsWith("/solutions/");
+              return (
+                <div key={idx} className="relative group/dropdown py-1.5">
+                  <button
+                    className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
+                      isSolutionsActive
+                        ? scrolled ? "text-white" : "text-black"
+                        : scrolled ? "text-slate-300 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                    }`}
+                  >
+                    Solutions
+                    <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
+                  </button>
+                  <div className="absolute top-full left-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible transition-all duration-300 z-50">
+                    <a
+                      href="/solutions/crm-software-ahmedabad"
+                      className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                    >
+                      CRM Solutions
+                    </a>
+                    <a
+                      href="/solutions/erp-software-ahmedabad"
+                      className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                    >
+                      ERP Solutions
+                    </a>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <a
                 key={idx}
@@ -107,6 +141,8 @@ export default function Navbar({ activeSection }) {
         >
           <div className="flex flex-col gap-4 text-center">
             {links.map((link, idx) => {
+              if (link.label === "Solutions") return null;
+              
               const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
               return (
                 <a
@@ -121,6 +157,26 @@ export default function Navbar({ activeSection }) {
                 </a>
               );
             })}
+
+            {/* Mobile Solutions Section */}
+            <div className="flex flex-col gap-2 border-y border-slate-100 py-3 my-1">
+              <span className="text-xs font-black uppercase text-slate-400 tracking-wider">Solutions</span>
+              <a
+                href="/solutions/crm-software-ahmedabad"
+                onClick={() => setIsOpen(false)}
+                className="text-base font-bold text-slate-800 hover:text-primary transition-colors"
+              >
+                CRM Solutions
+              </a>
+              <a
+                href="/solutions/erp-software-ahmedabad"
+                onClick={() => setIsOpen(false)}
+                className="text-base font-bold text-slate-800 hover:text-primary transition-colors"
+              >
+                ERP Solutions
+              </a>
+            </div>
+
             <a
               href="/contact"
               onClick={() => setIsOpen(false)}

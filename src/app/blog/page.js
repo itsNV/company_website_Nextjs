@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Blog from "@/components/Blog";
 import Footer from "@/components/Footer";
-import BackgroundParticles from "@/components/BackgroundParticles";
 import { Sparkles, Calendar, User, ArrowUpRight } from "lucide-react";
 
 export default function BlogPage() {
@@ -58,7 +57,7 @@ export default function BlogPage() {
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       
       <main className="flex-grow reveal-container relative z-[1] pt-28">
-        <BackgroundParticles activeSection="blog" />
+       
         
         {/* Blog Directory Hero */}
         <section className="py-20 bg-transparent">
@@ -78,10 +77,8 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* Featured Slider */}
-        <div className="pb-20">
-          <Blog />
-        </div>
+      
+        
 
         {/* Article Index Grid */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff] to-[#f4f2ff] border-t border-[#eae6fa]/40">
@@ -94,7 +91,7 @@ export default function BlogPage() {
               {articles.map((art, idx) => (
                 <div
                   key={idx}
-                  className="p-8 rounded-3xl border border-slate-200/40 bg-white/80 hover:bg-white hover:shadow-xl hover:shadow-purple-50/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                  className="p-8 hover-btn rounded-3xl border border-slate-200/40 bg-white/80 hover:bg-white hover:shadow-xl hover:shadow-purple-50/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-4 text-xs text-slate-400 font-bold mb-4">

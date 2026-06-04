@@ -1,11 +1,39 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Settings, ShieldAlert, Cpu, Layers, HardDrive, HelpCircle, ChevronDown, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function CustomSoftwarePage() {
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
+    const timer = setTimeout(() => {
+      const animatableElements = document.querySelectorAll(
+        "section, .reveal-item, .reveal-stagger, .split-line-mask"
+      );
+      animatableElements.forEach((el) => observer.observe(el));
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
 
   const services = [
     "Custom web and software application development",
@@ -98,10 +126,10 @@ export default function CustomSoftwarePage() {
       <Navbar activeSection="services" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
 
-      <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10">
+      <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10 reveal-container">
         
         {/* Hero Section */}
-        <section className="py-20">
+        <section className="py-20 reveal-item">
           <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-8 flex flex-col items-center lg:items-start">
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-6">
@@ -117,7 +145,7 @@ export default function CustomSoftwarePage() {
               <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
                 <a
                   href="/contact"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold hover:bg-slate-900 transition-all duration-300 shadow-lg shadow-purple-100"
+                  className="hover-btn inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold transition-all duration-300 shadow-lg shadow-purple-100"
                 >
                   Consult Our Software Team
                   <ArrowRight className="w-4 h-4" />
@@ -140,12 +168,12 @@ export default function CustomSoftwarePage() {
         </section>
 
         {/* Services & Capabilities List */}
-        <section className="py-16 bg-white/40 border-y border-[#eae6fa]/20">
+        <section id="about" className="py-16 bg-white/40 border-y border-[#eae6fa]/20">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Software Services We Offer</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Software Services We Offer</h2>
+            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((srv, idx) => (
-                <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                <div key={idx} className="hover-box flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
                   <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0" />
                   <span className="text-slate-800 font-semibold text-sm">{srv}</span>
                 </div>
@@ -155,15 +183,15 @@ export default function CustomSoftwarePage() {
         </section>
 
         {/* Features / Scope Section */}
-        <section className="py-20">
+        <section id="services" className="py-20">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-4">Why Choose Yunawise</h2>
-            <p className="text-slate-500 text-center max-w-xl mx-auto mb-16">Enterprise-ready software systems built for high performance and operational clarity.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <h2 className="reveal-item text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-4">Why Choose Yunawise</h2>
+            <p className="reveal-item text-slate-500 text-center max-w-xl mx-auto mb-16">Enterprise-ready software systems built for high performance and operational clarity.</p>
+            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {features.map((feat, idx) => {
                 const Icon = feat.icon;
                 return (
-                  <div key={idx} className="group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-lg hover:shadow-purple-50 hover:-translate-y-1 transition-all duration-300">
+                  <div key={idx} className="hover-box group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-6 ${feat.theme}`}>
                       <Icon className="w-6 h-6" />
                     </div>
@@ -177,14 +205,14 @@ export default function CustomSoftwarePage() {
         </section>
 
         {/* Process Timeline */}
-        <section className="py-20 bg-slate-50/50 border-t border-slate-200/40">
+        <section id="works" className="py-20 bg-slate-50/50 border-t border-slate-200/40">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4">Our Software Lifecycle</h2>
-            <p className="text-slate-500 text-center max-w-xl mx-auto mb-16">A modular architecture lifecycle aligning business workflow definitions with secure, scalable deployments.</p>
+            <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4">Our Software Lifecycle</h2>
+            <p className="reveal-item text-slate-500 text-center max-w-xl mx-auto mb-16">A modular architecture lifecycle aligning business workflow definitions with secure, scalable deployments.</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {process.map((step, idx) => (
-                <div key={idx} className="relative p-8 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between">
+                <div key={idx} className="hover-box relative p-8 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between">
                   <div>
                     <span className="text-4xl font-black font-outfit text-slate-100 group-hover:text-purple-200 transition-colors block mb-4">{step.step}</span>
                     <h3 className="text-lg font-bold font-outfit text-slate-900 mb-2">{step.title}</h3>

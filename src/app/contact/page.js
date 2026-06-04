@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import BackgroundParticles from "@/components/BackgroundParticles";
+
 
 export default function ContactPage() {
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function ContactPage() {
       {/* Premium Top Satin Gradient Vignette Mask */}
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       <main className="flex-grow reveal-container relative z-[1] pt-24">
-        <BackgroundParticles activeSection="contact" />
+       
         <Contact />
       </main>
       <Footer />

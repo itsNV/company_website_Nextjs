@@ -98,7 +98,7 @@ export default function ServicesPage() {
                   <Link
                     key={idx}
                     href={srv.link}
-                    className="p-8 rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-[6px] hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group block"
+                    className="p-8 hover-btn rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-[6px] hover:bg-white group block"
                   >
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-6 transition-transform duration-300 group-hover:scale-110 ${srv.color}`}>
                       <Icon className="w-6 h-6" />
@@ -126,7 +126,7 @@ export default function ServicesPage() {
             </p>
             <a
               href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold hover:bg-slate-900 transition-all duration-300 shadow-lg shadow-purple-200"
+              className="hover-btn inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold hover:bg-slate-900 transition-all duration-300 shadow-lg shadow-purple-200"
             >
               Get Started Now
               <ArrowRight className="w-4 h-4" />
