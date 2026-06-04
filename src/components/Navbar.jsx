@@ -68,7 +68,7 @@ export default function Navbar({ activeSection }) {
                     className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
                       isSolutionsActive
                         ? scrolled ? "text-white" : "text-black"
-                        : scrolled ? "text-slate-300 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                        : scrolled ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Solutions
