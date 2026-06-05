@@ -8,7 +8,19 @@ import { usePathname } from "next/navigation";
 export default function Navbar({ activeSection }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
+  const [desktopSolutionsOpen, setDesktopSolutionsOpen] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".group\\/dropdown")) {
+        setDesktopSolutionsOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,15 +49,15 @@ export default function Navbar({ activeSection }) {
       <div
         className={`w-full max-w-7xl rounded-full flex items-center justify-between border transition-all duration-300 relative ${
           scrolled
-            ? "bg-gray-900 backdrop-blur-xl border-slate-200/35 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
-            : "bg-gray-300 backdrop-blur-md border-slate-200/10 px-8 py-4.5"
+            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
+            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-8 py-4 shadow-sm"
         }`}
       >
         
         {/* Apple-style Geometric Lettermark Logo */}
         <a href="/" className="flex items-center gap-2 group">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm font-outfit shadow-sm group-hover:bg-primary transition-colors duration-300 
-            ${ scrolled ? "bg-grey-300 text-slate-900" : "bg-slate-900 text-white" }`}>
+            ${ scrolled ? "bg-gray-300 text-slate-900" : "bg-slate-900 text-white" }`}>
             <Image src={logo} alt="Yunawise Logo" className={`w-full h-full object-contain ${scrolled ? "duration-115" : " bg-gray-300  duration-300"}`} />
           </div>
           <span className={`text-base font-extrabold font-outfit tracking-tight text-slate-900
@@ -65,6 +77,10 @@ export default function Navbar({ activeSection }) {
               return (
                 <div key={idx} className="relative group/dropdown py-1.5">
                   <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDesktopSolutionsOpen(!desktopSolutionsOpen);
+                    }}
                     className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
                       isSolutionsActive
                         ? scrolled ? "text-white" : "text-black"
@@ -74,7 +90,8 @@ export default function Navbar({ activeSection }) {
                     Solutions
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </button>
-                  <div className="absolute top-full left-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible transition-all duration-300 z-50">
+                  <div className={`absolute top-full left-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                    ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
                     <a
                       href="/solutions/crm-software-ahmedabad"
                       className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
@@ -127,7 +144,9 @@ export default function Navbar({ activeSection }) {
         {/* Mobile Menu Trigger */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 -mr-2 text-slate-800 hover:text-primary xl:hidden transition-colors"
+          className={`p-2 -mr-2 xl:hidden transition-colors ${
+            scrolled ? "text-slate-200 hover:text-primary" : "text-slate-700 hover:text-primary"
+          }`}
           aria-label="Toggle navigation menu"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -141,7 +160,43 @@ export default function Navbar({ activeSection }) {
         >
           <div className="flex flex-col gap-4 text-center">
             {links.map((link, idx) => {
-              if (link.label === "Solutions") return null;
+              if (link.label === "Solutions") {
+                return (
+                  <div key={idx} className="flex flex-col items-center">
+                    <button
+                      onClick={() => setMobileSolutionsOpen(!mobileSolutionsOpen)}
+                      className="text-xl font-bold font-outfit text-slate-800 hover:text-primary transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer w-full"
+                    >
+                      Solutions
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileSolutionsOpen ? "rotate-180 text-primary" : ""}`} />
+                    </button>
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
+                      mobileSolutionsOpen ? "max-h-40 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
+                    }`}>
+                      <a
+                        href="/solutions/crm-software-ahmedabad"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setMobileSolutionsOpen(false);
+                        }}
+                        className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
+                      >
+                        CRM Solutions
+                      </a>
+                      <a
+                        href="/solutions/erp-software-ahmedabad"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setMobileSolutionsOpen(false);
+                        }}
+                        className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
+                      >
+                        ERP Solutions
+                      </a>
+                    </div>
+                  </div>
+                );
+              }
               
               const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
               return (
@@ -157,25 +212,6 @@ export default function Navbar({ activeSection }) {
                 </a>
               );
             })}
-
-            {/* Mobile Solutions Section */}
-            <div className="flex flex-col gap-2 border-y border-slate-100 py-3 my-1">
-              <span className="text-xs font-black uppercase text-slate-400 tracking-wider">Solutions</span>
-              <a
-                href="/solutions/crm-software-ahmedabad"
-                onClick={() => setIsOpen(false)}
-                className="text-base font-bold text-slate-800 hover:text-primary transition-colors"
-              >
-                CRM Solutions
-              </a>
-              <a
-                href="/solutions/erp-software-ahmedabad"
-                onClick={() => setIsOpen(false)}
-                className="text-base font-bold text-slate-800 hover:text-primary transition-colors"
-              >
-                ERP Solutions
-              </a>
-            </div>
 
             <a
               href="/contact"

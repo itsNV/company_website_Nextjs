@@ -91,36 +91,35 @@ export default function Services() {
   }, [serviceList.length]);
 
   return (
-    /* The parent height is set to 400vh to create scroll track padding for the viewport lock */
-    <section ref={containerRef} id="services" className="relative h-[400vh] bg-transparent">
+    /* The parent height is set to 400vh to create scroll track padding for the viewport lock on desktop */
+    <section ref={containerRef} id="services" className="relative md:h-[400vh] h-auto py-16 md:py-0 bg-transparent">
       
-      {/* Sticky viewport container covering 100vh */}
-      <div className="sticky top-0 left-0 right-0 h-screen w-full overflow-hidden flex items-center justify-center">
+      {/* Sticky viewport container covering 100vh only on desktop */}
+      <div className="md:sticky md:top-0 md:left-0 md:right-0 md:h-screen w-full md:overflow-hidden flex items-center justify-center">
         
-        <div className="max-w-4xl w-full px-6 flex flex-col items-center relative h-full justify-center">
+        <div className="max-w-4xl w-full px-6 flex flex-col items-center relative justify-center">
           
           {/* Static Title Header floating over cards */}
-          <div className="reveal-item text-center max-w-3xl mx-auto mb-12 shrink-0 relative z-20 pt-6">
+          <div className="reveal-item text-center max-w-3xl mx-auto mb-10 shrink-0 relative z-20 pt-6">
             <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3.5 py-1.5 rounded-full">
               Our Services
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
               Innovative digital solutions, built to scale.
             </h2>
-            <p className="text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
+            <p className="hidden md:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
               Scroll down to overlay services • Card {activeIndex + 1} of {serviceList.length}
             </p>
           </div>
 
-          {/* Cards viewport deck */}
-          <div className="relative w-full max-w-3xl h-[420px] md:h-[340px] flex items-center justify-center z-10">
+          {/* Desktop Cards viewport deck */}
+          <div className="hidden md:flex relative w-full max-w-3xl h-[340px] items-center justify-center z-10">
             {serviceList.map((srv, idx) => {
               const Icon = srv.icon;
               
               // Animation calculations based on current active card index
               const isPast = idx < activeIndex;
               const isActive = idx === activeIndex;
-              const isFuture = idx > activeIndex;
 
               let transformStyle = "translateY(100vh) scale(0.9)"; // Hidden in future
               let opacity = 0;
@@ -151,7 +150,7 @@ export default function Services() {
                 >
                   <div className="hover-box w-full h-full p-8 md:p-12 rounded-[32px] border bg-white shadow-xl shadow-slate-200/30 flex flex-col md:flex-row gap-8 items-start md:items-center border-slate-200/60">
                     {/* Left Side: Icon */}
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-lg shadow-indigo-100`}>
+                    <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-lg`}>
                       <Icon className="w-8 h-8" />
                     </div>
 
@@ -167,6 +166,34 @@ export default function Services() {
                         {srv.description}
                       </p>
                     </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile Cards flow list */}
+          <div className="flex md:hidden flex-col gap-6 w-full z-10">
+            {serviceList.map((srv, idx) => {
+              const Icon = srv.icon;
+              return (
+                <div
+                  key={idx}
+                  className="hover-box w-full p-6 rounded-3xl border bg-white shadow-md border-slate-200/60 flex flex-col gap-5 items-start"
+                >
+                  <div className={`w-12 h-12 shrink-0 rounded-xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-md`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded mb-2 inline-block">
+                      {srv.category}
+                    </span>
+                    <h3 className="text-xl font-bold font-outfit text-slate-900 mb-2 leading-tight">
+                      {srv.title}
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed text-xs">
+                      {srv.description}
+                    </p>
                   </div>
                 </div>
               );

@@ -17,8 +17,10 @@ export default function Hero() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setDimensions({ rx: 200, ry: 165 });
+      if (window.innerWidth < 400) {
+        setDimensions({ rx: 125, ry: 135 });
+      } else if (window.innerWidth < 640) {
+        setDimensions({ rx: 175, ry: 155 });
       } else if (window.innerWidth < 1024) {
         setDimensions({ rx: 340, ry: 215 });
       } else {
@@ -193,9 +195,30 @@ export default function Hero() {
           transition: transform 2.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease;
         }
 
+        @keyframes marquee {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .animate-marquee-left {
+          display: flex;
+          width: max-content;
+          animation: marquee 22s linear infinite;
+        }
+        .animate-marquee-right {
+          display: flex;
+          width: max-content;
+          animation: marquee 22s linear infinite reverse;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .orbit-item {
             transition: none !important;
+          }
+          .animate-marquee-left, .animate-marquee-right {
+            animation: none;
+            width: auto;
+            flex-wrap: wrap;
+            justify-content: center;
           }
         }
       `}</style>
@@ -217,21 +240,15 @@ export default function Hero() {
           onMouseLeave={() => setIsPaused(false)}
         >
           
-          {/* Orbit Rings Wrapper centered exactly behind this content block */}
-          <div className="absolute inset-0 pointer-events-none select-none z-0 flex items-center justify-center">
-            <svg className="absolute w-full h-[600px] opacity-100 transition-opacity duration-1000" viewBox="0 0 1000 600">
-              <ellipse 
-                cx="500" 
-                cy="300" 
-                rx={dimensions.rx} 
-                ry={dimensions.ry} 
-                fill="none" 
-                stroke="rgba(148, 163, 184, 0.16)" 
-                strokeWidth="1.5" 
-                strokeDasharray="6 6"
-                className="transition-all duration-1000"
-              />
-            </svg>
+          {/* Orbit Rings Wrapper centered exactly behind this content block (Hidden on mobile) */}
+          <div className="absolute inset-0 pointer-events-none select-none z-0 hidden sm:flex items-center justify-center">
+            <div 
+              style={{
+                width: `${dimensions.rx * 2}px`,
+                height: `${dimensions.ry * 2}px`,
+              }}
+              className="absolute border border-dashed border-slate-300/30 rounded-full transition-all duration-1000"
+            />
             <div className="relative w-full h-[600px] flex items-center justify-center">
               {techIcons.map((icon, idx) => {
                 // Calculate the specific orbital angle for this index on the ellipse
@@ -252,12 +269,27 @@ export default function Hero() {
                     }}
                     className="orbit-item pointer-events-auto z-20"
                   >
-                    <div className={`w-11 h-11 rounded-full ${icon.bgColor || "bg-white"} border border-slate-200/80 shadow-md flex items-center justify-center hover-box transition-transform duration-300 ${icon.shadow}`}>
-                      {icon.svg}
+                    <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full ${icon.bgColor || "bg-white"} border border-slate-200/80 shadow-md flex items-center justify-center hover-box transition-transform duration-300 ${icon.shadow}`}>
+                      <div className="scale-75 sm:scale-100 flex items-center justify-center">
+                        {icon.svg}
+                      </div>
                     </div>
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Mobile Running Tech Line 1 (Above Heading) */}
+          <div className="sm:hidden w-full overflow-hidden py-3 mb-6 relative z-20 pointer-events-none select-none">
+            <div className="animate-marquee-left flex gap-6">
+              {[...techIcons, ...techIcons].map((icon, idx) => (
+                <div key={idx} className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center shrink-0">
+                  <div className="scale-75 flex items-center justify-center">
+                    {icon.svg}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -308,6 +340,19 @@ export default function Hero() {
               Explore Our Work
               <ArrowUpRight className="w-4 h-4" />
             </a>
+          </div>
+
+          {/* Mobile Running Tech Line 2 (After CTA Buttons) */}
+          <div className="sm:hidden w-full overflow-hidden py-3 mt-10 relative z-20 pointer-events-none select-none">
+            <div className="animate-marquee-right flex gap-6">
+              {[...techIcons, ...techIcons].map((icon, idx) => (
+                <div key={idx} className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center shrink-0">
+                  <div className="scale-75 flex items-center justify-center">
+                    {icon.svg}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>

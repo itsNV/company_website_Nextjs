@@ -112,7 +112,7 @@ export default function Testimonials() {
             <button
               onClick={handlePrev}
               suppressHydrationWarning
-              className="hover-btn w-12 h-12 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-primary hover:text-blue-500 hover:border-primary flex items-center justify-center shadow-sm cursor-pointer"
+              className="hover-btn w-12 h-12 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center shadow-sm cursor-pointer"
               aria-label="Previous review"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -123,7 +123,7 @@ export default function Testimonials() {
             <button
               onClick={handleNext}
               suppressHydrationWarning
-              className="hover-btn w-12 h-12 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-primary hover:text-blue-500 hover:border-primary flex items-center justify-center shadow-sm cursor-pointer"
+              className="hover-btn w-12 h-12 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center shadow-sm cursor-pointer"
               aria-label="Next review"
             >
               <ArrowRight className="w-5 h-5" />
