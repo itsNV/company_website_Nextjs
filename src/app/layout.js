@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
+import Preloader from "@/components/Preloader";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -24,8 +25,27 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${plusJakarta.variable} ${outfit.variable} h-full antialiased scroll-smooth`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50/50 text-slate-900">{children}</body>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (sessionStorage.getItem("yunawise_preloader_seen")) {
+                    document.documentElement.classList.add("preloader-seen");
+                  }
+                } catch(e) {}
+              })();
+            `
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col font-sans bg-slate-50/50 text-slate-900 is-loading" suppressHydrationWarning>
+        <Preloader />
+        {children}
+      </body>
     </html>
   );
 }

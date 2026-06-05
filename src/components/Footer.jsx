@@ -32,13 +32,18 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-10 mb-12 relative z-10">
         {/* Brand */}
         <div className="md:col-span-5 flex flex-col items-start gap-5">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl font-outfit shadow-md shadow-primary/30">
-              <Image src={logo} alt="Yunawise Logo" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 flex items-center justify-center shrink-0">
+              <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-xl font-bold font-outfit tracking-tight">
-              Yunawise<span className="text-primary">.</span>
-            </span>
+            <div className="flex flex-col text-left leading-[1.1]">
+              <span className="text-[15px] font-black tracking-wider uppercase font-outfit text-white">
+                Yunawise
+              </span>
+              <span className="text-[8px] font-extrabold tracking-[0.22em] uppercase font-outfit text-slate-400">
+                Techsolve LLP
+              </span>
+            </div>
           </div>
 
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-slate-300">

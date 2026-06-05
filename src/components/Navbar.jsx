@@ -54,17 +54,19 @@ export default function Navbar({ activeSection }) {
         }`}
       >
         
-        {/* Apple-style Geometric Lettermark Logo */}
-        <a href="/" className="flex items-center gap-2 group">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm font-outfit shadow-sm group-hover:bg-primary transition-colors duration-300 
-            ${ scrolled ? "bg-gray-300 text-slate-900" : "bg-slate-900 text-white" }`}>
-            <Image src={logo} alt="Yunawise Logo" className={`w-full h-full object-contain ${scrolled ? "duration-115" : " bg-gray-300  duration-300"}`} />
+        {/* Brand Logo and Stacked Subtitle */}
+        <a href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 flex items-center justify-center shrink-0">
+            <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
           </div>
-          <span className={`text-base font-extrabold font-outfit tracking-tight text-slate-900
-            ${ scrolled ? "text-white" : "text-slate-900 "}
-            `}>
-            Yunawise<span className="text-primary font-black">.</span>
-          </span>
+          <div className="flex flex-col text-left leading-[1.1]">
+            <span className={`text-[15px] font-black tracking-wider uppercase font-outfit transition-colors ${scrolled ? "text-white" : "text-[#2e579d]"}`}>
+              Yunawise
+            </span>
+            <span className={`text-[8px] font-extrabold tracking-[0.22em] uppercase font-outfit transition-colors ${scrolled ? "text-slate-400" : "text-[#2e579d]/80"}`}>
+              Techsolve LLP
+            </span>
+          </div>
         </a>
 
         {/* Premium Quiet Nav Links with Left-to-Right Draw & Active Highlight */}
