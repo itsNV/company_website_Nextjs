@@ -8,13 +8,31 @@ import Image from "next/image";
 
 export default function AboutPage() {
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
     const timer = setTimeout(() => {
       const animatableElements = document.querySelectorAll(
         "section, .reveal-item, .reveal-stagger, .split-line-mask"
       );
-      animatableElements.forEach((el) => el.classList.add("active"));
+      animatableElements.forEach((el) => observer.observe(el));
     }, 150);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -30,7 +48,7 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Column: Copy */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left">
+            <div className="reveal-item lg:col-span-7 flex flex-col items-start text-left">
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
                 About Yunawise
@@ -59,7 +77,7 @@ export default function AboutPage() {
             </div>
 
             {/* Right Column: Premium Illustration */}
-            <div className="lg:col-span-5 relative w-full aspect-square max-w-[450px] mx-auto">
+            <div className="reveal-item lg:col-span-5 relative w-full aspect-square max-w-[450px] mx-auto">
               <div className="absolute inset-0 bg-gradient-to-tr from-purple-100 to-indigo-50/50 border border-slate-200/60 rounded-[36px] shadow-inner -z-10" />
               <div className="w-full h-full rounded-[36px] overflow-hidden border border-slate-200/50 bg-white/70 backdrop-blur-sm p-4 shadow-xl hover:shadow-2xl transition-shadow duration-300">
                 <Image
@@ -79,7 +97,7 @@ export default function AboutPage() {
           {/* Stat Counters Grid */}
         <div className="pb-20 pt-20 bg-transparent">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto pt-8 border-t border-slate-200/60">
+            <div className="reveal-stagger grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto pt-8 border-t border-slate-200/60">
               <div className="p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm text-center">
                 <h3 className="text-3xl md:text-4xl font-extrabold font-outfit text-purple-600">4+</h3>
                 <p className="text-slate-500 text-xs uppercase tracking-wider font-bold mt-1">Years of Experience</p>
@@ -106,7 +124,7 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Column: Heading & Intro */}
-            <div className="lg:col-span-5 flex flex-col items-start text-left">
+            <div className="reveal-item lg:col-span-5 flex flex-col items-start text-left">
               <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3.5 py-1.5 rounded-full mb-6">
                 Digital Experience
               </span>
@@ -126,7 +144,7 @@ export default function AboutPage() {
             </div>
 
             {/* Right Column: Stacked Premium Cards */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="reveal-stagger lg:col-span-7 flex flex-col gap-6">
               
               {/* Card 1: Digital Marketing */}
               <div className="group relative p-6 md:p-8 rounded-[28px] border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
@@ -194,7 +212,7 @@ export default function AboutPage() {
 
         {/* Call to action section */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff] to-[#f4f2ff] relative border-t border-[#eae6fa]/40">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 mb-6">
               Ready to construct your next digital asset?
             </h2>

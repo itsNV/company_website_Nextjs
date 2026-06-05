@@ -5,15 +5,39 @@ import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", msg: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.name && formData.email) {
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
         setFormData({ name: "", email: "", msg: "" });
-      }, 5000);
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 4000);
+      } else {
+        setError(data.error || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      console.error("Contact submit error:", err);
+      setError("Failed to send message. Please check your network connection.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,8 +92,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-slate-900 font-outfit text-sm uppercase tracking-wider mb-1">Email Inquiries</h4>
-                  <a href="mailto:inquiry@yunawise.com" className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
-                    inquiry@yunawise.com
+                  <a href="mailto:nisargpatel2466@gmail.com" className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
+                    nisargpatel2466@gmail.com
                   </a>
                 </div>
               </div>
@@ -149,16 +173,23 @@ export default function Contact() {
                     />
                   </div>
 
+                  {error && (
+                    <div className="p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 text-xs font-semibold">
+                      {error}
+                    </div>
+                  )}
+
                   <p className="text-[11px] text-slate-400 leading-normal">
                     By clicking Send Message, you agree to our privacy policy and consent to secure cookie storage to facilitate direct communication.
                   </p>
 
                   <button
                     type="submit"
+                    disabled={loading}
                     suppressHydrationWarning
-                    className="hover-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-primary w-full sm:w-auto self-start mt-2 shadow-lg"
+                    className="hover-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-primary w-full sm:w-auto self-start mt-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
-                    Send Message
+                    {loading ? "Sending..." : "Send Message"}
                     <Send className="w-4 h-4" />
                   </button>
                 </form>

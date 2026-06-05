@@ -8,13 +8,31 @@ import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck, Spa
 
 export default function ServicesPage() {
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
     const timer = setTimeout(() => {
       const animatableElements = document.querySelectorAll(
         "section, .reveal-item, .reveal-stagger, .split-line-mask"
       );
-      animatableElements.forEach((el) => el.classList.add("active"));
+      animatableElements.forEach((el) => observer.observe(el));
     }, 150);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   const coreServices = [
@@ -72,7 +90,7 @@ export default function ServicesPage() {
         
         {/* Services Page Hero */}
         <section className="py-20 bg-transparent">
-          <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="reveal-item max-w-7xl mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6 animate-pulse-soft">
               <Sparkles className="w-3.5 h-3.5" />
               Our Capabilities
@@ -91,7 +109,7 @@ export default function ServicesPage() {
         {/* Static Capabalities Grid */}
         <section className="pb-20 bg-transparent">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8">
               {coreServices.map((srv, idx) => {
                 const Icon = srv.icon;
                 return (
@@ -117,7 +135,7 @@ export default function ServicesPage() {
 
         {/* Call to action section */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff] to-[#f4f2ff] relative border-t border-[#eae6fa]/40">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 mb-6">
               Ready to construct your next digital asset?
             </h2>
@@ -126,7 +144,7 @@ export default function ServicesPage() {
             </p>
             <a
               href="/contact"
-              className="hover-btn inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold hover:bg-slate-900 transition-all duration-300 shadow-lg shadow-purple-200"
+              className="hover-btn inline-flex items-center gap-2 px-8 py-4 rounded-full bg-purple-600 text-white font-bold hover:bg-slate-950 transition-all duration-300 shadow-lg shadow-purple-200"
             >
               Get Started Now
               <ArrowRight className="w-4 h-4" />

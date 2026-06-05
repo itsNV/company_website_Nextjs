@@ -1,19 +1,36 @@
 "use client";
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import Blog from "@/components/Blog";
 import Footer from "@/components/Footer";
 import { Sparkles, Calendar, User, ArrowUpRight } from "lucide-react";
 
 export default function BlogPage() {
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
     const timer = setTimeout(() => {
       const animatableElements = document.querySelectorAll(
         "section, .reveal-item, .reveal-stagger, .split-line-mask"
       );
-      animatableElements.forEach((el) => el.classList.add("active"));
+      animatableElements.forEach((el) => observer.observe(el));
     }, 150);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   const articles = [
@@ -57,11 +74,10 @@ export default function BlogPage() {
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       
       <main className="flex-grow reveal-container relative z-[1] pt-28">
-       
         
         {/* Blog Directory Hero */}
         <section className="py-20 bg-transparent">
-          <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="reveal-item max-w-7xl mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse-soft">
               <Sparkles className="w-3.5 h-3.5" />
               Insights &amp; Industry Trends
@@ -77,17 +93,14 @@ export default function BlogPage() {
           </div>
         </section>
 
-      
-        
-
         {/* Article Index Grid */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff] to-[#f4f2ff] border-t border-[#eae6fa]/40">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mb-12 text-center">
+            <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 mb-12 text-center">
               All Publications
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8">
               {articles.map((art, idx) => (
                 <div
                   key={idx}
