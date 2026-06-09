@@ -8,7 +8,7 @@ import Projects from "@/components/Projects";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import BackgroundParticles from "@/components/BackgroundParticles";
+
 import InteractiveAvatar from "@/components/InteractiveAvatar";
 import SectionNavigator from "@/components/SectionNavigator";
 import SectionDivider from "@/components/SectionDivider";

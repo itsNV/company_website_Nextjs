@@ -23,7 +23,7 @@ export default function Preloader() {
     // Phase 1: Start fade out transition after 4.2s (gives full time to read the text)
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
-    }, 4200);
+    }, 2800);
 
     // Phase 2: Completely hide, re-enable scroll/content, and set sessionStorage (4.9s total)
     const hideTimer = setTimeout(() => {
@@ -31,7 +31,7 @@ export default function Preloader() {
       document.body.style.overflow = "";
       document.body.classList.remove("is-loading");
       sessionStorage.setItem("yunawise_preloader_seen", "true");
-    }, 4900);
+    }, 4000);
 
     return () => {
       clearTimeout(fadeTimer);

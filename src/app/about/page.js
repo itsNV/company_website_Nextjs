@@ -211,7 +211,7 @@ export default function AboutPage() {
         
 
         {/* Call to action section */}
-        <section className="py-20 bg-gradient-to-tr from-[#fcfaff] to-[#f4f2ff] relative border-t border-[#eae6fa]/40">
+        <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
           <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 mb-6">
               Ready to construct your next digital asset?
