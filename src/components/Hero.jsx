@@ -152,7 +152,7 @@ export default function Hero() {
         </svg>
       ),
       shadow: "shadow-[0_0_20px_rgba(225,0,152,0.2)]",
-    },
+    }, 
     {
       name: "Python",
       svg: (

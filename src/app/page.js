@@ -8,12 +8,15 @@ import Projects from "@/components/Projects";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-
-import InteractiveAvatar from "@/components/InteractiveAvatar";
 import SectionNavigator from "@/components/SectionNavigator";
-import SectionDivider from "@/components/SectionDivider";
+import { getProjects } from "@/lib/firebase/projects";
+
 
 export default function Home() {
+
+  
+
+
   const [activeSection, setActiveSection] = useState("home");
   const [globalScrollProgress, setGlobalScrollProgress] = useState(0);
 
@@ -74,9 +77,13 @@ export default function Home() {
     };
   }, []);
 
+
+
+
+
   return (
     <>
-      <InteractiveAvatar activeSection={activeSection} />
+      
       <Navbar activeSection={activeSection} />
       <SectionNavigator />
       {/* Premium Top Satin Gradient Vignette Mask */}
@@ -132,15 +139,15 @@ export default function Home() {
         </div>
 
         <Hero />
-        <SectionDivider />
+        
         <About />
-        <SectionDivider />
+        
         <Services />
-        <SectionDivider />
+        
         <Projects />
-        <SectionDivider />
+        
         <Testimonials />
-        <SectionDivider />
+        
         <Contact />
       </main>
       <Footer />

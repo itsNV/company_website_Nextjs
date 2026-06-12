@@ -127,7 +127,7 @@ export default function About() {
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${step.color}`}>
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-4xl font-black font-outfit text-slate-200 group-hover:text-purple-200 transition-colors">
+                    <span className="text-4xl font-black font-outfit text-slate-500 group-hover:text-purple-500 transition-colors">
                       {step.step}
                     </span>
                   </div>

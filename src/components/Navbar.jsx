@@ -3,19 +3,22 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
-import { usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";     
 
 export default function Navbar({ activeSection }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [desktopSolutionsOpen, setDesktopSolutionsOpen] = useState(false);
+  const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".group\\/dropdown")) {
         setDesktopSolutionsOpen(false);
+        setDesktopServicesOpen(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -40,6 +43,15 @@ export default function Navbar({ activeSection }) {
     { label: "Services", href: "/services" },
     { label: "Solutions", href: "/solutions/crm-software-ahmedabad" },
     { label: "Blog", href: "/blog" },
+  ];
+
+  const servicesDropdownItems = [
+    { label: "Website Development", href: "/services/website-development" },
+    { label: "Digital Marketing", href: "/services/digital-marketing" },
+    { label: "Custom Software Solutions", href: "/services/custom-software-development" },
+    { label: "e-Commerce Development", href: "/services/e-commerce-development" },
+    { label: "Branding Strategy", href: "/services/branding" },
+    { label: "Mobile App Development", href: "/services/mobile-app-development" },
   ];
 
   return (
@@ -74,6 +86,41 @@ export default function Navbar({ activeSection }) {
           {links.map((link, idx) => {
             const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
             
+            if (link.label === "Services") {
+              const isServicesActive = pathname.startsWith("/services");
+              return (
+                <div key={idx} className="relative group/dropdown py-1.5">
+                  <a
+                    href="/services"
+                    onClick={(e) => {
+                      // Allow normal link navigation on click, but toggle menu just in case
+                      setDesktopServicesOpen(!desktopServicesOpen);
+                    }}
+                    className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
+                      isServicesActive
+                        ? scrolled ? "text-white" : "text-black"
+                        : scrolled ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                    }`}
+                  >
+                    Services
+                    <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
+                  </a>
+                  <div className={`absolute top-full left-0 mt-2 w-60 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                    ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
+                    {servicesDropdownItems.map((srv) => (
+                      <a
+                        key={srv.href}
+                        href={srv.href}
+                        className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                      >
+                        {srv.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
             if (link.label === "Solutions") {
               const isSolutionsActive = pathname.startsWith("/solutions/");
               return (
@@ -162,6 +209,47 @@ export default function Navbar({ activeSection }) {
         >
           <div className="flex flex-col gap-4 text-center">
             {links.map((link, idx) => {
+              if (link.label === "Services") {
+                return (
+                  <div key={idx} className="flex flex-col items-center">
+                    <button
+                      onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                      className="text-xl font-bold font-outfit text-slate-800 hover:text-primary transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer w-full"
+                    >
+                      Services
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileServicesOpen ? "rotate-180 text-primary" : ""}`} />
+                    </button>
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
+                      mobileServicesOpen ? "max-h-80 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
+                    }`}>
+                      <a
+                        href="/services"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setMobileServicesOpen(false);
+                        }}
+                        className="text-base font-extrabold text-primary hover:text-primary-dark transition-colors py-1.5 border-b border-slate-200/40"
+                      >
+                        All Services
+                      </a>
+                      {servicesDropdownItems.map((srv) => (
+                        <a
+                          key={srv.href}
+                          href={srv.href}
+                          onClick={() => {
+                            setIsOpen(false);
+                            setMobileServicesOpen(false);
+                          }}
+                          className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
+                        >
+                          {srv.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
               if (link.label === "Solutions") {
                 return (
                   <div key={idx} className="flex flex-col items-center">

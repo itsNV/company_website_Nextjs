@@ -3,6 +3,7 @@ import "./globals.css";
 import Preloader from "@/components/Preloader";
 import BackgroundParticles from "@/components/BackgroundParticles";
 
+
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -44,9 +45,11 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-slate-50/50 text-slate-900 is-loading" suppressHydrationWarning>
-        <Preloader />
-        <BackgroundParticles />
+        
+          <Preloader />
+          <BackgroundParticles />
         {children}
+        
       </body>
     </html>
   );

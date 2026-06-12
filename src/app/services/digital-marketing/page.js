@@ -216,9 +216,9 @@ export default function DigitalMarketingPage() {
             
             <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
               {process.map((step, idx) => (
-                <div key={idx} className="hover-box relative p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between">
+                <div key={idx} className="hover-box relative p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between group">
                   <div>
-                    <span className="text-4xl font-black font-outfit text-slate-100 group-hover:text-emerald-200 transition-colors block mb-4">{step.step}</span>
+                    <span className="text-4xl font-black font-outfit text-slate-500 group-hover:text-emerald-500 transition-colors block mb-4">{step.step}</span>
                     <h3 className="text-base font-bold font-outfit text-slate-900 mb-2">{step.title}</h3>
                     <p className="text-slate-600 text-[11px] leading-relaxed">{step.desc}</p>
                   </div>

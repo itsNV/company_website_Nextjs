@@ -6,8 +6,11 @@ import logo from "@/app/Yunawise_logo.png";
 export default function Preloader() {
   const [show, setShow] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    
     // Check if user already saw the loader in this session to prevent annoyance
     const hasVisited = sessionStorage.getItem("yunawise_preloader_seen");
     if (hasVisited) {
@@ -40,6 +43,26 @@ export default function Preloader() {
       document.body.classList.remove("is-loading");
     };
   }, []);
+
+  if (!mounted) {
+    // Return server-matching layout during initial hydration
+    return (
+      <div className="fixed inset-0 z-[100] bg-[#0c1524] flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center text-center px-6">
+          <div className="w-16 h-16 mb-8 flex items-center justify-center">
+            <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" priority />
+          </div>
+          <div className="text-3xl sm:text-4xl md:text-5xl font-black font-outfit text-white tracking-wider uppercase">
+            YUNAWISE
+          </div>
+          <div className="h-[1.5px] w-[120px] bg-sky-400/60 my-4" />
+          <div className="text-[10px] sm:text-xs font-black tracking-[0.26em] font-outfit text-sky-400 uppercase">
+            TECHSOLVE LLP
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!show) return null;
 

@@ -1,166 +1,162 @@
 "use client";
 import React from "react";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUp, Mail, MapPin, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
+import Link from "next/link";
 
 export default function Footer() {
-  const quickLinks = [
-    { label: "Home", href: "#home" },
-    { label: "About", href: "#about" },
-    { label: "Services", href: "#services" },
-    { label: "Blog", href: "#blog" },
-    { label: "Contact", href: "#contact" },
-  ];
-
-  const serviceLinks = [
-    "Headless CMS Development",
-    "Custom Web Platforms",
-    "Mobile App Engineering",
-    "CRM / ERP Solutions",
-    "SEO & Growth Marketing",
-  ];
-
-  const socials = [
-    {
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/company/yunawise-techsolve-llp",
-      hoverClass: "hover:border-[#0A66C2] hover:bg-[#0A66C2]/10 hover:text-[#0A66C2]",
-      icon: (
-        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-        </svg>
-      )
-    },
-    {
-      label: "Instagram",
-      href: "#",
-      hoverClass: "hover:border-[#E1306C] hover:bg-[#E1306C]/10 hover:text-[#E1306C]",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-        </svg>
-      )
-    },
-    {
-      label: "Facebook",
-      href: "#",
-      hoverClass: "hover:border-[#1877F2] hover:bg-[#1877F2]/10 hover:text-[#1877F2]",
-      icon: (
-        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-          <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-        </svg>
-      )
-    },
-    {
-      label: "Twitter",
-      href: "#",
-      hoverClass: "hover:border-[#1DA1F2] hover:bg-[#1DA1F2]/10 hover:text-[#1DA1F2]",
-      icon: (
-        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      )
+  const handleScrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Services", href: "/services" },    
+    { label: "Solutions", href: "/solutions" },
+    { label: "Blog", href: "/blog" },
   ];
 
-  return (
-    <footer className="reveal-item bg-slate-900/95 text-white pt-16 pb-8 border-t border-slate-800/80 relative overflow-hidden">
-      <div className="absolute -top-20 -right-16 w-[340px] h-[340px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-14 w-[300px] h-[300px] bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+  const focusItems = [
+    { label: "Web Applications", href: "/services/website-development" },
+    { label: "Mobile App Development", href: "/services/mobile-app-development" },
+    { label: "APIs & Cloud Systems", href: "/services/custom-software-development" },
+    { label: "E-Commerce Development", href: "/services/e-commerce-development" },
+    { label: "Branding Strategy", href: "/services/branding-strategy" },
+    { label: "Digital Marketing", href: "/services/digital-marketing" },
+  ];
 
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-10 mb-12 relative z-10">
-        {/* Brand */}
-        <div className="md:col-span-5 flex flex-col items-start gap-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center shrink-0">
-              <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex flex-col text-left leading-[1.1]">
-              <span className="text-[15px] font-black tracking-wider uppercase font-outfit text-white">
-                Yunawise
-              </span>
-              <span className="text-[8px] font-extrabold tracking-[0.22em] uppercase font-outfit text-slate-400">
-                Techsolve LLP
-              </span>
-            </div>
-          </div>
-
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            <Sparkles className="w-3 h-3 text-primary" />
-            Digital Product Engineering
-          </span>
-
-          <p className="text-slate-400 text-sm leading-relaxed max-w-md">
-            We build high-performance websites, mobile apps, and scalable software systems with modern frameworks, clean architecture, and long-term support.
-          </p>
-
-          <a
-            href="#contact"
-            className="hover-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-xs font-bold uppercase tracking-wider"
-          >
-            Start a Project
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
-
-        {/* Links 1 */}
-        <div className="md:col-span-3 flex flex-col gap-4">
-          <h4 className="text-xs font-black uppercase text-slate-300 tracking-wider">Quick Navigation</h4>
-          <div className="flex flex-col gap-2.5">
-            {quickLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-slate-400 hover:text-white text-sm transition-colors w-fit"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Links 2 */}
-        <div className="md:col-span-4 flex flex-col gap-4">
-          <h4 className="text-xs font-black uppercase text-slate-300 tracking-wider">Core Services</h4>
-          <div className="flex flex-col gap-2.5">
-            {serviceLinks.map((service) => (
-              <a
-                key={service}
-                href="#services"
-                className="text-slate-400 hover:text-white text-sm transition-colors w-fit"
-              >
-                {service}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Copyright Bar */}
-      <div className="max-w-7xl mx-auto px-6 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-        <p className="text-slate-500 text-xs">
-          &copy; {new Date().getFullYear()} Yunawise Techsolve LLP. All rights reserved.
-        </p>
-
-        {/* Social Handles */}
-        <div className="flex items-center gap-3.5">
-          {socials.map(({ label, href, icon, hoverClass }) => (
+     return (
+        <footer className="w-full border-t border-slate-800 bg-transparent pt-20 pb-10 relative z-10 overflow-hidden">
+            {/* Elegant Background Glow */}
+            <div className="absolute top-0 left-1/4 -translate-x-1/2 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-1/4 translate-x-1/2 w-96 h-96 bg-teal-100/20 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="container mx-auto px-6 md:px-10 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 pb-16">
+                    {/* Brand Column */}
+                    <div className="flex flex-col gap-6">
+                        <Link href="/" className="flex items-center space-x-2 group transition-transform duration-300 hover:scale-[1.02] self-start">
+                            <Image src={logo} alt="Yunawise Logo" className="w-8 h-8 object-contain" />
+                            <span className="text-xl font-black tracking-tight text-slate-900 font-heading leading-none">
+                                Yunawise<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-400">.</span>
+                            </span>
+                        </Link>
+                        <p className="text-[15px] font-medium text-slate-500 leading-relaxed max-w-sm">
+                            Engineering scalable, high-performance software solutions, cloud infrastructures, and SaaS platforms that drive real business growth.
+                        </p>
+                        <div className="flex items-center gap-2.5">
             <a
-              key={label}
-              href={href}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              aria-label={label}
-              className={`w-9 h-9 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:scale-110 flex items-center justify-center transition-all duration-300 ${hoverClass}`}
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
             >
-              {icon}
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.44 22 12.017 22 6.484 17.522 2 12 2z" />
+              </svg>
             </a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
+            <a
+              href="https://www.linkedin.com/company/yunawise-techsolve-llp"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+          </div>
+                    </div>
+
+                    {/* Navigation Column */}
+                    <div className="flex flex-col gap-5">
+                        <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800">
+                            Navigation
+                        </h4>
+                        <ul className="flex flex-col gap-3 text-[15px] font-semibold text-slate-500">
+                            {navLinks.map((link) => (
+                                <li key={link.href}>
+                                    <Link href={link.href} className="hover:text-blue-600 transition-colors">
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Services Column */}
+                    <div className="flex flex-col gap-5">
+                        <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800">
+                            Our Focus
+                        </h4>
+                        <ul className="flex flex-col gap-3 text-[15px] font-semibold text-slate-500">
+                            {focusItems.map((item) => (
+                                <li key={item.href}>
+                                    <Link href={item.href} className="hover:text-blue-600 transition-colors">
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Contact & Info Column */}
+                    <div className="flex flex-col gap-5">
+                        <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800">
+                            Get in Touch
+                        </h4>
+                        <ul className="flex flex-col gap-4 text-[15px] font-semibold text-slate-500">
+                            <li className="flex items-center gap-2.5">
+                                <Mail className="w-4 h-4 text-blue-600 shrink-0" />
+                                <a href="mailto:hello@yunawise.com" className="hover:text-blue-600 transition-colors break-all">hello@yunawise.com</a>
+                            </li>
+                            <li className="flex items-center gap-2.5">
+                                <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
+                                <span>Global / Remote</span>
+                            </li>
+                            <li className="pt-2">
+                                <a href="https://www.yunawise.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
+                                    Visit Main Website <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Bottom Bar Divider */}
+                <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-slate-200 to-transparent mb-8" />
+
+                {/* Bottom Row */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="text-[14px] font-bold text-slate-400 text-center sm:text-left">
+                        © {new Date().getFullYear()} Yunawise. All rights reserved.
+                    </div>
+                    <button 
+                        onClick={handleScrollToTop}
+                        className="group flex items-center justify-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-premium-hover cursor-pointer"
+                        aria-label="Back to top"
+                    >
+                        <ArrowUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                    </button>
+                </div>
+            </div>
+        </footer>
+    );
 }

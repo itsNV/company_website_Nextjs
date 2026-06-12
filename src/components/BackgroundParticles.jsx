@@ -55,14 +55,6 @@ export default function BackgroundParticles() {
           33% { border-radius: 45% 55% 40% 60% / 50% 45% 55% 50%; transform: scale(1.25) translate(-15vw, -10vh); }
           66% { border-radius: 70% 30% 70% 30% / 60% 40% 60% 40%; transform: scale(0.8) translate(10vw, 12vh); }
         }
-        @keyframes morph-blob-4 {
-          0%, 100% { border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%; transform: scale(1.25) translate(0px, 0px); }
-          50% { border-radius: 60% 40% 70% 30% / 40% 65% 35% 60%; transform: scale(0.75) translate(15vw, 15vh); }
-        }
-        @keyframes morph-blob-5 {
-          0%, 100% { border-radius: 50% 50% 50% 50%; transform: scale(0.8) translate(0px, 0px); }
-          50% { border-radius: 30% 70% 40% 60%; transform: scale(1.3) translate(-12vw, -15vh); }
-        }
       `}} />
       <div
         ref={containerRef}
@@ -122,42 +114,6 @@ export default function BackgroundParticles() {
             className="w-[340px] h-[340px] blur-[40px] bg-gradient-to-tr from-rose-500/60 via-pink-500/60 to-orange-400/50 mix-blend-multiply filter"
             style={{
               animation: "morph-blob-3 22s ease-in-out infinite",
-            }}
-          />
-        </div>
-
-        {/* Blob 4: Top Left, Emerald/Teal Gradient */}
-        <div
-          className="absolute"
-          style={{
-            top: "15%",
-            left: "15%",
-            transform: "translate3d(calc(var(--mouse-x) * -0.3), calc(var(--mouse-y) * 0.5), 0)",
-            transition: "transform 0.15s cubic-bezier(0.1, 0.8, 0.2, 1)",
-          }}
-        >
-          <div
-            className="w-[300px] h-[300px] blur-[35px] bg-gradient-to-tr from-emerald-400/55 via-teal-500/60 to-cyan-400/50 mix-blend-multiply filter"
-            style={{
-              animation: "morph-blob-4 34s ease-in-out infinite",
-            }}
-          />
-        </div>
-
-        {/* Blob 5: Bottom Right, Deep Violet Gradient */}
-        <div
-          className="absolute"
-          style={{
-            bottom: "5%",
-            right: "5%",
-            transform: "translate3d(calc(var(--mouse-x) * 0.3), calc(var(--mouse-y) * 0.3), 0)",
-            transition: "transform 0.15s cubic-bezier(0.1, 0.8, 0.2, 1)",
-          }}
-        >
-          <div
-            className="w-[380px] h-[380px] blur-[50px] bg-gradient-to-tr from-violet-500/60 via-indigo-600/55 to-purple-500/50 mix-blend-multiply filter"
-            style={{
-              animation: "morph-blob-5 28s ease-in-out infinite",
             }}
           />
         </div>
