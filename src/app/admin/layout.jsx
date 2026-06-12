@@ -5,7 +5,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen">
       <AuthProvider>
-        <AdminNavbar />
+        {/* <AdminNavbar /> */}
         <main>{children}</main>
       </AuthProvider>
     </div>
