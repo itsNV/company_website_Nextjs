@@ -44,12 +44,13 @@ export default function BlogPage() {
   useEffect(() => {
     async function loadBlogs() {
       try {
-        const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(collection(db, "blogs"));
         const fetched = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+        // Sort in Javascript to avoid Firestore index errors
+        fetched.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
         setBlogs(fetched.length > 0 ? fetched : staticArticles);
       } catch (error) {
         console.error("Error reading blogs:", error);
@@ -60,6 +61,34 @@ export default function BlogPage() {
     }
     loadBlogs();
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
+    const timer = setTimeout(() => {
+      const animatableElements = document.querySelectorAll(
+        "section, .reveal-item, .reveal-stagger"
+      );
+      animatableElements.forEach((el) => observer.observe(el));
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [blogs]);
 
   return (
     <>

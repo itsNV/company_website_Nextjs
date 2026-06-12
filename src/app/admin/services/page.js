@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import AdminGuard from "@/components/AdminGuard";
 import AdminNavbar from "@/components/AdminNavbar";
-import Footer from "@/components/Footer";
 import { 
   Sparkles, 
   Loader2, 
@@ -904,7 +903,7 @@ export default function ServicesAdminPage() {
           )}
         </main>
 
-        <Footer />
+        
       </div>
     </AdminGuard>
   );

@@ -4,6 +4,8 @@ import { ArrowUpRight, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
 import { usePathname } from "next/navigation";     
+import { db } from "@/lib/firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Navbar({ activeSection }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,21 +39,38 @@ export default function Navbar({ activeSection }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const [servicesDropdownItems, setServicesDropdownItems] = useState([]);
+  const [solutionsDropdownItems, setSolutionsDropdownItems] = useState([]);
+
+  useEffect(() => {
+    async function loadNavData() {
+      try {
+        const servicesSnapshot = await getDocs(collection(db, "services"));
+        const srvs = servicesSnapshot.docs.map((doc) => ({
+          label: doc.data().name,
+          href: `/services/${doc.data().slug}`
+        }));
+        setServicesDropdownItems(srvs);
+
+        const solutionsSnapshot = await getDocs(collection(db, "solutions"));
+        const sols = solutionsSnapshot.docs.map((doc) => ({
+          label: doc.data().name,
+          href: `/solutions/${doc.data().slug}`
+        }));
+        setSolutionsDropdownItems(sols);
+      } catch (e) {
+        console.error("Error fetching nav dynamic items:", e);
+      }
+    }
+    loadNavData();
+  }, []);
+
   const links = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     { label: "Services", href: "/services" },
-    { label: "Solutions", href: "/solutions/crm-software-ahmedabad" },
+    { label: "Solutions", href: solutionsDropdownItems[0]?.href || "#" },
     { label: "Blog", href: "/blog" },
-  ];
-
-  const servicesDropdownItems = [
-    { label: "Website Development", href: "/services/website-development" },
-    { label: "Digital Marketing", href: "/services/digital-marketing" },
-    { label: "Custom Software Solutions", href: "/services/custom-software-development" },
-    { label: "e-Commerce Development", href: "/services/e-commerce-development" },
-    { label: "Branding Strategy", href: "/services/branding" },
-    { label: "Mobile App Development", href: "/services/mobile-app-development" },
   ];
 
   return (
@@ -141,18 +160,15 @@ export default function Navbar({ activeSection }) {
                   </button>
                   <div className={`absolute top-full left-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
                     ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    <a
-                      href="/solutions/crm-software-ahmedabad"
-                      className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                    >
-                      CRM Solutions
-                    </a>
-                    <a
-                      href="/solutions/erp-software-ahmedabad"
-                      className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                    >
-                      ERP Solutions
-                    </a>
+                    {solutionsDropdownItems.map((sol) => (
+                      <a
+                        key={sol.href}
+                        href={sol.href}
+                        className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                      >
+                        {sol.label}
+                      </a>
+                    ))}
                   </div>
                 </div>
               );
@@ -261,28 +277,21 @@ export default function Navbar({ activeSection }) {
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileSolutionsOpen ? "rotate-180 text-primary" : ""}`} />
                     </button>
                     <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
-                      mobileSolutionsOpen ? "max-h-40 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
+                      mobileSolutionsOpen ? "max-h-80 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
                     }`}>
-                      <a
-                        href="/solutions/crm-software-ahmedabad"
-                        onClick={() => {
-                          setIsOpen(false);
-                          setMobileSolutionsOpen(false);
-                        }}
-                        className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
-                      >
-                        CRM Solutions
-                      </a>
-                      <a
-                        href="/solutions/erp-software-ahmedabad"
-                        onClick={() => {
-                          setIsOpen(false);
-                          setMobileSolutionsOpen(false);
-                        }}
-                        className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
-                      >
-                        ERP Solutions
-                      </a>
+                      {solutionsDropdownItems.map((sol) => (
+                        <a
+                          key={sol.href}
+                          href={sol.href}
+                          onClick={() => {
+                            setIsOpen(false);
+                            setMobileSolutionsOpen(false);
+                          }}
+                          className="text-base font-bold text-slate-700 hover:text-primary transition-colors py-1"
+                        >
+                          {sol.label}
+                        </a>
+                      ))}
                     </div>
                   </div>
                 );

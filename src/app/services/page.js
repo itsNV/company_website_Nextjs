@@ -1,12 +1,100 @@
 "use client";
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-// import BackgroundParticles from "@/components/BackgroundParticles";
-import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
+import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck, Sparkles, ArrowRight, Loader2, Cpu } from "lucide-react";
+import { db } from "@/lib/firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
+const iconMap = {
+  Palette: ShieldCheck,
+  Compass: Laptop,
+  ShieldCheck: ShieldCheck,
+  Award: Sparkles,
+  Laptop: Laptop,
+  Smartphone: Smartphone,
+  ShoppingBag: ShoppingBag,
+  TrendingUp: TrendingUp,
+  Settings: Settings,
+  Cpu: Cpu
+};
 
 export default function ServicesPage() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const coreServicesStatic = [
+    {
+      id: "static-1",
+      name: "Website Development",
+      heroDescription: "High-performance headless CMS architectures (Sanity, Strapi) and enterprise WordPress ecosystems built to scale.",
+      icon: "Laptop",
+      colorClass: "text-blue-600 bg-blue-50 border-blue-100",
+      slug: "website-development",
+    },
+    {
+      id: "static-2",
+      name: "Digital Marketing",
+      heroDescription: "Your one-stop strategy, revealing organic search (SEO), targeted SEM, and performance campaign methodologies.",
+      icon: "TrendingUp",
+      colorClass: "text-emerald-600 bg-emerald-50 border-emerald-100",
+      slug: "digital-marketing",
+    },
+    {
+      id: "static-3",
+      name: "Custom Software Solutions",
+      heroDescription: "Tailored engineering solving enterprise problems. Scalable operations directories, ERP modules, and custom CRM systems.",
+      icon: "Settings",
+      colorClass: "text-purple-600 bg-purple-50 border-purple-100",
+      slug: "custom-software-development",
+    },
+    {
+      id: "static-4",
+      name: "e-Commerce Development",
+      heroDescription: "Conversion-centric digital storefronts integrated with Shopify Headless API or customized WooCommerce setups.",
+      icon: "ShoppingBag",
+      colorClass: "text-rose-600 bg-rose-50 border-rose-100",
+      slug: "e-commerce-development",
+    },
+    {
+      id: "static-5",
+      name: "Branding Strategy",
+      heroDescription: "Striking design assets and identity rulesets that define your corporate vision and establish customer trust.",
+      icon: "ShieldCheck",
+      colorClass: "text-cyan-600 bg-cyan-50 border-cyan-100",
+      slug: "branding",
+    },
+    {
+      id: "static-6",
+      name: "Mobile App Development",
+      heroDescription: "Scalable, native, and cross-platform (Flutter, React Native) mobile applications crafted for optimal touch-screen experiences.",
+      icon: "Smartphone",
+      colorClass: "text-indigo-600 bg-indigo-50 border-indigo-100",
+      slug: "mobile-app-development",
+    },
+  ];
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        const fetched = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setServices(fetched.length > 0 ? fetched : coreServicesStatic);
+      } catch (err) {
+        console.error("Error reading services:", err);
+        setServices(coreServicesStatic);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchServices();
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -24,7 +112,7 @@ export default function ServicesPage() {
 
     const timer = setTimeout(() => {
       const animatableElements = document.querySelectorAll(
-        "section, .reveal-item, .reveal-stagger, .split-line-mask"
+        "section, .reveal-item, .reveal-stagger"
       );
       animatableElements.forEach((el) => observer.observe(el));
     }, 150);
@@ -33,51 +121,15 @@ export default function ServicesPage() {
       clearTimeout(timer);
       observer.disconnect();
     };
-  }, []);
+  }, [services]);
 
-  const coreServices = [
-    {
-      title: "Website Development",
-      desc: "High-performance headless CMS architectures (Sanity, Strapi) and enterprise WordPress ecosystems built to scale.",
-      icon: Laptop,
-      color: "text-blue-600 bg-blue-50 border-blue-100",
-      link: "/services/website-development",
-    },
-    {
-      title: "Digital Marketing",
-      desc: "Your one-stop strategy, revealing organic search (SEO), targeted SEM, and performance campaign methodologies.",
-      icon: TrendingUp,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-      link: "/services/digital-marketing",
-    },
-    {
-      title: "Custom Software Solutions",
-      desc: "Tailored engineering solving enterprise problems. Scalable operations directories, ERP modules, and custom CRM systems.",
-      icon: Settings,
-      color: "text-purple-600 bg-purple-50 border-purple-100",
-      link: "/services/custom-software-development",
-    },
-    {
-      title: "e-Commerce Development",
-      desc: "Conversion-centric digital storefronts integrated with Shopify Headless API or customized WooCommerce setups.",
-      icon: ShoppingBag,
-      color: "text-rose-600 bg-rose-50 border-rose-100",
-      link: "/services/e-commerce-development",
-    },
-    {
-      title: "Branding Strategy",
-      desc: "Striking design assets and identity rulesets that define your corporate vision and establish customer trust.",
-      icon: ShieldCheck,
-      color: "text-cyan-600 bg-cyan-50 border-cyan-100",
-      link: "/services/branding",
-    },
-    {
-      title: "Mobile App Development",
-      desc: "Scalable, native, and cross-platform (Flutter, React Native) mobile applications crafted for optimal touch-screen experiences.",
-      icon: Smartphone,
-      color: "text-indigo-600 bg-indigo-50 border-indigo-100",
-      link: "/services/mobile-app-development",
-    },
+  const colorClasses = [
+    "text-blue-600 bg-blue-50 border-blue-100",
+    "text-emerald-600 bg-emerald-50 border-emerald-100",
+    "text-purple-600 bg-purple-50 border-purple-100",
+    "text-rose-600 bg-rose-50 border-rose-100",
+    "text-cyan-600 bg-cyan-50 border-cyan-100",
+    "text-indigo-600 bg-indigo-50 border-indigo-100"
   ];
 
   return (
@@ -85,13 +137,12 @@ export default function ServicesPage() {
       <Navbar activeSection="services" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       
-      <main className="flex-grow reveal-container relative z-[1] pt-28">
-        {/* <BackgroundParticles activeSection="services" /> */}
+      <main className="flex-grow reveal-container relative z-[1] pt-28 font-sans">
         
         {/* Services Page Hero */}
         <section className="py-20 bg-transparent">
           <div className="reveal-item max-w-7xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6 animate-pulse-soft">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse-soft">
               <Sparkles className="w-3.5 h-3.5" />
               Our Capabilities
             </div>
@@ -106,30 +157,38 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* Static Capabalities Grid */}
+        {/* Services Grid */}
         <section className="pb-20 bg-transparent">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8">
-              {coreServices.map((srv, idx) => {
-                const Icon = srv.icon;
-                return (
-                  <Link
-                    key={idx}
-                    href={srv.link}
-                    className="p-8 hover-btn rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-[6px] hover:bg-white group block"
-                  >
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-6 transition-transform duration-300 group-hover:scale-110 ${srv.color}`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <h3 className="text-xl font-bold font-outfit text-slate-900 group-hover:text-primary transition-colors">{srv.title}</h3>
-                      <ArrowRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                    </div>
-                    <p className="text-slate-600 text-sm leading-relaxed">{srv.desc}</p>
-                  </Link>
-                );
-              })}
-            </div>
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Syncing Services...</span>
+              </div>
+            ) : (
+              <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8">
+                {services.map((srv, idx) => {
+                  const Icon = iconMap[srv.icon] || Laptop;
+                  const colorTheme = srv.colorClass || colorClasses[idx % colorClasses.length];
+                  return (
+                    <Link
+                      key={srv.id}
+                      href={`/services/${srv.slug}`}
+                      className="p-8 hover-btn rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-[6px] hover:bg-white group block"
+                    >
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-6 transition-transform duration-300 group-hover:scale-110 ${colorTheme}`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="text-xl font-bold font-outfit text-slate-900 group-hover:text-blue-600 transition-colors">{srv.name}</h3>
+                        <ArrowRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                      </div>
+                      <p className="text-slate-600 text-sm leading-relaxed line-clamp-3">{srv.heroDescription}</p>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
@@ -152,7 +211,6 @@ export default function ServicesPage() {
           </div>
         </section>
 
-      
       </main>
 
       <Footer />

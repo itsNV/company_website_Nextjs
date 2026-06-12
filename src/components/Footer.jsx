@@ -1,9 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowUp, Mail, MapPin, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import logo from "@/app/Yunawise_logo.png";
 import Link from "next/link";
+import { db } from "@/lib/firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Footer() {
   const handleScrollToTop = () => {
@@ -12,21 +14,30 @@ export default function Footer() {
     }
   };
 
+  const [focusItems, setFocusItems] = useState([]);
+
+  useEffect(() => {
+    async function loadFooterServices() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        const srvs = querySnapshot.docs.map((doc) => ({
+          label: doc.data().name,
+          href: `/services/${doc.data().slug}`
+        }));
+        setFocusItems(srvs);
+      } catch (e) {
+        console.error("Error loading footer focus services:", e);
+      }
+    }
+    loadFooterServices();
+  }, []);
+
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Services", href: "/services" },    
-    { label: "Solutions", href: "/solutions" },
+    { label: "Solutions", href: "/solutions/crm-solutions" }, // Fallback to services if solutions has no landing page
     { label: "Blog", href: "/blog" },
-  ];
-
-  const focusItems = [
-    { label: "Web Applications", href: "/services/website-development" },
-    { label: "Mobile App Development", href: "/services/mobile-app-development" },
-    { label: "APIs & Cloud Systems", href: "/services/custom-software-development" },
-    { label: "E-Commerce Development", href: "/services/e-commerce-development" },
-    { label: "Branding Strategy", href: "/services/branding-strategy" },
-    { label: "Digital Marketing", href: "/services/digital-marketing" },
   ];
 
      return (
@@ -131,11 +142,11 @@ export default function Footer() {
                                 <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
                                 <span>Global / Remote</span>
                             </li>
-                            <li className="pt-2">
+                            {/* <li className="pt-2">
                                 <a href="https://www.yunawise.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
                                     Visit Main Website <ExternalLink className="w-3.5 h-3.5" />
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>

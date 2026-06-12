@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import AdminGuard from "@/components/AdminGuard";
 import AdminNavbar from "@/components/AdminNavbar";
 import { 
@@ -19,10 +17,11 @@ import {
   X,
   FileText,
   ImageIcon,
-  MessageSquare
+  MessageSquare,
+  Trash2
 } from "lucide-react";
 import { db, storage } from "@/lib/firebase/firebase";
-import { collection, setDoc, getDocs, doc, updateDoc, query, orderBy } from "firebase/firestore";
+import { collection, setDoc, getDocs, doc, updateDoc, query, orderBy, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function BlogAdminPage() {
@@ -244,6 +243,20 @@ export default function BlogAdminPage() {
   const filteredBlogs = blogs.filter((b) =>
     b.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleDeleteBlog = async (id, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this blog post permanently?")) return;
+    try {
+      await deleteDoc(doc(db, "blogs", id));
+      fetchBlogs();
+      if (selectedBlog?.id === id) {
+        setSelectedBlog(null);
+      }
+    } catch (err) {
+      alert("Error deleting blog: " + err.message);
+    }
+  };
 
   return (
     <AdminGuard>
@@ -518,7 +531,15 @@ export default function BlogAdminPage() {
                                 </div>
                               </div>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                            <div className="flex items-center gap-3 shrink-0">
+                              <button
+                                onClick={(e) => handleDeleteBlog(b.id, e)}
+                                className="p-2 hover:bg-rose-50 border border-transparent hover:border-rose-100 text-rose-500 rounded-xl transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -854,7 +875,7 @@ export default function BlogAdminPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </AdminGuard>
   );
 }

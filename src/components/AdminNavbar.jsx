@@ -68,7 +68,7 @@ export default function AdminNavbar() {
       <div className="flex items-center gap-4">
         <Link 
           href="/" 
-          className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 hover:text-purple-600 transition-colors"
+          className="hidden md:inline-flex items-center gap-1.5 text-[14px] font-black uppercase tracking-wider text-slate-400 hover:text-purple-600 transition-colors"
         >
           View Main Site
         </Link>
