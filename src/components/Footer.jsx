@@ -50,12 +50,20 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 pb-16">
                     {/* Brand Column */}
                     <div className="flex flex-col gap-6">
-                        <Link href="/" className="flex items-center space-x-2 group transition-transform duration-300 hover:scale-[1.02] self-start">
-                            <Image src={logo} alt="Yunawise Logo" className="w-8 h-8 object-contain" />
-                            <span className="text-xl font-black tracking-tight text-slate-900 font-heading leading-none">
-                                Yunawise<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-400">.</span>
-                            </span>
-                        </Link>
+                        {/* Brand Logo and Stacked Subtitle */}
+                                <a href="/" className="flex items-center gap-3 group">
+                                  <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                                    <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+                                  </div>
+                                  <div className="flex flex-col text-left leading-[1.1]">
+                                    <span className="text-[18px] font-black tracking-wider uppercase font-outfit transition-colors text-black" >
+                                      Yunawise
+                                    </span>
+                                    <span className="text-[9px] font-extrabold tracking-[0.22em] uppercase font-outfit transition-colors text-slate-700" >
+                                      Techsolve LLP
+                                    </span>
+                                  </div>
+                                </a>
                         <p className="text-[15px] font-medium text-slate-500 leading-relaxed max-w-sm">
                             Engineering scalable, high-performance software solutions, cloud infrastructures, and SaaS platforms that drive real business growth.
                         </p>
@@ -163,6 +171,7 @@ export default function Footer() {
                         onClick={handleScrollToTop}
                         className="group flex items-center justify-center p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow-premium-hover cursor-pointer"
                         aria-label="Back to top"
+                        suppressHydrationWarning
                     >
                         <ArrowUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
                     </button>

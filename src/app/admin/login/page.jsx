@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter } from "next/navigation";
@@ -15,17 +15,66 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [lockoutTimeLeft, setLockoutTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const lockoutUntil = localStorage.getItem("lockoutUntil");
+      if (lockoutUntil) {
+        const remaining = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 1000);
+        if (remaining > 0) {
+          setLockoutTimeLeft(remaining);
+        } else {
+          localStorage.removeItem("lockoutUntil");
+          localStorage.setItem("failedAttempts", "0");
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (lockoutTimeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setLockoutTimeLeft((prev) => {
+        if (prev <= 1) {
+          localStorage.removeItem("lockoutUntil");
+          localStorage.setItem("failedAttempts", "0");
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockoutTimeLeft]);
 
   const login = async (e) => {
     e.preventDefault();
+    if (lockoutTimeLeft > 0) {
+      setError(`Login is locked. Please wait ${lockoutTimeLeft}s.`);
+      return;
+    }
+    
     setLoading(true);
     setError("");
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      localStorage.removeItem("failedAttempts");
+      localStorage.removeItem("lockoutUntil");
       router.push("/admin/dashboard");
     } catch (err) {
-      setError(err.message || "Failed to authenticate. Please check your credentials.");
+      const currentAttempts = parseInt(localStorage.getItem("failedAttempts") || "0") + 1;
+      localStorage.setItem("failedAttempts", currentAttempts.toString());
+      
+      if (currentAttempts >= 5) {
+        const lockoutTime = Date.now() + 5 * 60 * 1000;
+        localStorage.setItem("lockoutUntil", lockoutTime.toString());
+        setLockoutTimeLeft(300);
+        setError("Too many failed attempts. Console access locked for 5 minutes.");
+      } else {
+        setError(`Invalid credentials. ${5 - currentAttempts} attempts remaining before lockout.`);
+      }
     } finally {
       setLoading(false);
     }
