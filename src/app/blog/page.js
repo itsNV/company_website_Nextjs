@@ -130,9 +130,10 @@ export default function BlogPage() {
             ) : blogs.length > 0 ? (
               <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8">
                 {blogs.map((art) => (
-                  <div
+                  <Link
                     key={art.id}
-                    className="p-8 hover-btn rounded-3xl border border-slate-200/40 bg-white/80 hover:bg-white hover:shadow-xl hover:shadow-purple-50/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                    href={`/blog/${art.slug}`}
+                    className="p-8 hover-btn rounded-3xl border border-slate-200/40 bg-white/80 hover:bg-white hover:shadow-xl hover:shadow-purple-50/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
                   >
                     <div>
                       {art.imageUrl && (
@@ -152,7 +153,7 @@ export default function BlogPage() {
                         </span>
                       </div>
 
-                      <h3 className="text-2xl font-bold font-outfit text-slate-900 mb-4 hover:text-purple-600 transition-colors leading-snug">
+                      <h3 className="text-2xl font-bold font-outfit text-slate-900 mb-4 group-hover:text-purple-600 transition-colors leading-snug">
                         {art.title}
                       </h3>
                       
@@ -161,11 +162,11 @@ export default function BlogPage() {
                       </p>
                     </div>
 
-                    <Link href={`/blog/${art.slug}`} className="flex items-center gap-1 text-sm font-bold text-slate-900 hover:text-purple-600 transition-colors border-t border-slate-100 pt-4 cursor-pointer group">
+                    <span className="flex items-center gap-1 text-sm font-bold text-slate-900 group-hover:text-purple-600 transition-colors border-t border-slate-100 pt-4">
                       <span>Read Article</span>
                       <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </Link>
-                  </div>
+                    </span>
+                  </Link>
                 ))}
               </div>
             ) : (

@@ -4,41 +4,18 @@ import React, { use, useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { 
-  ShieldCheck, 
-  Compass, 
-  Palette, 
-  Award, 
   HelpCircle, 
   ChevronDown, 
   Sparkles, 
   ArrowRight, 
   CheckCircle2, 
-  Laptop, 
   Cpu, 
   ShieldAlert,
-  Smartphone,
-  ShoppingBag,
-  TrendingUp,
-  Settings
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs, query, where, limit } from "firebase/firestore";
-
-const iconMap = {
-  Palette,
-  Compass,
-  ShieldCheck,
-  Award,
-  Laptop,
-  HelpCircle,
-  Sparkles,
-  Cpu,
-  Smartphone,
-  ShoppingBag,
-  TrendingUp,
-  Settings
-};
+import { serviceIconMap } from "@/lib/serviceIcons";
 
 const colorThemes = [
   "text-cyan-600 bg-cyan-50 border-cyan-100",
@@ -305,7 +282,7 @@ export default function DynamicServicePage({ params }) {
               <p className="reveal-item text-slate-500 text-center max-w-xl mx-auto mb-16">Creating visual consistency and emotional connection strategies to elevate credibility values.</p>
               <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 {service.features.map((feat, idx) => {
-                  const Icon = iconMap[feat.icon] || Palette;
+                  const Icon = serviceIconMap[feat.icon] || serviceIconMap.Palette;
                   const themeClass = colorThemes[idx % colorThemes.length];
                   return (
                     <div key={idx} className="hover-box group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300">

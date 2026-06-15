@@ -15,29 +15,16 @@ import {
   Plus, 
   Trash2,
   Laptop,
-  CheckCircle2,
-  Compass,
-  Palette,
   Award,
   ShieldCheck,
+  CheckCircle2,
+  Compass,
   HelpCircle,
   Link2
 } from "lucide-react";
 import { db } from "@/lib/firebase/firebase";
 import { collection, setDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
-
-// Helper map to match string names to Lucide icons
-const iconMap = {
-  Palette: Palette,
-  Compass: Compass,
-  ShieldCheck: ShieldCheck,
-  Award: Award,
-  Laptop: Laptop,
-  HelpCircle: HelpCircle,
-  Sparkles: Sparkles,
-};
-
-const iconOptions = Object.keys(iconMap);
+import { serviceIconMap, serviceIconOptions } from "@/lib/serviceIcons";
 
 export default function ServicesAdminPage() {
   const [services, setServices] = useState([]);
@@ -559,17 +546,29 @@ export default function ServicesAdminPage() {
                     />
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 md:col-span-3">
                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Feature Icon</label>
-                    <select
-                      value={newFeatureIcon}
-                      onChange={(e) => setNewFeatureIcon(e.target.value)}
-                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500"
-                    >
-                      {iconOptions.map((opt) => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
+                    <div className="flex flex-wrap gap-2 p-3 bg-white border border-slate-200 rounded-xl max-h-36 overflow-y-auto">
+                      {serviceIconOptions.map((iconName) => {
+                        const Icon = serviceIconMap[iconName];
+                        const isSelected = newFeatureIcon === iconName;
+                        return (
+                          <button
+                            key={iconName}
+                            type="button"
+                            title={iconName}
+                            onClick={() => setNewFeatureIcon(iconName)}
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+                              isSelected
+                                ? "border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20"
+                                : "border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-300"
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="space-y-1.5 md:col-span-3">
@@ -599,7 +598,7 @@ export default function ServicesAdminPage() {
                     <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Features Added ({features.length})</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {features.map((feat, idx) => {
-                        const Icon = iconMap[feat.icon] || Palette;
+                        const Icon = serviceIconMap[feat.icon] || serviceIconMap.Palette;
                         return (
                           <div key={idx} className="relative p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-start gap-4 pr-10">
                             <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 shrink-0">

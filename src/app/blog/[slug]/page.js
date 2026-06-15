@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { 
   ArrowLeft, 
+  ArrowUpRight,
   Calendar, 
   User, 
   Cpu, 
@@ -16,13 +17,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
-import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import BlogBlocksDisplay from "@/components/BlogBlocksDisplay";
+import BlogContentDisplay from "@/components/BlogContentDisplay";
 
 export default function BlogDetailsPage({ params }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
 
   const [blog, setBlog] = useState(null);
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -36,6 +40,30 @@ export default function BlogDetailsPage({ params }) {
       date: "June 2, 2026",
       category: "Ecommerce",
       slug: "ecommerce-shopify-comparison-2026",
+      contentSections: [
+        {
+          emoji: "🛒",
+          title: "Why This Decision Matters in 2026",
+          body: "Choosing between Shopify and a custom ecommerce build affects your long-term costs, flexibility, and performance.",
+          bulletPoints: [
+            "Shopify offers fast setup but recurring app and transaction fees",
+            "Custom builds provide full design freedom and better performance",
+            "Headless architectures scale better for growing brands",
+          ],
+          imageUrl: "",
+        },
+        {
+          emoji: "📊",
+          title: "Cost Comparison Breakdown",
+          body: "Understanding the true cost of ownership helps you make an informed decision.",
+          bulletPoints: [
+            "Shopify: $29–$299/month plus 0.5–2% transaction fees",
+            "Custom: Higher upfront, lower long-term operational costs",
+            "App subscriptions on Shopify can add $200+/month quickly",
+          ],
+          imageUrl: "",
+        },
+      ],
       problem: "Shopify offers quick setups but quickly becomes expensive due to app subscriptions and transaction fees, while limiting custom layout structures.",
       solution: "Building a headless ecommerce store with a custom framework offers total design freedom, sub-second load times, and zero operational fees.",
       tech_stack: ["Next.js", "Tailwind CSS", "Node.js", "Firebase", "Stripe"],
@@ -74,23 +102,45 @@ export default function BlogDetailsPage({ params }) {
     }
   ];
 
+  function getRelatedBlogs(allBlogs, currentBlog) {
+    return allBlogs
+      .filter((b) => b.category === currentBlog.category && b.slug !== currentBlog.slug)
+      .sort((a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0))
+      .slice(0, 3);
+  }
+
   useEffect(() => {
     async function loadBlog() {
       try {
-        const q = query(collection(db, "blogs"), where("slug", "==", slug), limit(1));
-        const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          const docData = snapshot.docs[0].data();
-          setBlog({ id: snapshot.docs[0].id, ...docData });
+        const snapshot = await getDocs(collection(db, "blogs"));
+        const fetched = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        const allBlogs = fetched.length > 0 ? fetched : staticArticles;
+        const found =
+          fetched.length > 0
+            ? fetched.find((a) => a.slug === slug)
+            : staticArticles.find((a) => a.slug === slug);
+
+        if (found) {
+          setBlog(found);
+          setRelatedBlogs(getRelatedBlogs(allBlogs, found));
         } else {
-          // Fallback to static articles
-          const found = staticArticles.find((a) => a.slug === slug);
-          setBlog(found || null);
+          setBlog(null);
+          setRelatedBlogs([]);
         }
       } catch (error) {
         console.error("Error loading blog details:", error);
         const found = staticArticles.find((a) => a.slug === slug);
-        setBlog(found || null);
+        if (found) {
+          setBlog(found);
+          setRelatedBlogs(getRelatedBlogs(staticArticles, found));
+        } else {
+          setBlog(null);
+          setRelatedBlogs([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -167,21 +217,22 @@ export default function BlogDetailsPage({ params }) {
 
       <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10 reveal-container">
         
-        {/* Hero Section */}
-        <section className="py-20 reveal-item">
+        {/* Breadcrumb — always visible */}
+        <div className="max-w-7xl mx-auto px-6 mb-4">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+            <Link href="/blog" className="hover:text-purple-600 transition-colors flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Blog
+            </Link>
+            <span>/</span>
+            <span className="text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">{blog.category}</span>
+          </div>
+        </div>
+
+        {/* Legacy Hero — only when no block layout */}
+        {!blog.blocks?.length && (
+        <section className="py-12 reveal-item">
           <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-8 flex flex-col items-center lg:items-start">
-              
-              {/* Breadcrumb Tag */}
-              <div className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                <Link href="/blog" className="hover:text-purple-600 transition-colors flex items-center gap-1">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Blog
-                </Link>
-                <span>/</span>
-                <span className="text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">{blog.category}</span>
-              </div>
-
-              {/* Author & Date */}
               <div className="flex items-center gap-4 text-xs text-slate-400 font-bold mb-6">
                 <span className="inline-flex items-center gap-1">
                   <User className="w-3.5 h-3.5" />
@@ -192,17 +243,13 @@ export default function BlogDetailsPage({ params }) {
                   {blog.date}
                 </span>
               </div>
-
               <h1 className="text-4xl md:text-6xl font-black font-outfit text-slate-900 leading-tight mb-6">
                 {blog.title}
               </h1>
-              
               <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
                 {blog.excerpt}
               </p>
             </div>
-            
-            {/* Cover Image or Category Spotlight */}
             <div className="lg:col-span-4 bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-6 shadow-xl flex flex-col items-center justify-center">
               {blog.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -216,8 +263,22 @@ export default function BlogDetailsPage({ params }) {
             </div>
           </div>
         </section>
+        )}
 
-        {/* Challenge & Technical Solution / Detailed Story */}
+        {/* Blog Content — block-based or legacy */}
+        {blog.blocks?.length > 0 ? (
+          <BlogBlocksDisplay
+            blocks={blog.blocks}
+            blogMeta={{ title: blog.title, excerpt: blog.excerpt, author: blog.author, category: blog.category, date: blog.date }}
+          />
+        ) : (
+          <>
+        {/* Rich Content Sections */}
+        {blog.contentSections?.length > 0 ? (
+          <BlogContentDisplay sections={blog.contentSections} />
+        ) : (
+          <>
+        {/* Legacy: Challenge & Technical Solution */}
         {(blog.problem || blog.solution) && (
           <section className="py-20 bg-white/40 border-y border-[#eae6fa]/25">
             <div className="max-w-7xl mx-auto px-6">
@@ -246,9 +307,13 @@ export default function BlogDetailsPage({ params }) {
             </div>
           </section>
         )}
+          </>
+        )}
+          </>
+        )}
 
-        {/* Tech Stack Spotlight */}
-        {blog.tech_stack?.length > 0 && (
+        {/* Tech Stack Spotlight — only for legacy blogs without blocks */}
+        {!blog.blocks?.length && blog.tech_stack?.length > 0 && (
           <section className="py-16">
             <div className="max-w-3xl mx-auto px-6 text-center">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center justify-center gap-1.5">
@@ -265,8 +330,8 @@ export default function BlogDetailsPage({ params }) {
           </section>
         )}
 
-        {/* FAQs Accordion */}
-        {blog.faqs?.length > 0 && (
+        {/* FAQs — only for legacy blogs without blocks */}
+        {!blog.blocks?.length && blog.faqs?.length > 0 && (
           <section className="py-20">
             <div className="max-w-3xl mx-auto px-6">
               <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
@@ -293,6 +358,70 @@ export default function BlogDetailsPage({ params }) {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Related Articles — same category */}
+        {relatedBlogs.length > 0 && (
+          <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] border-t border-[#eae6fa]/40">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="reveal-item flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3.5 py-1.5 rounded-full">
+                    {blog.category}
+                  </span>
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mt-4">
+                    More in this category
+                  </h2>
+                </div>
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-purple-600 hover:text-slate-900 transition-colors group shrink-0"
+                >
+                  View More
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
+              </div>
+
+              <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8">
+                {relatedBlogs.map((art) => (
+                  <Link
+                    key={art.id}
+                    href={`/blog/${art.slug}`}
+                    className="p-6 hover-btn rounded-3xl border border-slate-200/40 bg-white/80 hover:bg-white hover:shadow-xl hover:shadow-purple-50/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                  >
+                    <div>
+                      {art.imageUrl && (
+                        <div className="w-full aspect-[1.8] rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 mb-4">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={art.imageUrl} alt={art.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex items-center gap-3 text-xs text-slate-400 font-bold mb-3">
+                        <span className="inline-flex items-center gap-1">
+                          <User className="w-3.5 h-3.5" />
+                          {art.author || "Yunawise Contributor"}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {art.date}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-bold font-outfit text-slate-900 mb-3 group-hover:text-purple-600 transition-colors leading-snug line-clamp-2">
+                        {art.title}
+                      </h3>
+                      <p className="text-slate-600 text-sm leading-relaxed line-clamp-3">
+                        {art.excerpt}
+                      </p>
+                    </div>
+                    <span className="flex items-center gap-1 text-sm font-bold text-slate-900 group-hover:text-purple-600 transition-colors border-t border-slate-100 pt-4 mt-6">
+                      Read Article
+                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </span>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>

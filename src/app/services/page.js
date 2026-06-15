@@ -4,22 +4,10 @@ import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck, Sparkles, ArrowRight, Loader2, Cpu } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
-
-const iconMap = {
-  Palette: ShieldCheck,
-  Compass: Laptop,
-  ShieldCheck: ShieldCheck,
-  Award: Sparkles,
-  Laptop: Laptop,
-  Smartphone: Smartphone,
-  ShoppingBag: ShoppingBag,
-  TrendingUp: TrendingUp,
-  Settings: Settings,
-  Cpu: Cpu
-};
+import { serviceIconMap } from "@/lib/serviceIcons";
 
 export default function ServicesPage() {
   const [services, setServices] = useState([]);
@@ -168,7 +156,7 @@ export default function ServicesPage() {
             ) : (
               <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8">
                 {services.map((srv, idx) => {
-                  const Icon = iconMap[srv.icon] || Laptop;
+                  const Icon = serviceIconMap[srv.icon] || serviceIconMap.Laptop;
                   const colorTheme = srv.colorClass || colorClasses[idx % colorClasses.length];
                   return (
                     <Link
