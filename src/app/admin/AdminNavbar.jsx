@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Laptop, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
@@ -7,10 +7,28 @@ import logo from "@/app/Yunawise_logo.jpg";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter, usePathname } from "next/navigation";
+import { db } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function AdminNavbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setConfig(docSnap.data());
+        }
+      } catch (e) {
+        console.error("Error loading config in admin AdminNavbar:", e);
+      }
+    }
+    loadConfig();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -32,18 +50,27 @@ export default function AdminNavbar() {
       {/* Brand logo */}
       <Link href="/admin/dashboard" className="flex items-center gap-3.5 group">
         <div className="h-10 w-auto flex items-center justify-start shrink-0">
-          <Image 
-            src={logo} 
-            alt="Yunawise Logo" 
-            className="h-full w-auto object-contain invert brightness-200 mix-blend-screen" 
-          />
+          {config?.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img 
+              src={config.logoUrl} 
+              alt="Yunawise Logo" 
+              className="h-full w-auto object-contain invert brightness-200 mix-blend-screen" 
+            />
+          ) : (
+            <Image 
+              src={logo} 
+              alt="Yunawise Logo" 
+              className="h-full w-auto object-contain invert brightness-200 mix-blend-screen" 
+            />
+          )}
         </div>
         <div className="flex flex-col justify-center select-none font-outfit">
           <span className="text-[15px] font-black tracking-wider leading-[1.1] text-white">
-            YUNAWISE
+            {config?.companyName || "YUNAWISE"}
           </span>
           <span className="text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 text-sky-400">
-            TECHSOLVE LLP
+            {config?.companySubName || "TECHSOLVE LLP"}
           </span>
         </div>
       </Link>

@@ -1,12 +1,34 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
+import { db } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
-export default function Contact() {
+export default function Contact({ config }) {
   const [formData, setFormData] = useState({ name: "", email: "", msg: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [contactConfig, setContactConfig] = useState(config || null);
+
+  useEffect(() => {
+    if (config) {
+      setContactConfig(config);
+      return;
+    }
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setContactConfig(docSnap.data());
+        }
+      } catch (e) {
+        console.error("Error loading config in Contact:", e);
+      }
+    }
+    loadConfig();
+  }, [config]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +89,7 @@ export default function Contact() {
                 <div>
                   <h4 className="font-extrabold text-slate-900 font-outfit text-sm uppercase tracking-wider mb-1">Our Headquarters</h4>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    A-518, Moneyplant Highstreet, Jagatpur road, Gota, Ahmedabad 382470
+                    {contactConfig?.companyLocation || "A-518, Moneyplant Highstreet, Jagatpur road, Gota, Ahmedabad 382470"}
                   </p>
                 </div>
               </div>
@@ -79,8 +101,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-slate-900 font-outfit text-sm uppercase tracking-wider mb-1">Call Our Office</h4>
-                  <a href="tel:+918153874988" className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
-                    +91 8153874988
+                  <a href={`tel:${contactConfig?.companyPhone || "+918153874988"}`} className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
+                    {contactConfig?.companyPhone || "+91 8153874988"}
                   </a>
                 </div>
               </div>
@@ -92,8 +114,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-slate-900 font-outfit text-sm uppercase tracking-wider mb-1">Email Inquiries</h4>
-                  <a href="mailto:nisargpatel2466@gmail.com" className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
-                    nisargpatel2466@gmail.com
+                  <a href={`mailto:${contactConfig?.companyEmail || "nisargpatel2466@gmail.com"}`} className="text-primary hover:text-slate-900 font-semibold text-sm transition-colors">
+                    {contactConfig?.companyEmail || "nisargpatel2466@gmail.com"}
                   </a>
                 </div>
               </div>
@@ -113,7 +135,7 @@ export default function Contact() {
                   </div>
                   <h3 className="text-2xl font-black font-outfit text-slate-900 mb-2">Message Sent Successfully!</h3>
                   <p className="text-slate-500 max-w-sm">
-                    Thank you for contacting Yunawise Techsolve LLP. Our principal consultant will review your inquiry and reach back within 24 hours.
+                    Thank you for contacting {contactConfig?.companyName || "Yunawise"} {contactConfig?.companySubName || "Techsolve LLP"}. Our principal consultant will review your inquiry and reach back within 24 hours.
                   </p>
                 </div>
               ) : (

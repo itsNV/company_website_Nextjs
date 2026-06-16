@@ -5,9 +5,10 @@ import Image from "next/image";
 import logo from "@/app/Yunawise_logo.jpg";
 import { usePathname } from "next/navigation";     
 import { db } from "@/lib/firebase/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default function Navbar({ activeSection, config }) {
+  const [navConfig, setNavConfig] = useState(config || null);
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
@@ -17,6 +18,42 @@ export default function Navbar({ activeSection, config }) {
   const [showAllServices, setShowAllServices] = useState(false);
   const [showAllSolutions, setShowAllSolutions] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (config) {
+      setNavConfig(config);
+      return;
+    }
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setNavConfig(docSnap.data());
+        }
+      } catch (e) {
+        console.error("Error loading config in Navbar:", e);
+      }
+    }
+    loadConfig();
+  }, [config]);
+
+  useEffect(() => {
+    if (navConfig) {
+      if (navConfig.seoTitle && pathname === "/") {
+        document.title = navConfig.seoTitle;
+      }
+      if (navConfig.faviconUrl) {
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement("link");
+          link.rel = "icon";
+          document.getElementsByTagName("head")[0].appendChild(link);
+        }
+        link.href = navConfig.faviconUrl;
+      }
+    }
+  }, [navConfig, pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -102,10 +139,10 @@ export default function Navbar({ activeSection, config }) {
         {/* Brand Logo */}
         <a href="/" className="flex items-center gap-3.5 group">
           <div className="h-10 w-auto flex items-center justify-start shrink-0">
-            {config?.logoUrl ? (
+            {navConfig?.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img 
-                src={config.logoUrl} 
+                src={navConfig.logoUrl} 
                 alt="Yunawise Logo" 
                 className={`h-full w-auto object-contain transition-all duration-300 ${
                   scrolled 
@@ -129,12 +166,12 @@ export default function Navbar({ activeSection, config }) {
             <span className={`text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
               scrolled ? "text-white" : "text-[#2e5090]"
             }`}>
-              YUNAWISE
+              {navConfig?.companyName || "YUNAWISE"}
             </span>
             <span className={`text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 ${
               scrolled ? "text-sky-400" : "text-[#2e5090]/90"
             }`}>
-              TECHSOLVE LLP
+              {navConfig?.companySubName || "TECHSOLVE LLP"}
             </span>
           </div>
         </a>

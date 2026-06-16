@@ -5,9 +5,10 @@ import Image from "next/image";
 import logo from "@/app/Yunawise_logo.jpg";
 import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default function Footer({ config }) {
+  const [footerConfig, setFooterConfig] = useState(config || null);
   const handleScrollToTop = () => {
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -15,6 +16,25 @@ export default function Footer({ config }) {
   };
 
   const [focusItems, setFocusItems] = useState([]);
+
+  useEffect(() => {
+    if (config) {
+      setFooterConfig(config);
+      return;
+    }
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setFooterConfig(docSnap.data());
+        }
+      } catch (e) {
+        console.error("Error loading config in Footer:", e);
+      }
+    }
+    loadConfig();
+  }, [config]);
 
   useEffect(() => {
     async function loadFooterServices() {
@@ -58,10 +78,10 @@ export default function Footer({ config }) {
                         {/* Brand Logo */}
                                 <a href="/" className="flex items-center gap-3.5 group">
                                   <div className="h-10 w-auto flex items-center justify-start shrink-0">
-                                    {config?.logoUrl ? (
+                                    {footerConfig?.logoUrl ? (
                                       // eslint-disable-next-line @next/next/no-img-element
                                       <img 
-                                        src={config.logoUrl} 
+                                        src={footerConfig.logoUrl} 
                                         alt="Yunawise Logo" 
                                         className="h-full w-auto object-contain mix-blend-multiply" 
                                       />
@@ -75,10 +95,10 @@ export default function Footer({ config }) {
                                   </div>
                                   <div className="flex flex-col justify-center select-none font-outfit">
                                     <span className="text-[15px] font-black tracking-wider leading-[1.1] text-[#2e5090] transition-colors">
-                                      YUNAWISE
+                                      {footerConfig?.companyName || "YUNAWISE"}
                                     </span>
                                     <span className="text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 text-[#2e5090]/90 transition-colors">
-                                      TECHSOLVE LLP
+                                      {footerConfig?.companySubName || "TECHSOLVE LLP"}
                                     </span>
                                   </div>
                                 </a>
@@ -86,40 +106,45 @@ export default function Footer({ config }) {
                             Engineering scalable, high-performance software solutions, cloud infrastructures, and SaaS platforms that drive real business growth.
                         </p>
                         <div className="flex items-center gap-2.5">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.44 22 12.017 22 6.484 17.522 2 12 2z" />
-              </svg>
-            </a>
-            <a
-              href="https://www.linkedin.com/company/yunawise-techsolve-llp"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-              className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-          </div>
+                          {/* GitHub */}
+                          <a
+                            href={footerConfig?.githubUrl || "https://github.com"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="GitHub"
+                            className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
+                          >
+                            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                              <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.44 22 12.017 22 6.484 17.522 2 12 2z" />
+                            </svg>
+                          </a>
+                          {/* LinkedIn */}
+                          <a
+                            href={footerConfig?.linkedinUrl || "https://www.linkedin.com/company/yunawise-techsolve-llp"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="LinkedIn"
+                            className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
+                          >
+                            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                          </a>
+                          {/* Instagram */}
+                          <a
+                            href={footerConfig?.instagramUrl || "https://instagram.com"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Instagram"
+                            className="w-9 h-9 rounded-xl border border-slate-200/60 bg-slate-50/30 text-slate-500 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50/30 flex items-center justify-center transition-all duration-300 shadow-sm"
+                          >
+                            <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                            </svg>
+                          </a>
+                        </div>
                     </div>
 
                     {/* Navigation Column */}
@@ -169,11 +194,13 @@ export default function Footer({ config }) {
                         <ul className="flex flex-col gap-4 text-[15px] font-semibold text-slate-500">
                             <li className="flex items-center gap-2.5">
                                 <Mail className="w-4 h-4 text-blue-600 shrink-0" />
-                                <a href="mailto:hello@yunawise.com" className="hover:text-blue-600 transition-colors break-all">hello@yunawise.com</a>
+                                <a href={`mailto:${footerConfig?.companyEmail || "hello@yunawise.com"}`} className="hover:text-blue-600 transition-colors break-all">
+                                    {footerConfig?.companyEmail || "hello@yunawise.com"}
+                                </a>
                             </li>
                             <li className="flex items-center gap-2.5">
                                 <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-                                <span>Global / Remote</span>
+                                <span>{footerConfig?.companyLocation || "Global / Remote"}</span>
                             </li>
                             {/* <li className="pt-2">
                                 <a href="https://www.yunawise.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
@@ -190,7 +217,7 @@ export default function Footer({ config }) {
                 {/* Bottom Row */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="text-[14px] font-bold text-slate-400 text-center sm:text-left">
-                        © {new Date().getFullYear()} Yunawise. All rights reserved.
+                        © {new Date().getFullYear()} {footerConfig?.companyName || "Yunawise"}. All rights reserved.
                     </div>
                     <button 
                         onClick={handleScrollToTop}

@@ -1,10 +1,32 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck } from "lucide-react";
+import { db } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
-export default function Services() {
+export default function Services({ config }) {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [srvConfig, setSrvConfig] = useState(config || null);
+
+  useEffect(() => {
+    if (config) {
+      setSrvConfig(config);
+      return;
+    }
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setSrvConfig(docSnap.data());
+        }
+      } catch (e) {
+        console.error("Error loading config in Services:", e);
+      }
+    }
+    loadConfig();
+  }, [config]);
 
   const serviceList = [
     {
@@ -102,10 +124,10 @@ export default function Services() {
           {/* Static Title Header floating over cards */}
           <div className="reveal-item text-center max-w-3xl mx-auto mb-10 shrink-0 relative z-20 pt-6">
             <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3.5 py-1.5 rounded-full">
-              Our Services
+              {srvConfig?.servicesSubtitle || "Our Services"}
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
-              Innovative digital solutions, built to scale.
+              {srvConfig?.servicesTitle || "Innovative digital solutions, built to scale."}
             </h2>
             <p className="hidden md:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
               Scroll down to overlay services • Card {activeIndex + 1} of {serviceList.length}

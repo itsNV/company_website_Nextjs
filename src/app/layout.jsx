@@ -27,6 +27,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${plusJakarta.variable} ${outfit.variable} h-full antialiased scroll-smooth`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

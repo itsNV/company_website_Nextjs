@@ -6,7 +6,7 @@ import AdminNavbar from "@/components/AdminNavbar";
 import { Save, Loader2, AlertCircle, X, Settings, Image as ImageIcon, Sparkles } from "lucide-react";
 import { db, storage } from "@/lib/firebase/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 export default function SettingsAdminPage() {
   const [loading, setLoading] = useState(true);
@@ -48,6 +48,18 @@ export default function SettingsAdminPage() {
   const [faviconUrl, setFaviconUrl] = useState("");
   const [faviconFile, setFaviconFile] = useState(null);
 
+  // New Fields
+  const [companyName, setCompanyName] = useState("");
+  const [companySubName, setCompanySubName] = useState("");
+  const [servicesSubtitle, setServicesSubtitle] = useState("");
+  const [servicesTitle, setServicesTitle] = useState("");
+  const [companyEmail, setCompanyEmail] = useState("");
+  const [companyPhone, setCompanyPhone] = useState("");
+  const [companyLocation, setCompanyLocation] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+
   const fetchSettings = async () => {
     setLoading(true);
     try {
@@ -83,6 +95,17 @@ export default function SettingsAdminPage() {
 
         setLogoUrl(data.logoUrl || "");
         setFaviconUrl(data.faviconUrl || "");
+
+        setCompanyName(data.companyName || "");
+        setCompanySubName(data.companySubName || "");
+        setServicesSubtitle(data.servicesSubtitle || "");
+        setServicesTitle(data.servicesTitle || "");
+        setCompanyEmail(data.companyEmail || "");
+        setCompanyPhone(data.companyPhone || "");
+        setCompanyLocation(data.companyLocation || "");
+        setInstagramUrl(data.instagramUrl || "");
+        setLinkedinUrl(data.linkedinUrl || "");
+        setGithubUrl(data.githubUrl || "");
       }
     } catch (e) {
       console.error("Error loading settings:", e);
@@ -104,16 +127,33 @@ export default function SettingsAdminPage() {
       let finalLogoUrl = logoUrl;
       let finalFaviconUrl = faviconUrl;
 
+      // Helper function to safely delete a file from storage by its URL
+      const deleteStorageFile = async (url) => {
+        if (!url || !url.includes("firebasestorage.googleapis.com")) return;
+        try {
+          const fileRef = ref(storage, url);
+          await deleteObject(fileRef);
+        } catch (e) {
+          console.warn("Failed to delete previous media file from Storage:", e);
+        }
+      };
+
       // 1. Upload Logo if changed
       if (logoFile) {
-        const logoRef = ref(storage, `settings_media/logo_${Date.now()}_${logoFile.name}`);
+        if (logoUrl) {
+          await deleteStorageFile(logoUrl);
+        }
+        const logoRef = ref(storage, `web_images/logo_${Date.now()}_${logoFile.name}`);
         const snapshot = await uploadBytes(logoRef, logoFile);
         finalLogoUrl = await getDownloadURL(snapshot.ref);
       }
 
       // 2. Upload Favicon if changed
       if (faviconFile) {
-        const faviconRef = ref(storage, `settings_media/favicon_${Date.now()}_${faviconFile.name}`);
+        if (faviconUrl) {
+          await deleteStorageFile(faviconUrl);
+        }
+        const faviconRef = ref(storage, `web_images/favicon_${Date.now()}_${faviconFile.name}`);
         const snapshot = await uploadBytes(faviconRef, faviconFile);
         finalFaviconUrl = await getDownloadURL(snapshot.ref);
       }
@@ -147,6 +187,18 @@ export default function SettingsAdminPage() {
 
         logoUrl: finalLogoUrl,
         faviconUrl: finalFaviconUrl,
+        
+        companyName,
+        companySubName,
+        servicesSubtitle,
+        servicesTitle,
+        companyEmail,
+        companyPhone,
+        companyLocation,
+        instagramUrl,
+        linkedinUrl,
+        githubUrl,
+
         updatedAt: new Date().toISOString()
       };
 
@@ -469,6 +521,130 @@ export default function SettingsAdminPage() {
                       <textarea rows={3} value={step3Desc} onChange={(e) => setStep3Desc(e.target.value)} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs" />
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Company Profile & Contact details */}
+            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Settings className="w-5 h-5 text-blue-600" />
+                <h2 className="text-base font-black text-slate-900 uppercase tracking-wider font-outfit">
+                  Company Identity & Contact Info
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Company Name</label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. YUNAWISE"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Company Tagline / Sub-name</label>
+                  <input
+                    type="text"
+                    value={companySubName}
+                    onChange={(e) => setCompanySubName(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. TECHSOLVE LLP"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Contact Phone</label>
+                  <input
+                    type="text"
+                    value={companyPhone}
+                    onChange={(e) => setCompanyPhone(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. +91 8153874988"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Contact Email</label>
+                  <input
+                    type="email"
+                    value={companyEmail}
+                    onChange={(e) => setCompanyEmail(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. hello@yunawise.com"
+                  />
+                </div>
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Office Location / Address</label>
+                  <input
+                    type="text"
+                    value={companyLocation}
+                    onChange={(e) => setCompanyLocation(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. A-518, Moneyplant Highstreet, Jagatpur road, Gota, Ahmedabad"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Homepage Services Settings & Social URLs */}
+            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Sparkles className="w-5 h-5 text-blue-600" />
+                <h2 className="text-base font-black text-slate-900 uppercase tracking-wider font-outfit">
+                  Services Section Header & Social Links
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Services Section Subtitle</label>
+                  <input
+                    type="text"
+                    value={servicesSubtitle}
+                    onChange={(e) => setServicesSubtitle(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. Our Services"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Services Section Title</label>
+                  <input
+                    type="text"
+                    value={servicesTitle}
+                    onChange={(e) => setServicesTitle(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="e.g. Innovative digital solutions, built to scale."
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">LinkedIn URL</label>
+                  <input
+                    type="text"
+                    value={linkedinUrl}
+                    onChange={(e) => setLinkedinUrl(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="LinkedIn Profile URL"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">GitHub URL</label>
+                  <input
+                    type="text"
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="GitHub Organization/Profile URL"
+                  />
+                </div>
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Instagram URL</label>
+                  <input
+                    type="text"
+                    value={instagramUrl}
+                    onChange={(e) => setInstagramUrl(e.target.value)}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="Instagram Page URL"
+                  />
                 </div>
               </div>
             </div>
