@@ -34,80 +34,7 @@ const getIconComponent = (name) => {
   if (IconComp) return IconComp;
   return LucideIcons.Cpu; 
 };
-
-const fallbackSolutions = {
-  "crm-software-ahmedabad": {
-    name: "CRM Software Solutions",
-    heroBadge: "CRM Solutions",
-    heroDescription: "Automate customer engagement, track sales pipelines, and improve team retention with custom cloud CRM software built for SMEs and growing businesses.",
-    ctaText: "Start CRM Project",
-    ctaLink: "/contact",
-    overviewTitle: "Centralized Sales Management",
-    overviewDescription: "Modern businesses require smart CRM software to manage customer relations, follow-ups, quotes, and reports. As a trusted CRM developer, Yunawise designs modular features integrating contact repositories, analytics dashboards, and role-based permissions to optimize operations.",
-    benefits: [
-      "Centralized Customer Database",
-      "Automated Sales & Tasks Follow-ups",
-      "Cloud CRM Mobile Compatibility",
-      "Advanced Business Analytics Dashboards",
-      "Role-Based Access Protections"
-    ],
-    featuresOffered: [
-      "Manufacturing & Industrial",
-      "Textile & Garment",
-      "Pharmaceutical & Chemical"
-    ],
-    industriesServed: [
-      "Manufacturing & Industrial",
-      "Textile & Garment",
-      "Pharmaceutical & Chemical",
-      "Logistics & Distribution",
-      "Startups, SMEs & MSMEs",
-      "Real Estate & Construction",
-      "Retail & Trading",
-      "FMCG & Wholesale",
-      "Service & Project-Based"
-    ],
-    features: [
-      { title: "Lead Management System", desc: "Track inquiries, captures, and statuses through conversion filters.", icon: "Users" },
-      { title: "Sales Pipeline Automation", desc: "Centralized deal flow charts, automation follow-ups, and reminders.", icon: "Sparkles" },
-      { title: "Quotation & Order Tracker", desc: "Draft quotes, generate invoice details, and route transactions securely.", icon: "Shield" },
-      { title: "Performance Dashboards", desc: "Monitor sales team activities, KPIs, and close ratios in real-time.", icon: "Award" }
-    ],
-    processSteps: [],
-    faqs: []
-  },
-  "erp-software-ahmedabad": {
-    name: "ERP Enterprise Solutions",
-    heroBadge: "ERP Modules",
-    heroDescription: "Integrate production loops, warehouse logistics, payroll parameters, and inventory records into a single secure platform.",
-    ctaText: "Consult ERP Blueprint",
-    ctaLink: "/contact",
-    overviewTitle: "Unified Corporate Operations",
-    overviewDescription: "Consolidate accounting registers, vendor management, HR operations, and supply chain schedules. Our modular ERP architectures scale horizontally to optimize industrial outputs.",
-    benefits: [
-      "Real-time Inventory Tracking",
-      "Unified Ledger Systems",
-      "Automated Purchase Orders",
-      "Role-based Ledger Audits"
-    ],
-    featuresOffered: [
-      "Inventory loop control",
-      "Accounting registers",
-      "Vendor catalog pipelines"
-    ],
-    industriesServed: [
-      "Industrial Manufacturing",
-      "Wholesale Distributors",
-      "Logistics Providers"
-    ],
-    features: [
-      { title: "Warehouse Optimization", desc: "Dynamic tracking of batch numbers and bin storage allocations.", icon: "Cpu" },
-      { title: "Financial Audits", desc: "Seamless reporting pipelines matching standard tax formats.", icon: "ShieldCheck" }
-    ],
-    processSteps: [],
-    faqs: []
-  }
-};
+// Dynamic page blocks rendering for custom schema solutions
 
 function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
   if (!blocks || blocks.length === 0) return null;
@@ -393,12 +320,11 @@ export default function DynamicSolutionPage({ params }) {
           const docData = snapshot.docs[0].data();
           setSolution({ id: snapshot.docs[0].id, ...docData });
         } else {
-          // Fallback to static solutions
-          setSolution(fallbackSolutions[slug] || null);
+          setSolution(null);
         }
       } catch (error) {
         console.error("Error loading solution details:", error);
-        setSolution(fallbackSolutions[slug] || null);
+        setSolution(null);
       } finally {
         setLoading(false);
       }

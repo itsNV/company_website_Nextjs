@@ -13,57 +13,6 @@ export default function ServicesPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const coreServicesStatic = [
-    {
-      id: "static-1",
-      name: "Website Development",
-      heroDescription: "High-performance headless CMS architectures (Sanity, Strapi) and enterprise WordPress ecosystems built to scale.",
-      icon: "Laptop",
-      colorClass: "text-blue-600 bg-blue-50 border-blue-100",
-      slug: "website-development",
-    },
-    {
-      id: "static-2",
-      name: "Digital Marketing",
-      heroDescription: "Your one-stop strategy, revealing organic search (SEO), targeted SEM, and performance campaign methodologies.",
-      icon: "TrendingUp",
-      colorClass: "text-emerald-600 bg-emerald-50 border-emerald-100",
-      slug: "digital-marketing",
-    },
-    {
-      id: "static-3",
-      name: "Custom Software Solutions",
-      heroDescription: "Tailored engineering solving enterprise problems. Scalable operations directories, ERP modules, and custom CRM systems.",
-      icon: "Settings",
-      colorClass: "text-purple-600 bg-purple-50 border-purple-100",
-      slug: "custom-software-development",
-    },
-    {
-      id: "static-4",
-      name: "e-Commerce Development",
-      heroDescription: "Conversion-centric digital storefronts integrated with Shopify Headless API or customized WooCommerce setups.",
-      icon: "ShoppingBag",
-      colorClass: "text-rose-600 bg-rose-50 border-rose-100",
-      slug: "e-commerce-development",
-    },
-    {
-      id: "static-5",
-      name: "Branding Strategy",
-      heroDescription: "Striking design assets and identity rulesets that define your corporate vision and establish customer trust.",
-      icon: "ShieldCheck",
-      colorClass: "text-cyan-600 bg-cyan-50 border-cyan-100",
-      slug: "branding",
-    },
-    {
-      id: "static-6",
-      name: "Mobile App Development",
-      heroDescription: "Scalable, native, and cross-platform (Flutter, React Native) mobile applications crafted for optimal touch-screen experiences.",
-      icon: "Smartphone",
-      colorClass: "text-indigo-600 bg-indigo-50 border-indigo-100",
-      slug: "mobile-app-development",
-    },
-  ];
-
   useEffect(() => {
     async function fetchServices() {
       try {
@@ -72,10 +21,10 @@ export default function ServicesPage() {
           id: doc.id,
           ...doc.data(),
         }));
-        setServices(fetched.length > 0 ? fetched : coreServicesStatic);
+        setServices(fetched);
       } catch (err) {
         console.error("Error reading services:", err);
-        setServices(coreServicesStatic);
+        setServices([]);
       } finally {
         setLoading(false);
       }

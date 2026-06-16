@@ -23,93 +23,7 @@ const getIconComponent = (name) => {
   return LucideIcons.Laptop; 
 };
 
-// Complete static configurations for services to guarantee seamless load/transition
-const fallbackServices = {
-  "branding": {
-    name: "Branding Strategy & Identity",
-    heroBadge: "Branding Strategy",
-    heroDescription: "Strategic branding services that build strong identities, trust, and long-term market recognition. We help businesses build strong, memorable, and impactful brand identities.",
-    ctaText: "Design Your Identity",
-    ctaLink: "/contact",
-    benefits: [
-      "Builds brand recognition and trust",
-      "Differentiates your business from competitors",
-      "Creates emotional connection with customers",
-      "Improves customer loyalty",
-      "Enhances business credibility",
-      "Supports long-term growth"
-    ],
-    servicesOffered: [
-      "Brand strategy and positioning",
-      "Logo and visual identity design",
-      "Brand messaging and voice development",
-      "Brand guidelines creation",
-      "Rebranding services",
-      "Digital and print brand assets"
-    ],
-    features: [
-      {
-        title: "Unique Identity",
-        desc: "Creative and modern visual design concepts designed specifically to identify and separate your business.",
-        icon: "Palette"
-      },
-      {
-        title: "Market Positioning",
-        desc: "Target audience research alignment and strategic messaging guidelines that build user trust.",
-        icon: "Compass"
-      },
-      {
-        title: "Visual Consistency",
-        desc: "Comprehensive brand guideline documents guaranteeing unified presentation across physical and online mediums.",
-        icon: "ShieldCheck"
-      },
-      {
-        title: "Storytelling",
-        desc: "Translating corporate vision into emotional customer connection pipelines and credibility builders.",
-        icon: "Award"
-      }
-    ],
-    processSteps: [
-      { step: "01", title: "Research & Strategy", desc: "Investigate business values, target demographic preferences, and evaluate competitor positioning." },
-      { step: "02", title: "Brand Strategy", desc: "Define the brand voice, core values, mission alignment, and visual messaging guidelines." },
-      { step: "03", title: "Visual Identity Design", desc: "Draft unique logo variations, select color palettes, and finalize corporate typography." },
-      { step: "04", title: "Brand Development", desc: "Create unified print and digital brand assets, such as business cards, brochures, and digital headers." },
-      { step: "05", title: "Implementation", desc: "Ensure visual consistency is applied across websites, social media, and packaging material." }
-    ],
-    faqs: [
-      { q: "What is branding?", a: "Branding is the creation of a distinct visual identity, personality, and reputation for your business to establish recognition and trust." },
-      { q: "Why is branding important?", a: "Branding differentiates your business from competitors, increases client trust, and forms a lasting professional impression." },
-      { q: "Do you offer rebranding services?", a: "Yes, we assist established businesses in updating their logos, assets, and messaging to match current market trends." }
-    ]
-  },
-  "website-development": {
-    name: "Website Development Solutions",
-    heroBadge: "Web Platforms",
-    heroDescription: "High-performance headless CMS architectures and enterprise systems designed for sub-second speeds, modern accessibility, and secure scaling.",
-    ctaText: "Build Your Website",
-    ctaLink: "/contact",
-    benefits: [
-      "Sub-second load times",
-      "Unparalleled security",
-      "Flexible content management",
-      "SEO friendly rendering"
-    ],
-    servicesOffered: [
-      "Next.js headless configurations",
-      "Enterprise WordPress development",
-      "Strapi and Sanity CMS setup",
-      "Responsive layout engineering"
-    ],
-    features: [
-      { title: "Headless CMS", desc: "Integrate Sanity or Strapi to give teams total control of text updates without developer bottlenecks.", icon: "Laptop" },
-      { title: "SEO Primed", desc: "Server-side rendering (SSR) ensuring google indices read and rank pages faster.", icon: "Compass" }
-    ],
-    processSteps: [
-      { step: "01", title: "Discovery", desc: "Align business requirements and layout scope." }
-    ],
-    faqs: []
-  }
-};
+// Dynamic page blocks rendering for custom schema services
 
 function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
   if (!blocks || blocks.length === 0) return null;
@@ -395,13 +309,11 @@ export default function DynamicServicePage({ params }) {
           const docData = snapshot.docs[0].data();
           setService({ id: snapshot.docs[0].id, ...docData });
         } else {
-          // Fallback to static services
-          const found = fallbackServices[slug] || null;
-          setService(found);
+          setService(null);
         }
       } catch (error) {
         console.error("Error loading service details:", error);
-        setService(fallbackServices[slug] || null);
+        setService(null);
       } finally {
         setLoading(false);
       }
