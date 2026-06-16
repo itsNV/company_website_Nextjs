@@ -99,9 +99,12 @@ export function BlogBlockPreview({ block }) {
         </div>
       );
 
-    case "contentSection":
-      return wrapper(
-        <div className="py-4">
+    case "contentSection": {
+      const isHorizontal = (d.imagePreview || d.imageUrl) && (d.imagePosition === 'left' || d.imagePosition === 'right');
+      const isReverse = d.imagePosition === 'left';
+
+      const textContent = (
+        <div className="w-full">
           <div className="flex items-start gap-3 mb-4">
             <div className="w-11 h-11 shrink-0 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-xl">
               {d.emoji || "💡"}
@@ -116,14 +119,28 @@ export function BlogBlockPreview({ block }) {
               <BulletListItems items={d.bulletPoints} style={d.bulletStyle || "check"} />
             </div>
           )}
-          {(d.imagePreview || d.imageUrl) && (
-            <div className="pl-14 rounded-xl overflow-hidden border border-slate-200">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={d.imagePreview || d.imageUrl} alt="" style={getImagePixelStyle(d)} className="object-cover" />
-            </div>
-          )}
         </div>
       );
+
+      const imageContent = (d.imagePreview || d.imageUrl) && (
+        <div className={`${isHorizontal ? 'w-full lg:w-1/2' : 'w-full'} ${(!d.imagePosition || d.imagePosition === 'bottom') ? 'pl-14' : ''} flex justify-center shrink-0`}>
+          <div className="w-full rounded-xl overflow-hidden border border-slate-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={d.imagePreview || d.imageUrl} alt="" style={getImagePixelStyle(d)} className="object-cover w-full" />
+          </div>
+        </div>
+      );
+
+      return wrapper(
+        <div className="py-4">
+          <article className={`flex ${isHorizontal ? 'flex-col lg:flex-row' : 'flex-col'} ${isReverse ? 'flex-col-reverse' : ''} ${d.imagePosition === 'left' ? 'lg:flex-row-reverse' : ''} gap-4 items-start`}>
+            {d.imagePosition === "top" && imageContent}
+            {textContent}
+            {d.imagePosition !== "top" && imageContent}
+          </article>
+        </div>
+      );
+    }
 
     case "text":
       return wrapper(

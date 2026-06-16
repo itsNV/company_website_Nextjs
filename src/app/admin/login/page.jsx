@@ -5,7 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {

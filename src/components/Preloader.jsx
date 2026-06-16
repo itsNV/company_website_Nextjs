@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 
 export default function Preloader() {
   const [show, setShow] = useState(true);

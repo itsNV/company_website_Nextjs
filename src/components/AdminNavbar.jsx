@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, LogOut, LayoutDashboard, Laptop, Cpu, Globe, Settings } from "lucide-react";
+import { BookOpen, LogOut, LayoutDashboard, Laptop, Cpu, Globe, Settings, Menu, X } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter, usePathname } from "next/navigation";
@@ -13,6 +13,7 @@ export default function AdminNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +25,20 @@ export default function AdminNavbar() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // If target was removed/detached from DOM during rendering (like changing icons), ignore it
+      if (!document.body.contains(event.target)) {
+        return;
+      }
+      if (!event.target.closest("header")) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -68,7 +83,7 @@ export default function AdminNavbar() {
         </Link>
 
         {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -76,7 +91,7 @@ export default function AdminNavbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className={`flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider transition-all py-1.5 px-3 rounded-full border ${
+                className={`flex items-center gap-1.5 text-xs font-outfit font-extrabold uppercase tracking-wider transition-all py-1.5 px-3 rounded-full border ${
                   isActive
                     ? scrolled
                       ? "bg-white text-slate-900 border-white shadow-md"
@@ -94,27 +109,82 @@ export default function AdminNavbar() {
         </nav>
 
         {/* Right side controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-4">
           <Link 
             href="/" 
-            className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider transition-colors ${
+            className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-outfit font-extrabold uppercase tracking-wider transition-colors ${
               scrolled ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-900"
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
-            <span>View Site</span>
+            <span className="hidden xl:inline">View Site</span>
           </Link>
           <button
             onClick={handleLogout}
-            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full transition-colors text-xs font-bold uppercase tracking-wider cursor-pointer shadow-sm ${
+            className={`inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 rounded-full transition-colors text-xs font-outfit font-bold uppercase tracking-wider cursor-pointer shadow-sm ${
               scrolled
                 ? "bg-white hover:bg-slate-100 text-slate-900"
                 : "bg-slate-950 hover:bg-slate-800 text-white"
             }`}
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sign Out</span>
+            <span className="hidden xl:inline">Sign Out</span>
           </button>
+
+          {/* Mobile Menu Trigger */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+              setIsOpen(!isOpen);
+            }}
+            className={`p-2 -mr-2 lg:hidden transition-colors cursor-pointer z-50 relative ${
+              scrolled ? "text-slate-200 hover:text-white" : "text-slate-700 hover:text-slate-900"
+            }`}
+            aria-label="Toggle navigation menu"
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Mobile Nav Dropdown Capsule Card */}
+        <div
+          className={`absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl border border-slate-200/40 p-6 shadow-xl transition-all duration-300 lg:hidden z-50 ${
+            isOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-4 invisible pointer-events-none"
+          }`}
+        >
+          <div className="flex flex-col gap-4 text-center">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors py-2.5 px-4 rounded-xl border ${
+                    isActive
+                      ? "bg-slate-900 text-white border-slate-900 shadow-md"
+                      : "border-slate-100 text-slate-600 hover:text-slate-900 bg-slate-50"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+            <div className="h-px bg-slate-200/60 my-2" />
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 py-2 border border-slate-100 rounded-xl bg-slate-50"
+            >
+              <Globe className="w-4 h-4" />
+              <span>View Site</span>
+            </Link>
+          </div>
         </div>
 
       </div>

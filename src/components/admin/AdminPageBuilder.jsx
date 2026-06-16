@@ -25,11 +25,18 @@ import {
   Link2,
   FileText
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import {
   SERVICE_BLOCK_PALETTE,
   createPageBlock,
   getDefaultPageBlocks
 } from "@/lib/pageBuilderBlocks";
+
+const getIconComponent = (name) => {
+  const IconComp = LucideIcons[name];
+  if (IconComp) return IconComp;
+  return LucideIcons.Laptop; 
+};
 
 const DRAG_NEW = "page-block-new";
 const DRAG_REORDER = "page-block-reorder";
@@ -387,7 +394,7 @@ export default function AdminPageBuilder({
                             <span className="text-[8px] font-black uppercase tracking-wider text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
                               {block.type} section
                             </span>
-                            <h4 className="text-base font-bold text-slate-900 leading-snug">{block.data.title || block.data.name || "Untitled Section"}</h4>
+                            <h4 className="text-base font-bold text-slate-900 leading-snug">{block.data.sectionTitle || block.data.title || block.data.name || "Untitled Section"}</h4>
                             
                             {block.type === "hero" && (
                               <div className="p-4 bg-slate-50 rounded-xl space-y-2 text-xs text-slate-500">
@@ -405,23 +412,72 @@ export default function AdminPageBuilder({
                             )}
 
                             {block.type === "benefits" && (
-                              <ul className="space-y-1 pl-1">
-                                {block.data.items?.map((item, i) => (
-                                  <li key={i} className="text-xs text-slate-600 flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
+                              <div className="space-y-2">
+                                {block.data.sectionName && (
+                                  <span className="text-[10px] uppercase font-bold text-emerald-600 block">{block.data.sectionName}</span>
+                                )}
+                                <div className={`flex ${block.data.imagePosition === 'left' ? 'flex-row-reverse' : block.data.imagePosition === 'top' ? 'flex-col-reverse' : block.data.imagePosition === 'bottom' ? 'flex-col' : 'flex-row'} items-center justify-between gap-4`}>
+                                  <ul className="space-y-1 pl-1 flex-grow text-left">
+                                    {block.data.items?.map((item, i) => {
+                                      const BulletIcon = block.data.bulletIcon ? getIconComponent(block.data.bulletIcon) : null;
+                                      return (
+                                        <li key={i} className="text-xs text-slate-600 flex items-center gap-1.5 justify-start">
+                                          {BulletIcon ? (
+                                            <BulletIcon className="w-4 h-4 text-emerald-500 shrink-0" />
+                                          ) : (
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                          )}
+                                          <span>{item}</span>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                  {block.data.imageUrl && (
+                                    <img
+                                      src={block.data.imageUrl}
+                                      alt=""
+                                      style={{
+                                        width: block.data.imageWidth ? `${block.data.imageWidth}px` : '150px',
+                                        height: block.data.imageHeight ? `${block.data.imageHeight}px` : '100px',
+                                        maxWidth: '100%'
+                                      }}
+                                      className="object-cover rounded-xl border border-slate-200 shrink-0"
+                                    />
+                                  )}
+                                </div>
+                              </div>
                             )}
 
                             {block.type === "offerings" && (
-                              <div className="flex flex-wrap gap-1.5 pt-1">
-                                {block.data.items?.map((item, i) => (
-                                  <span key={i} className="text-[10px] font-bold bg-indigo-50 border border-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg">
-                                    {item}
-                                  </span>
-                                ))}
+                              <div className="space-y-2">
+                                {block.data.sectionName && (
+                                  <span className="text-[10px] uppercase font-bold text-indigo-600 block">{block.data.sectionName}</span>
+                                )}
+                                <div className={`flex ${block.data.imagePosition === 'left' ? 'flex-row-reverse' : block.data.imagePosition === 'top' ? 'flex-col-reverse' : block.data.imagePosition === 'bottom' ? 'flex-col' : 'flex-row'} items-center justify-between gap-4`}>
+                                  <div className="flex flex-wrap gap-1.5 pt-1 flex-grow justify-start">
+                                    {block.data.items?.map((item, i) => {
+                                      const BulletIcon = block.data.bulletIcon ? getIconComponent(block.data.bulletIcon) : null;
+                                      return (
+                                        <span key={i} className="text-[10px] font-bold bg-indigo-50 border border-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                                          {BulletIcon && <BulletIcon className="w-3.5 h-3.5" />}
+                                          {item}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                  {block.data.imageUrl && (
+                                    <img
+                                      src={block.data.imageUrl}
+                                      alt=""
+                                      style={{
+                                        width: block.data.imageWidth ? `${block.data.imageWidth}px` : '150px',
+                                        height: block.data.imageHeight ? `${block.data.imageHeight}px` : '100px',
+                                        maxWidth: '100%'
+                                      }}
+                                      className="object-cover rounded-xl border border-slate-200 shrink-0"
+                                    />
+                                  )}
+                                </div>
                               </div>
                             )}
 
@@ -541,13 +597,26 @@ export default function AdminPageBuilder({
                   <select
                     value={selectedBlock.data.sectionIcon || ""}
                     onChange={(e) => updateBlockData(selectedBlock.id, { sectionIcon: e.target.value })}
-                    className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
+                    className="w-full h-11 px-4 bg-slate-55 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
                   >
                     <option value="">No Section Icon</option>
                     {lucideOptions.map((opt) => (
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {selectedBlock.type !== "seo" && selectedBlock.type !== "hero" && (
+                <div className="space-y-1.5 pb-4 border-b border-slate-100">
+                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Section Title (Optional)</label>
+                  <input
+                    type="text"
+                    value={selectedBlock.data.sectionTitle || ""}
+                    onChange={(e) => updateBlockData(selectedBlock.id, { sectionTitle: e.target.value })}
+                    className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                    placeholder="Enter Custom Title (or leave blank for default)"
+                  />
                 </div>
               )}
 
@@ -677,12 +746,24 @@ export default function AdminPageBuilder({
               {selectedBlock.type === "benefits" && (
                 <div className="space-y-4">
                   <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Section Name (Optional Subtitle)</label>
+                    <input
+                      type="text"
+                      value={selectedBlock.data.sectionName || ""}
+                      onChange={(e) => updateBlockData(selectedBlock.id, { sectionName: e.target.value })}
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                      placeholder="e.g. BENEFITS"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Checklist Bullet Icon</label>
                     <select
                       value={selectedBlock.data.bulletIcon || "CheckCircle2"}
                       onChange={(e) => updateBlockData(selectedBlock.id, { bulletIcon: e.target.value })}
                       className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
                     >
+                      <option value="">No Icon</option>
                       {lucideOptions.map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
@@ -703,6 +784,92 @@ export default function AdminPageBuilder({
                       <option value="decimal">Numbered List (1, 2, 3)</option>
                     </select>
                   </div>
+
+                  {/* Section Image Settings */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Section Image (Optional)</label>
+                    <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50/50 p-4 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            updateBlockData(selectedBlock.id, {
+                              imageFile: file,
+                              imageUrl: URL.createObjectURL(file)
+                            });
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      {selectedBlock.data.imageUrl ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <img
+                            src={selectedBlock.data.imageUrl}
+                            alt="Preview"
+                            style={{
+                              width: selectedBlock.data.imageWidth ? `${selectedBlock.data.imageWidth}px` : '150px',
+                              height: selectedBlock.data.imageHeight ? `${selectedBlock.data.imageHeight}px` : '100px'
+                            }}
+                            className="object-cover rounded-xl border border-slate-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              updateBlockData(selectedBlock.id, { imageUrl: "", imageFile: null });
+                            }}
+                            className="text-[10px] text-red-650 text-red-600 font-bold uppercase"
+                          >
+                            Remove Image
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-4 text-slate-400">
+                          <Upload className="w-6 h-6 mb-2" />
+                          <span className="text-[11px] font-bold">Add optional image</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedBlock.data.imageUrl && (
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-500 uppercase">Width (px)</label>
+                        <input
+                          type="number"
+                          value={selectedBlock.data.imageWidth || ""}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imageWidth: e.target.value })}
+                          className="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-500 uppercase">Height (px)</label>
+                        <input
+                          type="number"
+                          value={selectedBlock.data.imageHeight || ""}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imageHeight: e.target.value })}
+                          className="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-555 uppercase">Position</label>
+                        <select
+                          value={selectedBlock.data.imagePosition || "right"}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imagePosition: e.target.value })}
+                          className="w-full h-9 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
+                        >
+                          <option value="top">Above the content</option>
+                          <option value="bottom">Below the content</option>
+                          <option value="left">Side by side (Left)</option>
+                          <option value="right">Side by side (Right)</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Bullet checklists */}
                   <div className="space-y-3">
@@ -745,7 +912,7 @@ export default function AdminPageBuilder({
 
                     <div className="space-y-2">
                       {selectedBlock.data.items?.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-55 border border-slate-100 text-xs">
                           <span className="font-semibold text-slate-700">{item}</span>
                           <button
                             type="button"
@@ -767,6 +934,117 @@ export default function AdminPageBuilder({
 
               {selectedBlock.type === "offerings" && (
                 <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Section Name (Optional Subtitle)</label>
+                    <input
+                      type="text"
+                      value={selectedBlock.data.sectionName || ""}
+                      onChange={(e) => updateBlockData(selectedBlock.id, { sectionName: e.target.value })}
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                      placeholder="e.g. CAPABILITIES"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Offering Bullet Icon</label>
+                    <select
+                      value={selectedBlock.data.bulletIcon || "CheckCircle2"}
+                      onChange={(e) => updateBlockData(selectedBlock.id, { bulletIcon: e.target.value })}
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
+                    >
+                      <option value="">No Icon</option>
+                      {lucideOptions.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Section Image Settings */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Section Image (Optional)</label>
+                    <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50/50 p-4 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            updateBlockData(selectedBlock.id, {
+                              imageFile: file,
+                              imageUrl: URL.createObjectURL(file)
+                            });
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      {selectedBlock.data.imageUrl ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <img
+                            src={selectedBlock.data.imageUrl}
+                            alt="Preview"
+                            style={{
+                              width: selectedBlock.data.imageWidth ? `${selectedBlock.data.imageWidth}px` : '150px',
+                              height: selectedBlock.data.imageHeight ? `${selectedBlock.data.imageHeight}px` : '100px'
+                            }}
+                            className="object-cover rounded-xl border border-slate-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              updateBlockData(selectedBlock.id, { imageUrl: "", imageFile: null });
+                            }}
+                            className="text-[10px] text-red-650 text-red-650 text-red-600 font-bold uppercase"
+                          >
+                            Remove Image
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-4 text-slate-400">
+                          <Upload className="w-6 h-6 mb-2" />
+                          <span className="text-[11px] font-bold">Add optional image</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {selectedBlock.data.imageUrl && (
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-500 uppercase">Width (px)</label>
+                        <input
+                          type="number"
+                          value={selectedBlock.data.imageWidth || ""}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imageWidth: e.target.value })}
+                          className="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-500 uppercase">Height (px)</label>
+                        <input
+                          type="number"
+                          value={selectedBlock.data.imageHeight || ""}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imageHeight: e.target.value })}
+                          className="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-bold text-slate-555 uppercase">Position</label>
+                        <select
+                          value={selectedBlock.data.imagePosition || "right"}
+                          onChange={(e) => updateBlockData(selectedBlock.id, { imagePosition: e.target.value })}
+                          className="w-full h-9 px-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:border-blue-500"
+                        >
+                          <option value="top">Above the content</option>
+                          <option value="bottom">Below the content</option>
+                          <option value="left">Side by side (Left)</option>
+                          <option value="right">Side by side (Right)</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Dynamic checklist arrays */}
                   <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Sub-Services / Offerings List</label>
@@ -808,7 +1086,7 @@ export default function AdminPageBuilder({
 
                     <div className="space-y-2">
                       {selectedBlock.data.items?.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-55 border border-slate-100 text-xs">
+                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
                           <span className="font-semibold text-slate-700">{item}</span>
                           <button
                             type="button"

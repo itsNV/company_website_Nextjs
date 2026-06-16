@@ -22,6 +22,7 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "cyan",
     description: "Detailed headline and overview paragraph copy",
     defaultData: {
+      sectionTitle: "",
       title: "Core Service Highlights",
       description: "We deliver rapid, secure, and user-centric software solutions tailored specifically to solve enterprise problems."
     }
@@ -31,9 +32,16 @@ export const SERVICE_BLOCK_PALETTE = [
     label: "Benefits Sidebar / Bullet List",
     icon: "ShieldCheck",
     color: "emerald",
-    description: "List of key benefits with customizable bullet checkmarks",
+    description: "List of key benefits with customizable bullet checkmarks, section title, and optional image",
     defaultData: {
+      sectionTitle: "",
+      sectionName: "",
+      sectionIcon: "ShieldCheck",
       bulletIcon: "CheckCircle2",
+      imageUrl: "",
+      imageWidth: "300",
+      imageHeight: "200",
+      imagePosition: "right",
       items: [
         "Sub-second page loading speeds",
         "Enterprise-grade security protections",
@@ -46,8 +54,16 @@ export const SERVICE_BLOCK_PALETTE = [
     label: "Capabilities/Services Offered",
     icon: "PlusCircle",
     color: "indigo",
-    description: "Dynamic array listing sub-services or offerings",
+    description: "Dynamic array listing sub-services or offerings with section title and optional image",
     defaultData: {
+      sectionTitle: "",
+      sectionName: "",
+      sectionIcon: "PlusCircle",
+      bulletIcon: "CheckCircle2",
+      imageUrl: "",
+      imageWidth: "300",
+      imageHeight: "200",
+      imagePosition: "right",
       items: [
         "Headless CMS custom architecture",
         "Custom API backend pipelines",
@@ -62,6 +78,8 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "rose",
     description: "Repeatable feature blocks with individual title, desc, and icon selectors",
     defaultData: {
+      sectionTitle: "",
+      sectionIcon: "Award",
       items: [
         { title: "Scalable Architecture", desc: "Dockerized container systems supporting massive horizontal traffic scales.", icon: "Cpu" },
         { title: "SEO optimization", desc: "Server-side page rendering ensuring indexing passes crawl and rank fast.", icon: "Compass" }
@@ -75,6 +93,8 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "amber",
     description: "Timeline steps for client lifecycle tracking",
     defaultData: {
+      sectionTitle: "",
+      sectionIcon: "Compass",
       items: [
         { step: "01", title: "Discovery Analysis", desc: "Audit existing business operations and layout requirements." },
         { step: "02", title: "Engineering Phase", desc: "Iterate codebase deployments inside containerized sandboxes." }
@@ -88,6 +108,8 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "fuchsia",
     description: "Frequently Asked Questions accordion elements",
     defaultData: {
+      sectionTitle: "",
+      sectionIcon: "HelpCircle",
       items: [
         { q: "What is the expected delivery timeframe?", a: "Most customized software solutions deliver within 6 to 12 weeks depending on scope complexity." }
       ]
@@ -100,6 +122,8 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "violet",
     description: "Plans comparison cards similar to Hostinger pricing tiers",
     defaultData: {
+      sectionTitle: "",
+      sectionIcon: "ShoppingBag",
       items: [
         {
           name: "Startup Core",
@@ -127,6 +151,8 @@ export const SERVICE_BLOCK_PALETTE = [
     color: "slate",
     description: "Industries served checklist configuration",
     defaultData: {
+      sectionTitle: "",
+      sectionIcon: "Compass",
       title: "Industries We Serve",
       description: "Custom database workflows configured specifically for your industry vertical.",
       items: [
@@ -145,7 +171,7 @@ export const SERVICE_BLOCK_PALETTE = [
     defaultData: {
       focusKeyword: "Software engineering, branding strategy",
       metaTitle: "Premium Software Development Services | Yunawise",
-      metaDescription: "Yunawise builds enterprise-grade cloud integrations and modern responsive web systems.",
+      metaDescription: "Yunawise builds campus-grade cloud integrations and modern responsive web systems.",
       structuredSchema: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\"\n}"
     }
   }
@@ -231,9 +257,9 @@ export const blocksToPagePayload = (blocks) => {
 
   const seoBlock = blocks.find((b) => b.type === "seo");
   if (seoBlock) {
+    payload.focusKeyword = seoBlock.data.focusKeyword || "";
     payload.seoTitle = seoBlock.data.metaTitle || "";
     payload.seoDescription = seoBlock.data.metaDescription || "";
-    payload.focusKeyword = seoBlock.data.focusKeyword || "";
     payload.structuredSchema = seoBlock.data.structuredSchema || "";
   }
 
@@ -355,7 +381,7 @@ export const pagePayloadToBlocks = (payload) => {
 export const uploadPageBlockImages = async (blocks, storage, uploadBytes, getDownloadURL, ref) => {
   const nextBlocks = [];
   for (const block of blocks) {
-    if (block.type === "hero" && block.data?.imageFile) {
+    if (block.data?.imageFile) {
       const file = block.data.imageFile;
       const fileRef = ref(storage, `page_builders/${Date.now()}_${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);

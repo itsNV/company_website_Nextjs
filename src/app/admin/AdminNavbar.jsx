@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { BookOpen, Laptop, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter, usePathname } from "next/navigation";

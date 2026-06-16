@@ -39,6 +39,8 @@ const getIconComponent = (name) => {
 function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
   if (!blocks || blocks.length === 0) return null;
 
+  const hasHeroBlock = blocks.some((b) => b.type === "hero");
+
   return (
     <div className="space-y-20">
       {blocks.map((block) => {
@@ -46,10 +48,12 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
         switch (block.type) {
           case "hero": {
             const imgUrl = block.data.imageUrl;
+            const benefitsBlock = blocks.find((b) => b.type === "benefits");
+            const hasBenefits = benefitsBlock && benefitsBlock.data?.items?.length > 0;
             return (
               <section key={block.id} className="py-20 reveal-item">
                 <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                  <div className={imgUrl ? "lg:col-span-7 flex flex-col items-center lg:items-start" : "lg:col-span-12 flex flex-col items-center text-center"}>
+                  <div className={(imgUrl || hasBenefits) ? "lg:col-span-7 flex flex-col items-center lg:items-start" : "lg:col-span-12 flex flex-col items-center text-center"}>
                     {block.data.badge && (
                       <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-6">
                         {IconComponent ? <IconComponent className="w-3.5 h-3.5" /> : <LucideIcons.Sparkles className="w-3.5 h-3.5 animate-pulse" />}
@@ -74,14 +78,60 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
                       </div>
                     )}
                   </div>
-                  {imgUrl && (
-                    <div className="lg:col-span-5 flex justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src={imgUrl} 
-                        alt={block.data.title} 
-                        className="w-full max-w-md md:max-w-lg aspect-[4/3] object-cover rounded-[32px] shadow-2xl border-4 border-white" 
-                      />
+                  {(imgUrl || hasBenefits) && (
+                    <div className="lg:col-span-5 flex flex-col gap-6 justify-center w-full">
+                      {imgUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img 
+                          src={imgUrl} 
+                          alt={block.data.title} 
+                          className="w-full max-w-md md:max-w-lg aspect-[4/3] object-cover rounded-[32px] shadow-2xl border-4 border-white" 
+                        />
+                      )}
+                      {hasBenefits && (
+                        <div className="bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-8 shadow-xl hover-box text-left w-full">
+                          {benefitsBlock.data.sectionName && (
+                            <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">{benefitsBlock.data.sectionName}</span>
+                          )}
+                          <h3 className="text-lg font-bold font-outfit text-slate-900 tracking-wide mb-4 border-b pb-2 border-slate-100 flex items-center gap-2">
+                            {benefitsBlock.data.sectionIcon ? (
+                              (() => {
+                                const IconComp = getIconComponent(benefitsBlock.data.sectionIcon);
+                                return <IconComp className="w-5 h-5 text-emerald-500 shrink-0" />;
+                              })()
+                            ) : (
+                              <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                            )}
+                            {benefitsBlock.data.sectionTitle || "Key Benefits"}
+                          </h3>
+                          {benefitsBlock.data.bulletStyle === "icon" || !benefitsBlock.data.bulletStyle ? (
+                            <div className="flex flex-col gap-2">
+                              {benefitsBlock.data.items?.map((item, idx) => {
+                                const BulletIcon = benefitsBlock.data.bulletIcon ? getIconComponent(benefitsBlock.data.bulletIcon) : LucideIcons.CheckCircle2;
+                                return (
+                                  <div key={idx} className="flex gap-2 items-center">
+                                    <BulletIcon className="w-4 h-4 text-emerald-500 shrink-0" />
+                                    <span className="text-slate-700 text-xs font-semibold">{item}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <ol className={
+                              benefitsBlock.data.bulletStyle === "disc" ? "list-disc pl-5 space-y-1.5 text-slate-700 text-xs font-semibold" :
+                              benefitsBlock.data.bulletStyle === "circle" ? "list-[circle] pl-5 space-y-1.5 text-slate-700 text-xs font-semibold" :
+                              benefitsBlock.data.bulletStyle === "square" ? "list-[square] pl-5 space-y-1.5 text-slate-700 text-xs font-semibold" :
+                              "list-decimal pl-5 space-y-1.5 text-slate-700 text-xs font-semibold"
+                            }>
+                              {benefitsBlock.data.items?.map((item, idx) => (
+                                <li key={idx}>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -90,11 +140,11 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "overview": {
             return (
-              <section key={block.id} className="py-16 bg-white/40 border-y border-slate-200/30">
+              <section key={block.id} className="py-16 bg-white/40 border-y border-slate-200/30 reveal-item">
                 <div className="max-w-5xl mx-auto px-6 text-center">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mb-6 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-6 h-6 text-emerald-600 shrink-0" />}
-                    {block.data.title || "Core Highlights"}
+                    {block.data.sectionTitle || block.data.title || "Core Highlights"}
                   </h2>
                   <p className="text-slate-600 text-base leading-relaxed">
                     {block.data.description}
@@ -104,7 +154,8 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
             );
           }
           case "benefits": {
-            const Icon = getIconComponent(block.data.bulletIcon || "CheckCircle2");
+            if (hasHeroBlock) return null;
+            const Icon = block.data.bulletIcon ? getIconComponent(block.data.bulletIcon) : null;
             const style = block.data.bulletStyle || "icon";
 
             let listClass = "grid grid-cols-1 md:grid-cols-2 gap-4";
@@ -113,62 +164,140 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
             else if (style === "square") listClass = "list-[square] pl-6 space-y-2 text-slate-700 text-sm font-semibold";
             else if (style === "decimal") listClass = "list-decimal pl-6 space-y-2 text-slate-700 text-sm font-semibold";
 
+            const imageStyle = block.data.imageUrl ? {
+              width: block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
+              height: block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto',
+              maxWidth: '100%',
+              objectFit: 'cover'
+            } : null;
+
+            const isHorizontal = block.data.imageUrl && (block.data.imagePosition === 'left' || block.data.imagePosition === 'right');
+            const isReverse = block.data.imagePosition === 'left' || block.data.imagePosition === 'top';
+
             return (
               <section key={block.id} className="py-16 bg-transparent">
-                <div className="max-w-4xl mx-auto px-6 bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-8 sm:p-10 shadow-xl">
-                  <h3 className="text-lg font-bold text-slate-900 uppercase tracking-wider mb-6 border-b pb-3 border-slate-100 flex items-center gap-2">
-                    {IconComponent && <IconComponent className="w-5 h-5 text-emerald-500 shrink-0" />}
-                    Key Benefits
-                  </h3>
-                  {style === "icon" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {block.data.items?.map((item, idx) => (
-                        <div key={idx} className="flex gap-3 items-center">
-                          <Icon className="w-5 h-5 text-emerald-500 shrink-0" />
-                          <span className="text-slate-700 text-sm font-semibold">{item}</span>
-                        </div>
-                      ))}
+                <div className={`max-w-6xl mx-auto px-6 flex ${isHorizontal ? 'flex-col lg:flex-row-reverse' : 'flex-col'} ${isReverse ? 'flex-col-reverse lg:flex-row' : ''} items-center gap-10`}>
+                  
+                  {/* Text Container */}
+                  <div className="w-full flex-grow bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-8 sm:p-10 shadow-xl text-left hover-box">
+                    {block.data.sectionName && (
+                      <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">{block.data.sectionName}</span>
+                    )}
+                    <h3 className="text-2xl font-bold font-outfit text-slate-900 tracking-wide mb-6 border-b pb-3 border-slate-100 flex items-center gap-2">
+                      {IconComponent && <IconComponent className="w-6 h-6 text-emerald-500 shrink-0" />}
+                      {block.data.sectionTitle || "Key Benefits"}
+                    </h3>
+                    
+                    {style === "icon" ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {block.data.items?.map((item, idx) => (
+                          <div key={idx} className="flex gap-3 items-center">
+                            {Icon ? (
+                              <Icon className="w-5 h-5 text-emerald-500 shrink-0" />
+                            ) : (
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                            )}
+                            <span className="text-slate-700 text-sm font-semibold">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <ol className={listClass}>
+                        {block.data.items?.map((item, idx) => (
+                          <li key={idx}>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+
+                  {/* Image Container */}
+                  {block.data.imageUrl && (
+                    <div className="shrink-0 flex justify-center">
+                      <img
+                        src={block.data.imageUrl}
+                        alt={block.data.sectionTitle || "Benefits image"}
+                        style={imageStyle}
+                        className="rounded-3xl shadow-xl border border-slate-200/50"
+                      />
                     </div>
-                  ) : (
-                    <ol className={listClass}>
-                      {block.data.items?.map((item, idx) => (
-                        <li key={idx}>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ol>
                   )}
+
                 </div>
               </section>
             );
           }
           case "offerings": {
+            const isHorizontal = block.data.imageUrl && (block.data.imagePosition === 'left' || block.data.imagePosition === 'right');
+            const isReverse = block.data.imagePosition === 'left' || block.data.imagePosition === 'top';
+            const imageStyle = block.data.imageUrl ? {
+              width: block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
+              height: block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto',
+              maxWidth: '100%',
+              objectFit: 'cover'
+            } : null;
+
             return (
-              <section key={block.id} className="py-16 bg-white/40 border-y border-slate-200/30">
-                <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Capabilities & Features</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {block.data.items?.map((srv, idx) => (
-                      <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                        <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                        <span className="text-slate-800 font-semibold text-sm">{srv}</span>
-                      </div>
-                    ))}
+              <section key={block.id} className="py-16 bg-white/40 border-y border-slate-200/30 reveal-item">
+                <div className={`max-w-7xl mx-auto px-6 flex ${isHorizontal ? 'flex-col lg:flex-row-reverse' : 'flex-col'} ${isReverse ? 'flex-col-reverse lg:flex-row' : ''} items-center gap-10`}>
+                  
+                  {/* Text Container */}
+                  <div className="w-full flex-grow text-left">
+                    {block.data.sectionName && (
+                      <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">{block.data.sectionName}</span>
+                    )}
+                    <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mb-10 flex items-center gap-2">
+                      {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
+                      {block.data.sectionTitle || "Capabilities & Features"}
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {block.data.items?.map((srv, idx) => {
+                        const BulletIcon = block.data.bulletIcon ? getIconComponent(block.data.bulletIcon) : null;
+                        return (
+                          <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover-box hover:shadow-md transition-shadow">
+                            {BulletIcon ? (
+                              <BulletIcon className="w-5 h-5 text-emerald-600 shrink-0" />
+                            ) : (
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                            )}
+                            <span className="text-slate-800 font-semibold text-sm">{srv}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+
+                  {/* Image Container */}
+                  {block.data.imageUrl && (
+                    <div className="shrink-0 flex justify-center">
+                      <img
+                        src={block.data.imageUrl}
+                        alt={block.data.sectionTitle || "Offerings image"}
+                        style={imageStyle}
+                        className="rounded-3xl shadow-xl border border-slate-200/50"
+                      />
+                    </div>
+                  )}
+
                 </div>
               </section>
             );
           }
           case "features": {
             return (
-              <section key={block.id} className="py-20">
+              <section key={block.id} className="py-20 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-12">Core Features</h2>
+                  <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
+                    {IconComponent && <IconComponent className="w-8 h-8 text-emerald-600 shrink-0" />}
+                    {block.data.sectionTitle || "Core Features"}
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {block.data.items?.map((feat, idx) => {
                       const Icon = getIconComponent(feat.icon || "Cpu");
                       return (
-                        <div key={idx} className="p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition-all">
+                        <div key={idx} className="p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm hover-box hover:shadow-md transition-all">
                           <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-emerald-100 bg-emerald-50 text-emerald-600 mb-6">
                             <Icon className="w-6 h-6" />
                           </div>
@@ -184,12 +313,15 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "process": {
             return (
-              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40">
+              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Lifecycle Timeline</h2>
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
+                    {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
+                    {block.data.sectionTitle || "Lifecycle Timeline"}
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                     {block.data.items?.map((step, idx) => (
-                      <div key={idx} className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between group">
+                      <div key={idx} className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between group hover-box">
                         <div>
                           <span className="text-4xl font-black font-outfit text-slate-500 group-hover:text-emerald-500 transition-colors block mb-4">{step.step}</span>
                           <h3 className="text-base font-bold font-outfit text-slate-900 mb-2">{step.title}</h3>
@@ -204,9 +336,12 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "faqs": {
             return (
-              <section key={block.id} className="py-20">
+              <section key={block.id} className="py-20 reveal-item">
                 <div className="max-w-4xl mx-auto px-6">
-                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
+                    {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
+                    {block.data.sectionTitle || "Frequently Asked Questions"}
+                  </h2>
                   <div className="flex flex-col gap-4">
                     {block.data.items?.map((faq, idx) => {
                       const isOpen = openFaq === `${block.id}_${idx}`;
@@ -237,12 +372,15 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "pricing": {
             return (
-              <section key={block.id} className="py-20 bg-gradient-to-b from-transparent to-emerald-50/10">
+              <section key={block.id} className="py-20 bg-gradient-to-b from-transparent to-emerald-50/10 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Pricing & Packages</h2>
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
+                    {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
+                    {block.data.sectionTitle || "Pricing & Packages"}
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
                     {block.data.items?.map((plan, idx) => (
-                      <div key={idx} className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 shadow-xl flex flex-col justify-between hover:border-emerald-500 transition-colors">
+                      <div key={idx} className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 shadow-xl flex flex-col justify-between hover-box hover:border-emerald-500 transition-colors">
                         <div>
                           <h4 className="text-lg font-black text-slate-900">{plan.name}</h4>
                           <div className="mt-4 flex items-baseline">
@@ -261,7 +399,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
                         <div className="mt-8">
                           <a 
                             href={plan.ctaLink || "/contact"}
-                            className="block w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center text-xs uppercase tracking-wider shadow-sm transition-all"
+                            className="block w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center text-xs uppercase tracking-wider shadow-sm hover-btn"
                           >
                             {plan.ctaText || "Choose Plan"}
                           </a>
@@ -275,17 +413,18 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "industries": {
             return (
-              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40">
+              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4">
-                    {block.data.title || "Industries We Serve"}
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4 flex items-center justify-center gap-2">
+                    {IconComponent && <IconComponent className="w-7 h-7 text-slate-600 shrink-0" />}
+                    {block.data.sectionTitle || block.data.title || "Industries We Serve"}
                   </h2>
                   {block.data.description && (
                     <p className="text-slate-500 text-center max-w-xl mx-auto mb-16">{block.data.description}</p>
                   )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {block.data.items?.map((ind, idx) => (
-                      <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                      <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover-box hover:shadow-md transition-shadow">
                         <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                         <span className="text-slate-800 font-semibold text-sm">{ind}</span>
                       </div>
@@ -419,10 +558,10 @@ export default function DynamicSolutionPage({ params }) {
           />
         ) : (
           <>
-            {/* Fallback legacy layout */}
+            {/* Fallback legacy layout aligned with service dynamic design schema */}
             <section className="py-20 reveal-item">
               <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                <div className="lg:col-span-8 flex flex-col items-center lg:items-start">
+                <div className={solution.benefits?.length > 0 ? "lg:col-span-8 flex flex-col items-center lg:items-start" : "lg:col-span-12 flex flex-col items-center text-center"}>
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-6">
                     <LucideIcons.Sparkles className="w-3.5 h-3.5 animate-pulse" />
                     {solution.heroBadge || "Enterprise Solution"}
@@ -434,7 +573,7 @@ export default function DynamicSolutionPage({ params }) {
                     {solution.heroDescription}
                   </p>
                   {solution.ctaText && (
-                    <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+                    <div className="mt-8">
                       <a
                         href={solution.ctaLink || "/contact"}
                         className="hover-btn inline-flex items-center gap-2 px-8 py-4 rounded-full bg-emerald-600 text-white font-bold transition-all duration-300 shadow-lg shadow-emerald-100"
@@ -445,10 +584,10 @@ export default function DynamicSolutionPage({ params }) {
                     </div>
                   )}
                 </div>
-                
+
                 {solution.benefits?.length > 0 && (
-                  <div className="lg:col-span-4 bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-8 shadow-xl">
-                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 border-slate-100">Key Benefits</h3>
+                  <div className="lg:col-span-4 bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/50 p-8 shadow-xl hover-box text-left w-full">
+                    <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b pb-2 border-slate-100">Key Benefits</h3>
                     <div className="flex flex-col gap-2">
                       {solution.benefits.map((item, idx) => (
                         <div key={idx} className="flex gap-2 items-center">
@@ -463,12 +602,13 @@ export default function DynamicSolutionPage({ params }) {
             </section>
 
             {solution.overviewDescription && (
-              <section className="py-16 bg-white/40 border-y border-[#eae6fa]/20">
-                <div className="max-w-7xl mx-auto px-6 text-center lg:text-left animate-fade-in">
-                  <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 mb-6">
+              <section className="py-16 bg-white/40 border-y border-slate-200/30 reveal-item">
+                <div className="max-w-5xl mx-auto px-6 text-center">
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mb-6 flex items-center justify-center gap-2">
+                    <LucideIcons.Layers className="w-6 h-6 text-emerald-600 shrink-0" />
                     {solution.overviewTitle || "Overview Blueprint"}
                   </h2>
-                  <p className="reveal-item text-slate-600 leading-relaxed max-w-4xl mx-auto lg:mx-0">
+                  <p className="text-slate-600 text-base leading-relaxed">
                     {solution.overviewDescription}
                   </p>
                 </div>
@@ -476,20 +616,22 @@ export default function DynamicSolutionPage({ params }) {
             )}
 
             {solution.features?.length > 0 && (
-              <section className="py-20">
+              <section className="py-20 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Core Features</h2>
-                  <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
+                    <LucideIcons.Cpu className="w-8 h-8 text-emerald-600 shrink-0" />
+                    Core Features
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {solution.features.map((feat, idx) => {
                       const Icon = iconMap[feat.icon] || LucideIcons.Cpu;
-                      const themeClass = colorThemes[idx % colorThemes.length];
                       return (
-                        <div key={idx} className="hover-box group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300">
-                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-6 ${themeClass}`}>
+                        <div key={idx} className="p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm hover-box hover:shadow-md transition-all">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-emerald-100 bg-emerald-50 text-emerald-600 mb-6">
                             <Icon className="w-6 h-6" />
                           </div>
-                          <h3 className="text-lg font-bold font-outfit text-slate-900 mb-3">{feat.title}</h3>
-                          <p className="text-slate-600 text-xs leading-relaxed">{feat.desc}</p>
+                          <h3 className="text-xl font-bold font-outfit text-slate-900 mb-3">{feat.title}</h3>
+                          <p className="text-slate-600 text-sm leading-relaxed">{feat.desc}</p>
                         </div>
                       );
                     })}
@@ -499,13 +641,16 @@ export default function DynamicSolutionPage({ params }) {
             )}
 
             {solution.industriesServed?.length > 0 && (
-              <section className="py-20 bg-slate-50/50 border-t border-slate-200/40">
+              <section className="py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
-                  <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4">Industries We Serve</h2>
-                  <p className="reveal-item text-slate-500 text-center max-w-xl mx-auto mb-16">Custom database workflows configured specifically for your industry vertical.</p>
-                  <div className="reveal-stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4 flex items-center justify-center gap-2">
+                    <LucideIcons.Globe className="w-7 h-7 text-emerald-600 shrink-0" />
+                    Industries We Serve
+                  </h2>
+                  <p className="text-slate-500 text-center max-w-xl mx-auto mb-16">Custom database workflows configured specifically for your industry vertical.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {solution.industriesServed.map((ind, idx) => (
-                      <div key={idx} className="hover-box flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                      <div key={idx} className="flex gap-3.5 items-center p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover-box hover:shadow-md transition-shadow">
                         <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                         <span className="text-slate-800 font-semibold text-sm">{ind}</span>
                       </div>

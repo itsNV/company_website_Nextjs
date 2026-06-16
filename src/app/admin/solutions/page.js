@@ -39,6 +39,7 @@ export default function SolutionsAdminPage() {
   // Basic Fields
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [showInNavbar, setShowInNavbar] = useState(false);
 
   // Page builder blocks
   const [blocks, setBlocks] = useState([]);
@@ -102,6 +103,7 @@ export default function SolutionsAdminPage() {
   const resetForm = () => {
     setName("");
     setSlug("");
+    setShowInNavbar(false);
     setBlocks(getDefaultPageBlocks());
     setEditingSolutionId(null);
   };
@@ -124,6 +126,7 @@ export default function SolutionsAdminPage() {
         ...blocksToPagePayload(uploadedBlocks),
         name,
         slug,
+        showInNavbar,
         updatedAt: new Date().toISOString()
       };
 
@@ -153,6 +156,7 @@ export default function SolutionsAdminPage() {
     setEditingSolutionId(solution.id);
     setName(solution.name || "");
     setSlug(solution.slug || "");
+    setShowInNavbar(solution.showInNavbar || false);
     
     // Parse layout payload back into visual drag-and-drop blocks array
     const mappedBlocks = pagePayloadToBlocks(solution);
@@ -268,6 +272,19 @@ export default function SolutionsAdminPage() {
                       className="w-full h-11 px-4 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl text-xs outline-none"
                     />
                   </div>
+                </div>
+
+                <div className="mt-4 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="showInNavbar"
+                    checked={showInNavbar}
+                    onChange={(e) => setShowInNavbar(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
+                  />
+                  <label htmlFor="showInNavbar" className="text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    Show as featured link in Navbar dropdown and Footer Top 5 list
+                  </label>
                 </div>
               </div>
 

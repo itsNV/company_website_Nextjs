@@ -101,6 +101,7 @@ export function createBlock(type, overrides = {}) {
         imagePreview: "",
         imageWidthPx: "",
         imageHeightPx: "",
+        imagePosition: "right",
       },
     },
     text: { data: { content: "", align: "left" } },
@@ -253,6 +254,7 @@ export function blocksToBlogPayload(blocks) {
       imageUrl: data.imageUrl || "",
       imageWidthPx: data.imageWidthPx || "",
       imageHeightPx: data.imageHeightPx || "",
+      imagePosition: data.imagePosition || "right",
     }));
 
   const twoCol = blocks.find((b) => b.type === "twoColumn");

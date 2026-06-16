@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUp, Mail, MapPin, ExternalLink } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
@@ -22,8 +22,13 @@ export default function Footer({ config }) {
         const querySnapshot = await getDocs(collection(db, "services"));
         const srvs = querySnapshot.docs.map((doc) => ({
           label: doc.data().name,
-          href: `/services/${doc.data().slug}`
-        }));
+          href: `/services/${doc.data().slug}`,
+          showInNavbar: doc.data().showInNavbar || false,
+        })).sort((a, b) => {
+          if (a.showInNavbar && !b.showInNavbar) return -1;
+          if (!a.showInNavbar && b.showInNavbar) return 1;
+          return 0;
+        });
         setFocusItems(srvs);
       } catch (e) {
         console.error("Error loading footer focus services:", e);
@@ -50,23 +55,25 @@ export default function Footer({ config }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 pb-16">
                     {/* Brand Column */}
                     <div className="flex flex-col gap-6">
-                        {/* Brand Logo and Stacked Subtitle */}
-                                <a href="/" className="flex items-center gap-3 group">
-                                  <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                                    {config?.logoUrl ? (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img src={config.logoUrl} alt="Yunawise Logo" className="w-full h-full object-contain" />
-                                    ) : (
-                                      <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
-                                    )}
-                                  </div>
-                                  <div className="flex flex-col text-left leading-[1.1]">
-                                    <span className="text-[18px] font-black tracking-wider uppercase font-outfit transition-colors text-black" >
-                                      Yunawise
-                                    </span>
-                                    <span className="text-[9px] font-extrabold tracking-[0.22em] uppercase font-outfit transition-colors text-slate-700" >
-                                      Techsolve LLP
-                                    </span>
+                        {/* Brand Logo */}
+                                <a href="/" className="flex items-center group">
+                                  <div className="h-10 w-36 flex items-center justify-start shrink-0 overflow-hidden relative">
+                                    <div className="absolute inset-0 flex items-center justify-center scale-[2.2]">
+                                      {config?.logoUrl ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img 
+                                          src={config.logoUrl} 
+                                          alt="Yunawise Logo" 
+                                          className="h-full w-auto object-contain mix-blend-multiply" 
+                                        />
+                                      ) : (
+                                        <Image 
+                                          src={logo} 
+                                          alt="Yunawise Logo" 
+                                          className="h-full w-auto object-contain mix-blend-multiply" 
+                                        />
+                                      )}
+                                    </div>
                                   </div>
                                 </a>
                         <p className="text-[15px] font-medium text-slate-500 leading-relaxed max-w-sm">
@@ -130,14 +137,21 @@ export default function Footer({ config }) {
                         <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800">
                             Our Focus
                         </h4>
-                        <ul className={`grid gap-3 text-[15px] font-semibold text-slate-500 ${focusItems.length > 5 ? "grid-cols-2 gap-x-6 w-80 md:w-96 lg:w-[320px]" : "grid-cols-1"}`}>
-                            {focusItems.map((item) => (
+                        <ul className="flex flex-col gap-3 text-[15px] font-semibold text-slate-500">
+                            {focusItems.slice(0, focusItems.length > 6 ? 5 : focusItems.length).map((item) => (
                                 <li key={item.href}>
                                     <Link href={item.href} className="hover:text-blue-600 transition-colors">
                                         {item.label}
                                     </Link>
                                 </li>
                             ))}
+                            {focusItems.length > 6 && (
+                                <li>
+                                    <Link href="/services" className="text-blue-600 hover:text-blue-700 transition-colors font-extrabold flex items-center gap-1 mt-1">
+                                        View All Services ({focusItems.length}) →
+                                    </Link>
+                                </li>
+                            )}
                         </ul>
                     </div>
 

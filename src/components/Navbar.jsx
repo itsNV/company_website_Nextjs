@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.png";
+import logo from "@/app/Yunawise_logo.jpg";
 import { usePathname } from "next/navigation";     
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
@@ -14,6 +14,8 @@ export default function Navbar({ activeSection, config }) {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [desktopSolutionsOpen, setDesktopSolutionsOpen] = useState(false);
   const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
+  const [showAllServices, setShowAllServices] = useState(false);
+  const [showAllSolutions, setShowAllSolutions] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -21,6 +23,8 @@ export default function Navbar({ activeSection, config }) {
       if (!event.target.closest(".group\\/dropdown")) {
         setDesktopSolutionsOpen(false);
         setDesktopServicesOpen(false);
+        setShowAllServices(false);
+        setShowAllSolutions(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -48,15 +52,25 @@ export default function Navbar({ activeSection, config }) {
         const servicesSnapshot = await getDocs(collection(db, "services"));
         const srvs = servicesSnapshot.docs.map((doc) => ({
           label: doc.data().name,
-          href: `/services/${doc.data().slug}`
-        }));
+          href: `/services/${doc.data().slug}`,
+          showInNavbar: doc.data().showInNavbar || false,
+        })).sort((a, b) => {
+          if (a.showInNavbar && !b.showInNavbar) return -1;
+          if (!a.showInNavbar && b.showInNavbar) return 1;
+          return 0;
+        });
         setServicesDropdownItems(srvs);
 
         const solutionsSnapshot = await getDocs(collection(db, "solutions"));
         const sols = solutionsSnapshot.docs.map((doc) => ({
           label: doc.data().name,
-          href: `/solutions/${doc.data().slug}`
-        }));
+          href: `/solutions/${doc.data().slug}`,
+          showInNavbar: doc.data().showInNavbar || false,
+        })).sort((a, b) => {
+          if (a.showInNavbar && !b.showInNavbar) return -1;
+          if (!a.showInNavbar && b.showInNavbar) return 1;
+          return 0;
+        });
         setSolutionsDropdownItems(sols);
       } catch (e) {
         console.error("Error fetching nav dynamic items:", e);
@@ -85,23 +99,33 @@ export default function Navbar({ activeSection, config }) {
         }`}
       >
         
-        {/* Brand Logo and Stacked Subtitle */}
-        <a href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 flex items-center justify-center shrink-0">
-            {config?.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={config.logoUrl} alt="Yunawise Logo" className="w-full h-full object-contain" />
-            ) : (
-              <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
-            )}
-          </div>
-          <div className="flex flex-col text-left leading-[1.1]">
-            <span className={`text-[15px] font-black tracking-wider uppercase font-outfit transition-colors ${scrolled ? "text-white" : "text-[#2e579d]"}`}>
-              Yunawise
-            </span>
-            <span className={`text-[8px] font-extrabold tracking-[0.22em] uppercase font-outfit transition-colors ${scrolled ? "text-slate-400" : "text-[#2e579d]/80"}`}>
-              Techsolve LLP
-            </span>
+        {/* Brand Logo */}
+        <a href="/" className="flex items-center group">
+          <div className="h-10 w-36 flex items-center justify-start shrink-0 overflow-hidden relative">
+            <div className="absolute inset-0 flex items-center justify-center scale-[2.2]">
+              {config?.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img 
+                  src={config.logoUrl} 
+                  alt="Yunawise Logo" 
+                  className={`h-full w-auto object-contain transition-all duration-300 ${
+                    scrolled 
+                      ? "invert brightness-200 mix-blend-screen" 
+                      : "mix-blend-multiply"
+                  }`} 
+                />
+              ) : (
+                <Image 
+                  src={logo} 
+                  alt="Yunawise Logo" 
+                  className={`h-full w-auto object-contain transition-all duration-300 ${
+                    scrolled 
+                      ? "invert brightness-200 mix-blend-screen" 
+                      : "mix-blend-multiply"
+                  }`} 
+                />
+              )}
+            </div>
           </div>
         </a>
 
@@ -129,10 +153,15 @@ export default function Navbar({ activeSection, config }) {
                     Services
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </a>
-                  <div className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
-                    ${servicesDropdownItems.length > 5 ? "w-[480px] grid grid-cols-2 gap-1" : "w-60 flex flex-col gap-0.5"}
-                    ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {servicesDropdownItems.map((srv) => (
+                  <div 
+                    onMouseLeave={() => setShowAllServices(false)}
+                    className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
+                      ${showAllServices && servicesDropdownItems.length > 6 ? "max-h-[380px] overflow-y-auto" : ""}
+                      ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
+                    {(showAllServices || servicesDropdownItems.length <= 6
+                      ? servicesDropdownItems
+                      : servicesDropdownItems.slice(0, 5)
+                    ).map((srv) => (
                       <a
                         key={srv.href}
                         href={srv.href}
@@ -141,6 +170,18 @@ export default function Navbar({ activeSection, config }) {
                         {srv.label}
                       </a>
                     ))}
+                    {!showAllServices && servicesDropdownItems.length > 6 && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAllServices(true);
+                        }}
+                        className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30"
+                      >
+                        + Show {servicesDropdownItems.length - 5} More
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -164,10 +205,15 @@ export default function Navbar({ activeSection, config }) {
                     Solutions
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </button>
-                  <div className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
-                    ${solutionsDropdownItems.length > 5 ? "w-[480px] grid grid-cols-2 gap-1" : "w-48 flex flex-col gap-0.5"}
-                    ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {solutionsDropdownItems.map((sol) => (
+                  <div 
+                    onMouseLeave={() => setShowAllSolutions(false)}
+                    className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
+                      ${showAllSolutions && solutionsDropdownItems.length > 6 ? "max-h-[380px] overflow-y-auto" : ""}
+                      ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
+                    {(showAllSolutions || solutionsDropdownItems.length <= 6
+                      ? solutionsDropdownItems
+                      : solutionsDropdownItems.slice(0, 5)
+                    ).map((sol) => (
                       <a
                         key={sol.href}
                         href={sol.href}
@@ -176,6 +222,18 @@ export default function Navbar({ activeSection, config }) {
                         {sol.label}
                       </a>
                     ))}
+                    {!showAllSolutions && solutionsDropdownItems.length > 6 && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAllSolutions(true);
+                        }}
+                        className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30"
+                      >
+                        + Show {solutionsDropdownItems.length - 5} More
+                      </button>
+                    )}
                   </div>
                 </div>
               );

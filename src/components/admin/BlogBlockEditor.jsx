@@ -241,6 +241,21 @@ export default function BlogBlockEditor({ block, categories, onChange, onSizeCha
             ))}
           </div>
           <div className="space-y-1"><label className={labelClass}>Section Image Size</label>{pixelSizeControls(block.data)}</div>
+          {(block.data.imageUrl || block.data.imagePreview || block.data.imageFile) && (
+            <div className="space-y-1.5">
+              <label className={labelClass}>Image Position</label>
+              <select
+                value={block.data.imagePosition || "right"}
+                onChange={(e) => update({ imagePosition: e.target.value })}
+                className={inputClass}
+              >
+                <option value="top">Above the content</option>
+                <option value="bottom">Below the content</option>
+                <option value="left">Side by side (Left)</option>
+                <option value="right">Side by side (Right)</option>
+              </select>
+            </div>
+          )}
           {imageUploadBox}
         </>
       );

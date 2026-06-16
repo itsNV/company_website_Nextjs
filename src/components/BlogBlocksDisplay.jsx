@@ -96,42 +96,55 @@ export default function BlogBlocksDisplay({ blocks, blogMeta }) {
 
           case "seo":
             return <SeoSchemaInjector key={block.id || idx} schema={d.schema} />;
+          case "contentSection": {
+            const isHorizontal = d.imageUrl && (d.imagePosition === 'left' || d.imagePosition === 'right');
+            const isReverse = d.imagePosition === 'left';
+            const textContent = (
+              <div className="w-full flex-grow">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 flex items-center justify-center text-2xl shadow-sm">
+                    {d.emoji || "💡"}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold font-outfit text-slate-900 leading-tight pt-2">
+                    {d.title}
+                  </h2>
+                </div>
+                {d.body && (
+                  <p className="text-slate-600 leading-relaxed text-base md:text-lg mb-8 md:pl-[4.5rem]">
+                    {d.body}
+                  </p>
+                )}
+                {d.bulletPoints?.length > 0 && (
+                  <div className="mb-8 md:pl-[4.5rem]">
+                    <BulletListCards items={d.bulletPoints} style={d.bulletStyle || "check"} />
+                  </div>
+                )}
+              </div>
+            );
 
-          case "contentSection":
+            const imageContent = d.imageUrl && (
+              <div className={`${isHorizontal ? 'w-full lg:w-1/2' : 'w-full'} ${(!d.imagePosition || d.imagePosition === 'bottom') ? 'md:pl-[4.5rem]' : ''} flex justify-center shrink-0`}>
+                <div className="w-full rounded-3xl overflow-hidden border border-slate-200/60 shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={d.imageUrl} alt={d.title} style={getImagePixelStyle(d)} className="object-cover w-full" />
+                </div>
+              </div>
+            );
+
             return (
               <section key={block.id || idx} className="py-10 reveal-item">
                 <div className="max-w-4xl mx-auto px-6">
                   <BlockWrapper block={block}>
-                    <article>
-                      <div className="flex items-start gap-4 mb-6">
-                        <div className="w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 flex items-center justify-center text-2xl shadow-sm">
-                          {d.emoji || "💡"}
-                        </div>
-                        <h2 className="text-2xl md:text-3xl font-extrabold font-outfit text-slate-900 leading-tight pt-2">
-                          {d.title}
-                        </h2>
-                      </div>
-                      {d.body && (
-                        <p className="text-slate-600 leading-relaxed text-base md:text-lg mb-8 md:pl-[4.5rem]">
-                          {d.body}
-                        </p>
-                      )}
-                      {d.bulletPoints?.length > 0 && (
-                        <div className="mb-8 md:pl-[4.5rem]">
-                          <BulletListCards items={d.bulletPoints} style={d.bulletStyle || "check"} />
-                        </div>
-                      )}
-                      {d.imageUrl && (
-                        <div className="md:pl-[4.5rem] rounded-3xl overflow-hidden border border-slate-200/60 shadow-lg">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={d.imageUrl} alt={d.title} style={getImagePixelStyle(d)} className="object-cover" />
-                        </div>
-                      )}
+                    <article className={`flex ${isHorizontal ? 'flex-col lg:flex-row' : 'flex-col'} ${isReverse ? 'flex-col-reverse' : ''} ${d.imagePosition === 'left' ? 'lg:flex-row-reverse' : ''} gap-8 items-start`}>
+                      {d.imagePosition === "top" && imageContent}
+                      {textContent}
+                      {d.imagePosition !== "top" && imageContent}
                     </article>
                   </BlockWrapper>
                 </div>
               </section>
             );
+          }
 
           case "text":
             return (
