@@ -68,16 +68,28 @@ export default function AdminNavbar() {
         }`}
       >
         {/* Brand logo */}
-        <Link href="/admin/dashboard" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 flex items-center justify-center shrink-0 p-1 bg-white rounded-xl border border-slate-100 transition-transform duration-300 group-hover:scale-105">
-            <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+        <Link href="/admin/dashboard" className="flex items-center gap-3.5 group">
+          <div className="h-10 w-auto flex items-center justify-start shrink-0">
+            <Image 
+              src={logo} 
+              alt="Yunawise Logo" 
+              className={`h-full w-auto object-contain transition-all duration-300 ${
+                scrolled 
+                  ? "invert brightness-200 mix-blend-screen" 
+                  : "mix-blend-multiply"
+              }`} 
+            />
           </div>
-          <div className="flex flex-col text-left leading-[1.1]">
-            <span className={`text-[13px] font-black tracking-wider uppercase font-outfit transition-colors ${scrolled ? "text-white" : "text-slate-900"}`}>
-              Yunawise
+          <div className="flex flex-col justify-center select-none font-outfit">
+            <span className={`text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
+              scrolled ? "text-white" : "text-[#2e5090]"
+            }`}>
+              YUNAWISE
             </span>
-            <span className={`text-[8px] font-extrabold tracking-[0.22em] uppercase font-outfit transition-colors ${scrolled ? "text-slate-400" : "text-slate-500"}`}>
-              Console
+            <span className={`text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 ${
+              scrolled ? "text-sky-400" : "text-[#2e5090]/90"
+            }`}>
+              TECHSOLVE LLP
             </span>
           </div>
         </Link>

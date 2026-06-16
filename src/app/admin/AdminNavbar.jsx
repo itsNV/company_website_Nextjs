@@ -30,15 +30,21 @@ export default function AdminNavbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#111827]/85 backdrop-blur-xl border-b border-slate-800/80 h-16 w-full flex items-center justify-between px-6 sm:px-10">
       
       {/* Brand logo */}
-      <Link href="/admin/dashboard" className="flex items-center gap-3 group">
-        <div className="w-8 h-8 flex items-center justify-center shrink-0 p-1 bg-white/5 rounded-xl border border-white/10 transition-transform duration-300 group-hover:scale-105">
-          <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+      <Link href="/admin/dashboard" className="flex items-center gap-3.5 group">
+        <div className="h-10 w-auto flex items-center justify-start shrink-0">
+          <Image 
+            src={logo} 
+            alt="Yunawise Logo" 
+            className="h-full w-auto object-contain invert brightness-200 mix-blend-screen" 
+          />
         </div>
-        <div className="flex items-baseline gap-0.5 text-white">
-          <span className="text-sm font-black tracking-wider uppercase font-outfit">
-            Yunawise Console
+        <div className="flex flex-col justify-center select-none font-outfit">
+          <span className="text-[15px] font-black tracking-wider leading-[1.1] text-white">
+            YUNAWISE
           </span>
-          <span className="text-sm font-black font-outfit text-purple-500">.</span>
+          <span className="text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 text-sky-400">
+            TECHSOLVE LLP
+          </span>
         </div>
       </Link>
 

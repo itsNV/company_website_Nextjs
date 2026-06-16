@@ -100,32 +100,42 @@ export default function Navbar({ activeSection, config }) {
       >
         
         {/* Brand Logo */}
-        <a href="/" className="flex items-center group">
-          <div className="h-10 w-36 flex items-center justify-start shrink-0 overflow-hidden relative">
-            <div className="absolute inset-0 flex items-center justify-center scale-[2.2]">
-              {config?.logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img 
-                  src={config.logoUrl} 
-                  alt="Yunawise Logo" 
-                  className={`h-full w-auto object-contain transition-all duration-300 ${
-                    scrolled 
-                      ? "invert brightness-200 mix-blend-screen" 
-                      : "mix-blend-multiply"
-                  }`} 
-                />
-              ) : (
-                <Image 
-                  src={logo} 
-                  alt="Yunawise Logo" 
-                  className={`h-full w-auto object-contain transition-all duration-300 ${
-                    scrolled 
-                      ? "invert brightness-200 mix-blend-screen" 
-                      : "mix-blend-multiply"
-                  }`} 
-                />
-              )}
-            </div>
+        <a href="/" className="flex items-center gap-3.5 group">
+          <div className="h-10 w-auto flex items-center justify-start shrink-0">
+            {config?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img 
+                src={config.logoUrl} 
+                alt="Yunawise Logo" 
+                className={`h-full w-auto object-contain transition-all duration-300 ${
+                  scrolled 
+                    ? "invert brightness-200 mix-blend-screen" 
+                    : "mix-blend-multiply"
+                }`} 
+              />
+            ) : (
+              <Image 
+                src={logo} 
+                alt="Yunawise Logo" 
+                className={`h-full w-auto object-contain transition-all duration-300 ${
+                  scrolled 
+                    ? "invert brightness-200 mix-blend-screen" 
+                    : "mix-blend-multiply"
+                }`} 
+              />
+            )}
+          </div>
+          <div className="flex flex-col justify-center select-none font-outfit">
+            <span className={`text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
+              scrolled ? "text-white" : "text-[#2e5090]"
+            }`}>
+              YUNAWISE
+            </span>
+            <span className={`text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 ${
+              scrolled ? "text-sky-400" : "text-[#2e5090]/90"
+            }`}>
+              TECHSOLVE LLP
+            </span>
           </div>
         </a>
 
