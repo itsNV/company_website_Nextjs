@@ -7,7 +7,7 @@ import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-export default function Footer() {
+export default function Footer({ config }) {
   const handleScrollToTop = () => {
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -53,7 +53,12 @@ export default function Footer() {
                         {/* Brand Logo and Stacked Subtitle */}
                                 <a href="/" className="flex items-center gap-3 group">
                                   <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                                    <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+                                    {config?.logoUrl ? (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src={config.logoUrl} alt="Yunawise Logo" className="w-full h-full object-contain" />
+                                    ) : (
+                                      <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+                                    )}
                                   </div>
                                   <div className="flex flex-col text-left leading-[1.1]">
                                     <span className="text-[18px] font-black tracking-wider uppercase font-outfit transition-colors text-black" >
@@ -125,7 +130,7 @@ export default function Footer() {
                         <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800">
                             Our Focus
                         </h4>
-                        <ul className="flex flex-col gap-3 text-[15px] font-semibold text-slate-500">
+                        <ul className={`grid gap-3 text-[15px] font-semibold text-slate-500 ${focusItems.length > 5 ? "grid-cols-2 gap-x-6 w-80 md:w-96 lg:w-[320px]" : "grid-cols-1"}`}>
                             {focusItems.map((item) => (
                                 <li key={item.href}>
                                     <Link href={item.href} className="hover:text-blue-600 transition-colors">

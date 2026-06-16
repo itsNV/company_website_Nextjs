@@ -2,7 +2,7 @@
 
 import AdminGuard from "@/components/AdminGuard";
 import Link from "next/link";
-import { BookOpen, Laptop, Cpu, ArrowRight, Activity, ShieldCheck, Database, Calendar } from "lucide-react";
+import { BookOpen, Laptop, Cpu, ArrowRight, Activity, ShieldCheck, Database, Calendar, Settings } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
 
 
@@ -34,6 +34,15 @@ export default function Dashboard() {
       color: "from-emerald-500/5 to-teal-500/5 hover:border-emerald-500/30",
       iconColor: "text-emerald-600 bg-emerald-50 border-emerald-100",
       badge: "Enterprise",
+    },
+    {
+      title: "Global Settings",
+      description: "Configure homepage visual layouts, orbital tags lists, meta descriptions, logo uploads, and favicon files.",
+      icon: Settings,
+      href: "/admin/settings",
+      color: "from-slate-500/5 to-blue-500/5 hover:border-slate-500/30",
+      iconColor: "text-slate-600 bg-slate-50 border-slate-100",
+      badge: "Configuration",
     },
   ];
 

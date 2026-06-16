@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Compass, Palette, Rocket, Target, Eye, ShieldAlert } from "lucide-react";
 
-export default function About() {
+export default function About({ config }) {
   const [activeTab, setActiveTab] = useState("mission");
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -102,13 +102,13 @@ export default function About() {
         {/* Workflow Title */}
         <div className="reveal-item text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3.5 py-1.5 rounded-full">
-            How We Work
+            {config?.aboutWorkflowSubtitle || "How We Work"}
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            Ways we build high-performance products.
+            {config?.aboutWorkflowTitle || "Ways we build high-performance products."}
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
-            Yunawise is a full-service digital studio delivering strategy, design, and development under one roof. We structure our lifecycle to ensure efficiency and speed.
+            {config?.aboutWorkflowDesc || "Yunawise is a full-service digital studio delivering strategy, design, and development under one roof. We structure our lifecycle to ensure efficiency and speed."}
           </p>
         </div>
 
@@ -116,6 +116,22 @@ export default function About() {
         <div className={`reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 ${isVisible ? "active" : ""}`}>
           {workflowSteps.map((step, idx) => {
             const Icon = step.icon;
+            let displayTitle = step.title;
+            let displayDesc = step.description;
+
+            if (config) {
+              if (idx === 0 && config.step1Title) {
+                displayTitle = config.step1Title;
+                displayDesc = config.step1Desc || displayDesc;
+              } else if (idx === 1 && config.step2Title) {
+                displayTitle = config.step2Title;
+                displayDesc = config.step2Desc || displayDesc;
+              } else if (idx === 2 && config.step3Title) {
+                displayTitle = config.step3Title;
+                displayDesc = config.step3Desc || displayDesc;
+              }
+            }
+
             return (
               <div
                 key={idx}
@@ -132,10 +148,10 @@ export default function About() {
                     </span>
                   </div>
                   <h3 className="text-xl font-bold font-outfit text-slate-900 mb-3">
-                    {step.title}
+                    {displayTitle}
                   </h3>
                   <p className="text-slate-600 leading-relaxed text-sm">
-                    {step.description}
+                    {displayDesc}
                   </p>
                 </div>
               </div>

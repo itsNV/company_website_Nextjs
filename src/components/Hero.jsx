@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, Zap, Sparkles } from "lucide-react";
 
-export default function Hero() {
+export default function Hero({ config }) {
   const [heroReady, setHeroReady] = useState(false);
   const [angleOffset, setAngleOffset] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -240,8 +240,8 @@ export default function Hero() {
           onMouseLeave={() => setIsPaused(false)}
         >
           
-          {/* Orbit Rings Wrapper centered exactly behind this content block (Hidden on mobile) */}
-          <div className="absolute inset-0 pointer-events-none select-none z-0 hidden sm:flex items-center justify-center">
+          {/* Orbit Rings Wrapper centered exactly behind this content block (Hidden on mobile/tablet) */}
+          <div className="absolute inset-0 pointer-events-none select-none z-0 hidden lg:flex items-center justify-center">
             <div 
               style={{
                 width: `${dimensions.rx * 2}px`,
@@ -280,8 +280,8 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Mobile Running Tech Line 1 (Above Heading) */}
-          <div className="sm:hidden w-full overflow-hidden py-3 mb-6 relative z-20 pointer-events-none select-none">
+          {/* Running Tech Line 1 (Above Heading, shown on mobile/tablet) */}
+          <div className="lg:hidden w-full overflow-hidden py-3 mb-6 relative z-20 pointer-events-none select-none">
             <div className="animate-marquee-left flex gap-6">
               {[...techIcons, ...techIcons].map((icon, idx) => (
                 <div key={idx} className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center shrink-0">
@@ -294,28 +294,55 @@ export default function Hero() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-[62px] font-extrabold font-outfit text-slate-900 leading-[1.12] tracking-tight mb-8 max-w-4xl select-none z-20 relative">
-            <span className="split-line-mask block">
-              <span className="split-line-text">Developing Mobile</span>
-            </span>
-            <span className="split-line-mask block mt-1">
-              <span className="split-line-text">
-                Apps,Websites, Custom
-              </span>
-            </span>
-            <span className="split-line-mask block mt-1">
-              <span className="split-line-text">
-                Softwares and tailor-made
-              </span>
-            </span>
-            <span className="split-line-mask block mt-1">
-              <span className="split-line-text">
-                digital solutions.
-              </span>
-            </span>
+            {config?.heroTitleLine1 ? (
+              <>
+                {config.heroTitleLine1 && (
+                  <span className="split-line-mask block">
+                    <span className="split-line-text">{config.heroTitleLine1}</span>
+                  </span>
+                )}
+                {config.heroTitleLine2 && (
+                  <span className="split-line-mask block mt-1">
+                    <span className="split-line-text">{config.heroTitleLine2}</span>
+                  </span>
+                )}
+                {config.heroTitleLine3 && (
+                  <span className="split-line-mask block mt-1">
+                    <span className="split-line-text">{config.heroTitleLine3}</span>
+                  </span>
+                )}
+                {config.heroTitleLine4 && (
+                  <span className="split-line-mask block mt-1">
+                    <span className="split-line-text">{config.heroTitleLine4}</span>
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <span className="split-line-mask block">
+                  <span className="split-line-text">Developing Mobile</span>
+                </span>
+                <span className="split-line-mask block mt-1">
+                  <span className="split-line-text">Apps,Websites, Custom</span>
+                </span>
+                <span className="split-line-mask block mt-1">
+                  <span className="split-line-text">Softwares and tailor-made</span>
+                </span>
+                <span className="split-line-mask block mt-1">
+                  <span className="split-line-text">digital solutions.</span>
+                </span>
+              </>
+            )}
           </h1>
 
+          {config?.heroDescription && (
+            <p className="text-slate-600 text-sm md:text-base max-w-xl mx-auto mb-8 z-20 relative font-medium">
+              {config.heroDescription}
+            </p>
+          )}
+
           <div className="hero-enter hero-enter-delay-4 flex flex-wrap gap-2.5 max-w-2xl mb-12 justify-center z-20 relative">
-            {throwableTags.map((label) => (
+            {(config?.throwableTags?.length > 0 ? config.throwableTags : throwableTags).map((label) => (
               <span
                 key={label}
                 className="throwable-badge hover-box select-none px-4 py-2 rounded-xl bg-white border border-slate-200/80 text-slate-800 text-xs font-bold shadow-sm"
@@ -327,23 +354,23 @@ export default function Hero() {
 
           <div className="hero-enter hero-enter-delay-5 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto z-20 relative">
             <a
-              href="#contact"
+              href={config?.ctaLink1 || "#contact"}
               className="hover-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-black text-white font-bold hover:bg-accent text-center shadow-lg"
             >
-              Start Your Project
+              {config?.ctaText1 || "Start Your Project"}
               <Zap className="w-4 h-4 fill-white" />
             </a>
             <a
-              href="#works"
+              href={config?.ctaLink2 || "#works"}
               className="hover-btn hover-btn-outline inline-flex items-center justify-center gap-1.5 px-8 py-4 rounded-full bg-white text-slate-800 font-semibold border border-slate-200 text-center shadow-sm"
             >
-              Explore Our Work
+              {config?.ctaText2 || "Explore Our Work"}
               <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
 
-          {/* Mobile Running Tech Line 2 (After CTA Buttons) */}
-          <div className="sm:hidden w-full overflow-hidden py-3 mt-10 relative z-20 pointer-events-none select-none">
+          {/* Running Tech Line 2 (After CTA Buttons, shown on mobile/tablet) */}
+          <div className="lg:hidden w-full overflow-hidden py-3 mt-10 relative z-20 pointer-events-none select-none">
             <div className="animate-marquee-right flex gap-6">
               {[...techIcons, ...techIcons].map((icon, idx) => (
                 <div key={idx} className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center shrink-0">

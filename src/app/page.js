@@ -10,6 +10,8 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SectionNavigator from "@/components/SectionNavigator";
 import { getProjects } from "@/lib/firebase/projects";
+import { db } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 
 export default function Home() {
@@ -19,6 +21,39 @@ export default function Home() {
 
   const [activeSection, setActiveSection] = useState("home");
   const [globalScrollProgress, setGlobalScrollProgress] = useState(0);
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setConfig(data);
+          
+          if (data.seoTitle) document.title = data.seoTitle;
+          const metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc && data.seoDescription) {
+            metaDesc.setAttribute("content", data.seoDescription);
+          }
+
+          if (data.faviconUrl) {
+            let link = document.querySelector("link[rel~='icon']");
+            if (!link) {
+              link = document.createElement("link");
+              link.rel = "icon";
+              document.getElementsByTagName("head")[0].appendChild(link);
+            }
+            link.href = data.faviconUrl;
+          }
+        }
+      } catch (e) {
+        console.error("Error loading homepage config:", e);
+      }
+    }
+    loadConfig();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -84,7 +119,7 @@ export default function Home() {
   return (
     <>
       
-      <Navbar activeSection={activeSection} />
+      <Navbar activeSection={activeSection} config={config} />
       <SectionNavigator />
       {/* Premium Top Satin Gradient Vignette Mask */}
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
@@ -138,9 +173,9 @@ export default function Home() {
           </svg>
         </div>
 
-        <Hero />
+        <Hero config={config} />
         
-        <About />
+        <About config={config} />
         
         <Services />
         
@@ -150,7 +185,7 @@ export default function Home() {
         
         <Contact />
       </main>
-      <Footer />
+      <Footer config={config} />
     </>
   );
 }

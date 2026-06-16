@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-export default function Navbar({ activeSection }) {
+export default function Navbar({ activeSection, config }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
@@ -75,20 +75,25 @@ export default function Navbar({ activeSection }) {
 
   return (
     <header
-      className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 md:px-8 transition-all duration-300"
+      className="fixed top-3 sm:top-6 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 md:px-8 transition-all duration-300"
     >
       <div
         className={`w-full max-w-7xl rounded-full flex items-center justify-between border transition-all duration-300 relative ${
           scrolled
-            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
-            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-8 py-4 shadow-sm"
+            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-4 py-2.5 sm:px-6 sm:py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
+            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-5 py-3 sm:px-8 sm:py-4 shadow-sm"
         }`}
       >
         
         {/* Brand Logo and Stacked Subtitle */}
         <a href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 flex items-center justify-center shrink-0">
-            <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+            {config?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={config.logoUrl} alt="Yunawise Logo" className="w-full h-full object-contain" />
+            ) : (
+              <Image src={logo} alt="Yunawise Logo" className="w-full h-full object-contain" />
+            )}
           </div>
           <div className="flex flex-col text-left leading-[1.1]">
             <span className={`text-[15px] font-black tracking-wider uppercase font-outfit transition-colors ${scrolled ? "text-white" : "text-[#2e579d]"}`}>
@@ -101,7 +106,7 @@ export default function Navbar({ activeSection }) {
         </a>
 
         {/* Premium Quiet Nav Links with Left-to-Right Draw & Active Highlight */}
-        <nav className="hidden xl:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
           {links.map((link, idx) => {
             const isActive = pathname === link.href || (link.href.startsWith("/#") && pathname === "/" && activeSection === link.href.substring(2));
             
@@ -124,7 +129,8 @@ export default function Navbar({ activeSection }) {
                     Services
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </a>
-                  <div className={`absolute top-full left-0 mt-2 w-60 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                  <div className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                    ${servicesDropdownItems.length > 5 ? "w-[480px] grid grid-cols-2 gap-1" : "w-60 flex flex-col gap-0.5"}
                     ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
                     {servicesDropdownItems.map((srv) => (
                       <a
@@ -158,7 +164,8 @@ export default function Navbar({ activeSection }) {
                     Solutions
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </button>
-                  <div className={`absolute top-full left-0 mt-2 w-48 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                  <div className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 
+                    ${solutionsDropdownItems.length > 5 ? "w-[480px] grid grid-cols-2 gap-1" : "w-48 flex flex-col gap-0.5"}
                     ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
                     {solutionsDropdownItems.map((sol) => (
                       <a
@@ -195,7 +202,7 @@ export default function Navbar({ activeSection }) {
         </nav>
 
         {/* Right Ultra-Minimal CTA */}
-        <div className="hidden xl:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <a
             href="/contact"
             className={`hover-btn px-4.5 py-1.5 rounded-full hover:bg-primary text-[12px] font-extrabold tracking-wider uppercase flex items-center gap-1 shadow-sm transition-all
@@ -209,7 +216,7 @@ export default function Navbar({ activeSection }) {
         {/* Mobile Menu Trigger */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`p-2 -mr-2 xl:hidden transition-colors ${
+          className={`p-2 -mr-2 lg:hidden transition-colors ${
             scrolled ? "text-slate-200 hover:text-primary" : "text-slate-700 hover:text-primary"
           }`}
           aria-label="Toggle navigation menu"
@@ -219,7 +226,7 @@ export default function Navbar({ activeSection }) {
 
         {/* Mobile Nav Dropdown Capsule Card */}
         <div
-          className={`absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl border border-slate-200/40 p-6 shadow-xl transition-all duration-300 xl:hidden ${
+          className={`absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl border border-slate-200/40 p-6 shadow-xl transition-all duration-300 lg:hidden ${
             isOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-4 invisible pointer-events-none"
           }`}
         >
@@ -235,8 +242,8 @@ export default function Navbar({ activeSection }) {
                       Services
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileServicesOpen ? "rotate-180 text-primary" : ""}`} />
                     </button>
-                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
-                      mobileServicesOpen ? "max-h-80 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-55 rounded-2xl ${
+                      mobileServicesOpen ? "max-h-80 overflow-y-auto p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
                     }`}>
                       <a
                         href="/services"
@@ -276,8 +283,8 @@ export default function Navbar({ activeSection }) {
                       Solutions
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileSolutionsOpen ? "rotate-180 text-primary" : ""}`} />
                     </button>
-                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
-                      mobileSolutionsOpen ? "max-h-80 p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-55 rounded-2xl ${
+                      mobileSolutionsOpen ? "max-h-80 overflow-y-auto p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
                     }`}>
                       {solutionsDropdownItems.map((sol) => (
                         <a

@@ -4,27 +4,24 @@ import React, { useEffect, useState } from "react";
 import AdminGuard from "@/components/AdminGuard";
 import AdminNavbar from "@/components/AdminNavbar";
 import { 
-  Sparkles, 
-  Loader2, 
-  AlertCircle, 
   PlusCircle, 
   Edit3, 
   Search, 
-  Save, 
   X, 
-  Plus, 
   Trash2,
-  Laptop,
-  Award,
-  ShieldCheck,
-  CheckCircle2,
-  Compass,
-  HelpCircle,
-  Link2
+  AlertCircle,
+  Laptop
 } from "lucide-react";
-import { db } from "@/lib/firebase/firebase";
-import { collection, setDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
-import { serviceIconMap, serviceIconOptions } from "@/lib/serviceIcons";
+import { db, storage } from "@/lib/firebase/firebase";
+import { collection, setDoc, getDocs, doc, deleteDoc, query } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import AdminPageBuilder from "@/components/admin/AdminPageBuilder";
+import { 
+  getDefaultPageBlocks, 
+  pagePayloadToBlocks, 
+  blocksToPagePayload, 
+  uploadPageBlockImages 
+} from "@/lib/pageBuilderBlocks";
 
 export default function ServicesAdminPage() {
   const [services, setServices] = useState([]);
@@ -39,41 +36,12 @@ export default function ServicesAdminPage() {
   // Search
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Service form states
+  // Basic Fields
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [heroBadge, setHeroBadge] = useState("");
-  const [heroDescription, setHeroDescription] = useState("");
-  const [ctaText, setCtaText] = useState("");
-  const [ctaLink, setCtaLink] = useState("");
 
-  // Dynamic lists states
-  // const [benefits, setBenefits] = useState([]);
-  // const [newBenefit, setNewBenefit] = useState("");
-
-  const [servicesOffered, setServicesOffered] = useState([]);
-  const [newServiceOffered, setNewServiceOffered] = useState("");
-
-  // Features
-  const [features, setFeatures] = useState([]);
-  const [newFeatureTitle, setNewFeatureTitle] = useState("");
-  const [newFeatureDesc, setNewFeatureDesc] = useState("");
-  const [newFeatureIcon, setNewFeatureIcon] = useState("Palette");
-
-  // Process Steps
-  const [processSteps, setProcessSteps] = useState([]);
-  const [newStepNumber, setNewStepNumber] = useState("");
-  const [newStepTitle, setNewStepTitle] = useState("");
-  const [newStepDesc, setNewStepDesc] = useState("");
-
-  // FAQs
-  const [faqs, setFaqs] = useState([]);
-  const [newFaqQuestion, setNewFaqQuestion] = useState("");
-  const [newFaqAnswer, setNewFaqAnswer] = useState("");
-
-  // SEO
-  const [seoTitle, setSeoTitle] = useState("");
-  const [seoDescription, setSeoDescription] = useState("");
+  // Page builder blocks
+  const [blocks, setBlocks] = useState([]);
 
   // Auto-slug generator
   const generateSlug = (text) => {
@@ -81,15 +49,32 @@ export default function ServicesAdminPage() {
       .toString()
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, "-")          // Replace spaces with -
-      .replace(/[^\w\-]+/g, "")       // Remove all non-word chars
-      .replace(/\-\-+/g, "-");        // Replace multiple - with single -
+      .replace(/\s+/g, "-")          
+      .replace(/[^\w\-]+/g, "")       
+      .replace(/\-\-+/g, "-");        
   };
 
   const handleNameChange = (e) => {
     const val = e.target.value;
     setName(val);
-    setSlug(generateSlug(val));
+    const generated = generateSlug(val);
+    setSlug(generated);
+
+    // Sync hero title automatically if user hasn't customized it heavily
+    const updated = blocks.map(b => {
+      if (b.type === "hero") {
+        return {
+          ...b,
+          data: {
+            ...b.data,
+            title: val,
+            slug: generated
+          }
+        };
+      }
+      return b;
+    });
+    setBlocks(updated);
   };
 
   const fetchServices = async () => {
@@ -111,184 +96,70 @@ export default function ServicesAdminPage() {
 
   useEffect(() => {
     fetchServices();
+    setBlocks(getDefaultPageBlocks());
   }, []);
 
-  // Benefit handlers
-  // const addBenefit = () => {
-  //   if (newBenefit.trim()) {
-  //     setBenefits([...benefits, newBenefit.trim()]);
-  //     setNewBenefit("");
-  //   }
-  // };
-
-  // const removeBenefit = (index) => {
-  //   setBenefits(benefits.filter((_, idx) => idx !== index));
-  // };
-
-  // Service offered handlers
-  const addServiceOffered = () => {
-    if (newServiceOffered.trim()) {
-      setServicesOffered([...servicesOffered, newServiceOffered.trim()]);
-      setNewServiceOffered("");
-    }
-  };
-
-  const removeServiceOffered = (index) => {
-    setServicesOffered(servicesOffered.filter((_, idx) => idx !== index));
-  };
-
-  // Feature handlers
-  const addFeature = () => {
-    if (newFeatureTitle.trim() && newFeatureDesc.trim()) {
-      setFeatures([
-        ...features,
-        {
-          title: newFeatureTitle.trim(),
-          desc: newFeatureDesc.trim(),
-          icon: newFeatureIcon
-        }
-      ]);
-      setNewFeatureTitle("");
-      setNewFeatureDesc("");
-      setNewFeatureIcon("Palette");
-    }
-  };
-
-  const removeFeature = (index) => {
-    setFeatures(features.filter((_, idx) => idx !== index));
-  };
-
-  // Process Steps handlers
-  const addProcessStep = () => {
-    if (newStepNumber.trim() && newStepTitle.trim() && newStepDesc.trim()) {
-      setProcessSteps([
-        ...processSteps,
-        {
-          step: newStepNumber.trim(),
-          title: newStepTitle.trim(),
-          desc: newStepDesc.trim()
-        }
-      ]);
-      setNewStepNumber("");
-      setNewStepTitle("");
-      setNewStepDesc("");
-    }
-  };
-
-  const removeProcessStep = (index) => {
-    setProcessSteps(processSteps.filter((_, idx) => idx !== index));
-  };
-
-  // FAQ handlers
-  const addFaq = () => {
-    if (newFaqQuestion.trim() && newFaqAnswer.trim()) {
-      setFaqs([
-        ...faqs,
-        {
-          q: newFaqQuestion.trim(),
-          a: newFaqAnswer.trim()
-        }
-      ]);
-      setNewFaqQuestion("");
-      setNewFaqAnswer("");
-    }
-  };
-
-  const removeFaq = (index) => {
-    setFaqs(faqs.filter((_, idx) => idx !== index));
-  };
-
-  // Reset form helper
   const resetForm = () => {
     setName("");
     setSlug("");
-    setHeroBadge("");
-    setHeroDescription("");
-    setCtaText("");
-    setCtaLink("");
-    // setBenefits([]);
-    setServicesOffered([]);
-    setFeatures([]);
-    setProcessSteps([]);
-    setFaqs([]);
-    setSeoTitle("");
-    setSeoDescription("");
+    setBlocks(getDefaultPageBlocks());
     setEditingServiceId(null);
   };
 
-  // Form submit handler (Create/Update)
-  const handleSubmitService = async (e) => {
-    e.preventDefault();
+  const handlePublish = async () => {
     if (!name || !slug) {
-      setMessage({ type: "error", text: "Service name and slug are required." });
+      setMessage({ type: "error", text: "Service Name and Slug are required to publish." });
       return;
     }
 
     setSubmitting(true);
     setMessage({ type: "", text: "" });
 
-    const serviceData = {
-      name,
-      slug,
-      heroBadge,
-      heroDescription,
-      ctaText,
-      ctaLink,
-      // benefits,
-      servicesOffered,
-      features,
-      processSteps,
-      faqs,
-      seoTitle,
-      seoDescription,
-      updatedAt: new Date().toISOString()
-    };
-
     try {
-      if (editingServiceId) {
-        // Edit Mode
-        const docRef = doc(db, "services", editingServiceId);
-        await updateDoc(docRef, serviceData);
-        setMessage({ type: "success", text: "Service updated successfully!" });
-      } else {
-        // Create Mode
-        await setDoc(doc(db, "services", slug), {
-          ...serviceData,
-          createdAt: new Date().toISOString()
-        });
-        setMessage({ type: "success", text: "Service created successfully!" });
-      }
+      // 1. Upload high-res images to Firebase Storage
+      const uploadedBlocks = await uploadPageBlockImages(blocks, storage, uploadBytes, getDownloadURL, ref);
+
+      // 2. Map visual blocks payload into dynamic & legacy fields
+      const payload = {
+        ...blocksToPagePayload(uploadedBlocks),
+        name,
+        slug,
+        updatedAt: new Date().toISOString()
+      };
+
+      // 3. Save to Firestore
+      const targetId = editingServiceId || slug;
+      await setDoc(doc(db, "services", targetId), {
+        ...payload,
+        createdAt: editingServiceId ? (services.find(s => s.id === editingServiceId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+      });
+
+      setMessage({ 
+        type: "success", 
+        text: editingServiceId ? "Service configurations saved successfully!" : "New Service deployed successfully!" 
+      });
 
       resetForm();
       fetchServices();
       setActiveTab("edit");
     } catch (err) {
-      setMessage({ type: "error", text: err.message || "Failed to save service details." });
+      setMessage({ type: "error", text: err.message || "Failed to publish service catalog updates." });
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Edit action
   const handleEditSelect = (service) => {
     setEditingServiceId(service.id);
     setName(service.name || "");
     setSlug(service.slug || "");
-    setHeroBadge(service.heroBadge || "");
-    setHeroDescription(service.heroDescription || "");
-    setCtaText(service.ctaText || "");
-    setCtaLink(service.ctaLink || "");
-    // setBenefits(service.benefits || []);
-    setServicesOffered(service.servicesOffered || []);
-    setFeatures(service.features || []);
-    setProcessSteps(service.processSteps || []);
-    setFaqs(service.faqs || []);
-    setSeoTitle(service.seoTitle || "");
-    setSeoDescription(service.seoDescription || "");
-    setActiveTab("create"); // Switch to form
+    
+    // Parse layout payload back into visual drag-and-drop blocks array
+    const mappedBlocks = pagePayloadToBlocks(service);
+    setBlocks(mappedBlocks);
+    setActiveTab("create"); 
   };
 
-  // Delete action
   const handleDeleteService = async (id) => {
     if (!window.confirm("Are you sure you want to delete this service permanently?")) return;
     try {
@@ -300,7 +171,7 @@ export default function ServicesAdminPage() {
   };
 
   const filteredServices = services.filter((s) =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase())
+    s.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -310,22 +181,20 @@ export default function ServicesAdminPage() {
         <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
 
         <main className="flex-grow pt-28 pb-16 px-6 max-w-7xl mx-auto w-full z-10">
-          {/* Top glow effects */}
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-blue-200/30 rounded-full blur-[140px] pointer-events-none" />
 
-          {/* Header Row */}
+          {/* Header row */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-slate-200 pb-6 mb-10">
             <div>
               <h1 className="text-3xl font-black font-outfit text-slate-900 tracking-wide flex items-center gap-1.5">
-                Services Console
+                Services Builder
                 <span className="text-blue-600">.</span>
               </h1>
               <p className="text-slate-500 text-xs mt-1 uppercase tracking-wider font-semibold">
-                Yunawise Solutions Core Catalog Manager
+                Visual Drag & Drop service configurator
               </p>
             </div>
 
-            {/* Mode selection buttons */}
             <div className="flex items-center gap-3 bg-white border border-slate-200 p-1.5 rounded-2xl shadow-sm">
               <button
                 onClick={() => { setActiveTab("create"); resetForm(); }}
@@ -365,18 +234,17 @@ export default function ServicesAdminPage() {
           )}
 
           {activeTab === "create" ? (
-            <form onSubmit={handleSubmitService} className="max-w-4xl mx-auto space-y-8">
-              {/* Form Heading info */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <div className="space-y-6">
+              {/* Basic configuration box */}
+              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-xl max-w-4xl mx-auto">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
                   <Laptop className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-wider font-outfit">
-                    {editingServiceId ? "Modify Existing Service" : "New Service Configuration"}
+                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">
+                    {editingServiceId ? "Modify Catalog Details" : "Setup New Service Track"}
                   </h2>
                 </div>
 
-                {/* Basic Information section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Service Name</label>
                     <input
@@ -385,488 +253,66 @@ export default function ServicesAdminPage() {
                       placeholder="e.g. Website Development"
                       value={name}
                       onChange={handleNameChange}
-                      className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-550 tracking-wider font-semibold">URL Slug (Auto-Generated)</label>
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">URL Slug</label>
                     <input
                       type="text"
                       required
-                      placeholder="website-development"
+                      placeholder="e.g. website-development"
                       value={slug}
                       onChange={(e) => setSlug(generateSlug(e.target.value))}
-                      className="w-full h-11 px-4 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl text-sm outline-none cursor-not-allowed"
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Hero Badge Text</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Modern Web Solutions"
-                      value={heroBadge}
-                      onChange={(e) => setHeroBadge(e.target.value)}
-                      className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase text-slate-550 tracking-wider">Hero Description</label>
-                    <textarea
-                      rows={4}
-                      placeholder="High-converting explanation displayed directly below hero badge..."
-                      value={heroDescription}
-                      onChange={(e) => setHeroDescription(e.target.value)}
-                      className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all resize-none"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">CTA Button Text</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Start Your Project"
-                      value={ctaText}
-                      onChange={(e) => setCtaText(e.target.value)}
-                      className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-550 tracking-wider">CTA Target Link</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. /contact"
-                      value={ctaLink}
-                      onChange={(e) => setCtaLink(e.target.value)}
-                      className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                      className="w-full h-11 px-4 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl text-xs outline-none"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Benefits Section */}
-              {/* <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-2">
-                  <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">Benefits Array</h3>
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="e.g. Improves customer loyalty"
-                    value={newBenefit}
-                    onChange={(e) => setNewBenefit(e.target.value)}
-                    className="flex-grow h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addBenefit(); } }}
-                  />
-                  <button
-                    type="button"
-                    onClick={addBenefit}
-                    className="h-11 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1 shrink-0"
-                  >
-                    <Plus className="w-4 h-4" /> Add Benefit
-                  </button>
-                </div>
-
-                {benefits.length > 0 && (
-                  <div className="flex flex-wrap gap-2.5 pt-3">
-                    {benefits.map((b, idx) => (
-                      <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-800 text-xs font-semibold">
-                        {b}
-                        <button type="button" onClick={() => removeBenefit(idx)} className="hover:text-blue-900 focus:outline-none">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div> */}
-
-              {/* Services Offered Section */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-2">
-                  <PlusCircle className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">Services Offered</h3>
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="e.g. Custom Logo Design"
-                    value={newServiceOffered}
-                    onChange={(e) => setNewServiceOffered(e.target.value)}
-                    className="flex-grow h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addServiceOffered(); } }}
-                  />
-                  <button
-                    type="button"
-                    onClick={addServiceOffered}
-                    className="h-11 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1 shrink-0"
-                  >
-                    <Plus className="w-4 h-4" /> Add Service
-                  </button>
-                </div>
-
-                {servicesOffered.length > 0 && (
-                  <div className="flex flex-wrap gap-2.5 pt-3">
-                    {servicesOffered.map((s, idx) => (
-                      <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-purple-800 text-xs font-semibold">
-                        {s}
-                        <button type="button" onClick={() => removeServiceOffered(idx)} className="hover:text-purple-900 focus:outline-none">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+              {/* Visual Page Builder */}
+              <div className="mt-6">
+                <AdminPageBuilder 
+                  blocks={blocks}
+                  onChange={setBlocks}
+                  onPublish={handlePublish}
+                  publishing={submitting}
+                  publishLabel={editingServiceId ? "Save Changes" : "Create Service"}
+                />
               </div>
-
-              {/* Features Repeatable Section */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-4">
-                  <Award className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">Core Features Scope</h3>
-                </div>
-
-                {/* Sub-inputs to add a feature */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl p-5">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Feature Title</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Creative Layouts"
-                      value={newFeatureTitle}
-                      onChange={(e) => setNewFeatureTitle(e.target.value)}
-                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/10"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-3">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Feature Icon</label>
-                    <div className="flex flex-wrap gap-2 p-3 bg-white border border-slate-200 rounded-xl max-h-36 overflow-y-auto">
-                      {serviceIconOptions.map((iconName) => {
-                        const Icon = serviceIconMap[iconName];
-                        const isSelected = newFeatureIcon === iconName;
-                        return (
-                          <button
-                            key={iconName}
-                            type="button"
-                            title={iconName}
-                            onClick={() => setNewFeatureIcon(iconName)}
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-                              isSelected
-                                ? "border-blue-500 bg-blue-50 text-blue-600 ring-2 ring-blue-500/20"
-                                : "border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-300"
-                            }`}
-                          >
-                            <Icon className="w-4 h-4" />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-3">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Feature Description</label>
-                    <textarea
-                      rows={2}
-                      placeholder="e.g. Modern UI structure configured from strategy maps."
-                      value={newFeatureDesc}
-                      onChange={(e) => setNewFeatureDesc(e.target.value)}
-                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500 resize-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-3 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={addFeature}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1"
-                    >
-                      <Plus className="w-4 h-4" /> Add Feature Item
-                    </button>
-                  </div>
-                </div>
-
-                {features.length > 0 && (
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Features Added ({features.length})</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {features.map((feat, idx) => {
-                        const Icon = serviceIconMap[feat.icon] || serviceIconMap.Palette;
-                        return (
-                          <div key={idx} className="relative p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-start gap-4 pr-10">
-                            <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 shrink-0">
-                              <Icon className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <h5 className="font-bold text-sm text-slate-900">{feat.title}</h5>
-                              <p className="text-xs text-slate-500 mt-1 leading-relaxed">{feat.desc}</p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => removeFeature(idx)}
-                              className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Process Steps Section */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-4">
-                  <Compass className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">Process Steps Timeline</h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl p-5">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Step Number</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 01"
-                      value={newStepNumber}
-                      onChange={(e) => setNewStepNumber(e.target.value)}
-                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-2">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Step Title</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Research & Strategy"
-                      value={newStepTitle}
-                      onChange={(e) => setNewStepTitle(e.target.value)}
-                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 md:col-span-3">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Step Description</label>
-                    <textarea
-                      rows={2}
-                      placeholder="e.g. Investigate business demographics and audit layout designs."
-                      value={newStepDesc}
-                      onChange={(e) => setNewStepDesc(e.target.value)}
-                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500 resize-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-3 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={addProcessStep}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1"
-                    >
-                      <Plus className="w-4 h-4" /> Add Process Step
-                    </button>
-                  </div>
-                </div>
-
-                {processSteps.length > 0 && (
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Lifecycle Steps Added ({processSteps.length})</h4>
-                    <div className="space-y-3">
-                      {processSteps.map((step, idx) => (
-                        <div key={idx} className="relative p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-start gap-4 pr-10">
-                          <span className="text-2xl font-black font-outfit text-blue-600 shrink-0">{step.step}</span>
-                          <div>
-                            <h5 className="font-bold text-sm text-slate-900">{step.title}</h5>
-                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">{step.desc}</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => removeProcessStep(idx)}
-                            className="absolute top-5 right-5 text-slate-400 hover:text-rose-500 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* FAQs repeat section */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-4">
-                  <HelpCircle className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">Frequently Asked Questions</h3>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 bg-slate-50/50 border border-slate-200/50 rounded-2xl p-5">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Question text</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. What is branding?"
-                      value={newFaqQuestion}
-                      onChange={(e) => setNewFaqQuestion(e.target.value)}
-                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Answer detail</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Branding is the creation of distinct guidelines..."
-                      value={newFaqAnswer}
-                      onChange={(e) => setNewFaqAnswer(e.target.value)}
-                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:border-blue-500 resize-none"
-                    />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={addFaq}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1"
-                    >
-                      <Plus className="w-4 h-4" /> Add FAQ Item
-                    </button>
-                  </div>
-                </div>
-
-                {faqs.length > 0 && (
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">FAQs Added ({faqs.length})</h4>
-                    <div className="space-y-3">
-                      {faqs.map((faq, idx) => (
-                        <div key={idx} className="relative p-5 rounded-2xl border border-slate-200 bg-white shadow-sm pr-12">
-                          <h5 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                            {faq.q}
-                          </h5>
-                          <p className="text-xs text-slate-500 mt-2 leading-relaxed pl-4 border-l border-slate-100">{faq.a}</p>
-                          <button
-                            type="button"
-                            onClick={() => removeFaq(idx)}
-                            className="absolute top-5 right-5 text-slate-400 hover:text-rose-500 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* SEO parameters */}
-              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-2">
-                  <ShieldCheck className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">SEO Optimization Meta</h3>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">SEO Title Tag</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Branding & Logo Design Services | Yunawise"
-                      value={seoTitle}
-                      onChange={(e) => setSeoTitle(e.target.value)}
-                      className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-slate-550 tracking-wider">SEO Meta Description</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Search index snippet description under 160 characters..."
-                      value={seoDescription}
-                      onChange={(e) => setSeoDescription(e.target.value)}
-                      className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all resize-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Action bar */}
-              <div className="flex items-center justify-between border-t border-slate-200 pt-6">
-                {editingServiceId ? (
-                  <button
-                    type="button"
-                    onClick={() => { resetForm(); setActiveTab("edit"); }}
-                    className="h-12 px-6 border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold rounded-2xl text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-1.5"
-                  >
-                    Cancel Edit
-                  </button>
-                ) : (
-                  <div></div>
-                )}
-                
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md shadow-blue-100 flex items-center gap-2 disabled:opacity-50"
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Saving Details...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" /> {editingServiceId ? "Save Service Changes" : "Deploy Service Track"}
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+            </div>
           ) : (
-            /* Edit and Search Services Mode */
+            /* Edit List Mode */
             <div className="max-w-4xl mx-auto space-y-6">
-              {/* Search bar */}
               <div className="relative">
                 <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Search service parameters or SEO metadata..."
+                  placeholder="Search service title..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200/80 rounded-2xl text-sm text-slate-800 placeholder-slate-400 outline-none shadow-sm focus:border-blue-500"
+                  className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200/80 rounded-2xl text-sm text-slate-800 outline-none shadow-sm focus:border-blue-500"
                 />
               </div>
 
               {loadingList ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                  <span className="text-xs uppercase font-bold tracking-wider">Syncing Core Collections...</span>
+                  <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs uppercase font-bold tracking-wider">Syncing collection details...</span>
                 </div>
               ) : filteredServices.length === 0 ? (
                 <div className="bg-white border border-slate-200/60 rounded-3xl p-12 text-center text-slate-500 shadow-md">
-                  <p className="text-sm font-semibold">No services found matching current queries.</p>
-                  <button
-                    onClick={() => { setActiveTab("create"); resetForm(); }}
-                    className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-55 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider transition-all"
-                  >
-                    Setup First Service
-                  </button>
+                  <p className="text-sm font-semibold">No services found matching current search.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {filteredServices.map((service) => (
-                    <div key={service.id} className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div key={service.id} className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-blue-50 text-blue-700 border border-blue-100">
-                            {service.heroBadge || "Service"}
+                            Service Track
                           </span>
                           <span className="text-[11px] font-bold text-slate-400 font-mono">
                             /{service.slug}
@@ -875,9 +321,6 @@ export default function ServicesAdminPage() {
                         <h3 className="text-lg font-black font-outfit text-slate-900 pt-1">
                           {service.name}
                         </h3>
-                        <p className="text-slate-500 text-xs line-clamp-1 max-w-xl">
-                          {service.heroDescription || "No hero description specified."}
-                        </p>
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
@@ -901,8 +344,6 @@ export default function ServicesAdminPage() {
             </div>
           )}
         </main>
-
-        
       </div>
     </AdminGuard>
   );
