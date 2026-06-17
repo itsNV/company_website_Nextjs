@@ -308,6 +308,17 @@ export default function BlogAdminPage() {
                                     /{b.slug}
                                   </span>
                                 </div>
+                                {/* Show active blog section blocks */}
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {(b.blocks || blogToBlocks(b) || []).map((block) => (
+                                    <span 
+                                      key={block.id || block.type} 
+                                      className="text-[8px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/50 text-slate-500 uppercase tracking-wider"
+                                    >
+                                      {block.type}
+                                    </span>
+                                  ))}
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">

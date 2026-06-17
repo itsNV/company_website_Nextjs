@@ -214,15 +214,28 @@ export default function AdminPageBuilder({
                   key={item.type}
                   draggable
                   onDragStart={(e) => handlePaletteDragStart(e, item.type)}
-                  className={`flex items-center gap-3.5 p-3 rounded-xl border cursor-grab active:cursor-grabbing transition-all ${PALETTE_COLORS[item.color]}`}
+                  className={`flex items-center justify-between gap-3.5 p-3 rounded-xl border cursor-grab active:cursor-grabbing transition-all ${PALETTE_COLORS[item.color]}`}
                 >
-                  <div className="w-9 h-9 rounded-lg bg-white/85 border border-white/60 flex items-center justify-center shrink-0 shadow-sm">
-                    <Icon className="w-4 h-4" />
+                  <div className="flex items-center gap-3 min-w-0 flex-grow">
+                    <div className="w-9 h-9 rounded-lg bg-white/85 border border-white/60 flex items-center justify-center shrink-0 shadow-sm">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 leading-none">{item.label}</p>
+                      <p className="text-[10px] text-slate-500 truncate mt-1 leading-relaxed font-medium">{item.description}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 leading-none">{item.label}</p>
-                    <p className="text-[10px] text-slate-500 truncate mt-1 leading-relaxed font-medium">{item.description}</p>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addBlockAt(item.type, blocks.length);
+                    }}
+                    className="p-1.5 rounded-lg bg-white/80 border border-slate-200 hover:bg-blue-50 hover:text-blue-600 transition-colors shadow-sm shrink-0"
+                    title="Tap to add"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               );
             })}
@@ -357,7 +370,7 @@ export default function AdminPageBuilder({
                           )}
 
                           {!previewMode && selectedId === block.id && (
-                            <div className="absolute -right-2 top-2.5 z-10 flex flex-col gap-1">
+                            <div className="absolute right-2 top-2 z-10 flex gap-1 bg-white/95 backdrop-blur border border-slate-200/85 p-1 rounded-xl shadow-md lg:shadow-none lg:border-none lg:bg-transparent lg:p-0 lg:-right-2 lg:top-2.5 lg:flex-col">
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); moveBlock(block.id, -1); }}

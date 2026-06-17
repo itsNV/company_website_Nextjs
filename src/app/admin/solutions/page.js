@@ -338,6 +338,17 @@ export default function SolutionsAdminPage() {
                         <h3 className="text-lg font-black font-outfit text-slate-900 pt-1">
                           {sol.name}
                         </h3>
+                        {/* Show active component blocks */}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {(sol.blocks || pagePayloadToBlocks(sol) || []).map((b) => (
+                            <span 
+                              key={b.id || b.type} 
+                              className="text-[8px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200/50 text-slate-500 uppercase tracking-wider"
+                            >
+                              {b.type}
+                            </span>
+                          ))}
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
