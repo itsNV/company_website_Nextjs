@@ -34,6 +34,7 @@ export default function Hero({ config }) {
 
   // Smooth delta-based animation loop for elliptical path
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     let frameId;
     let lastTime = performance.now();
     const animate = (time) => {

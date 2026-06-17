@@ -87,6 +87,7 @@ export default function Services({ config }) {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (window.innerWidth < 1024) return;
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       
@@ -114,10 +115,10 @@ export default function Services({ config }) {
 
   return (
     /* The parent height is set to 400vh to create scroll track padding for the viewport lock on desktop */
-    <section ref={containerRef} id="services" className="relative md:h-[400vh] h-auto py-16 md:py-0 bg-transparent">
+    <section ref={containerRef} id="services" className="relative lg:h-[400vh] h-auto py-16 lg:py-0 bg-transparent">
       
       {/* Sticky viewport container covering 100vh only on desktop */}
-      <div className="md:sticky md:top-0 md:left-0 md:right-0 md:h-screen w-full md:overflow-hidden flex items-center justify-center">
+      <div className="lg:sticky lg:top-0 lg:left-0 lg:right-0 lg:h-screen w-full lg:overflow-hidden flex items-center justify-center">
         
         <div className="max-w-4xl w-full px-6 flex flex-col items-center relative justify-center">
           
@@ -126,16 +127,16 @@ export default function Services({ config }) {
             <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3.5 py-1.5 rounded-full">
               {srvConfig?.servicesSubtitle || "Our Services"}
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
+            <h2 className="text-3xl lg:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
               {srvConfig?.servicesTitle || "Innovative digital solutions, built to scale."}
             </h2>
-            <p className="hidden md:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
+            <p className="hidden lg:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
               Scroll down to overlay services • Card {activeIndex + 1} of {serviceList.length}
             </p>
           </div>
 
           {/* Desktop Cards viewport deck */}
-          <div className="hidden md:flex relative w-full max-w-3xl h-[340px] items-center justify-center z-10">
+          <div className="hidden lg:flex relative w-full max-w-3xl h-[340px] items-center justify-center z-10">
             {serviceList.map((srv, idx) => {
               const Icon = srv.icon;
               
@@ -170,7 +171,7 @@ export default function Services({ config }) {
                     transformStyle: "preserve-3d",
                   }}
                 >
-                  <div className="hover-box w-full h-full p-8 md:p-12 rounded-[32px] border bg-white shadow-xl shadow-slate-200/30 flex flex-col md:flex-row gap-8 items-start md:items-center border-slate-200/60">
+                  <div className="hover-box w-full h-full p-8 lg:p-12 rounded-[32px] border bg-white shadow-xl shadow-slate-200/30 flex flex-col lg:flex-row gap-8 items-start lg:items-center border-slate-200/60">
                     {/* Left Side: Icon */}
                     <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-lg`}>
                       <Icon className="w-8 h-8" />
@@ -195,7 +196,7 @@ export default function Services({ config }) {
           </div>
 
           {/* Mobile Cards flow list */}
-          <div className="flex md:hidden flex-col gap-6 w-full z-10">
+          <div className="flex lg:hidden flex-col gap-6 w-full z-10">
             {serviceList.map((srv, idx) => {
               const Icon = srv.icon;
               return (

@@ -131,14 +131,14 @@ export default function Navbar({ activeSection, config }) {
       <div
         className={`w-full max-w-7xl rounded-full flex items-center justify-between border transition-all duration-300 relative ${
           scrolled
-            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-4 py-2.5 sm:px-6 sm:py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
-            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-5 py-3 sm:px-8 sm:py-4 shadow-sm"
+            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-3.5 py-2.5 sm:px-6 sm:py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
+            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-4 py-3 sm:px-8 sm:py-4 shadow-sm"
         }`}
       >
         
         {/* Brand Logo */}
-        <a href="/" className="flex items-center gap-3.5 group">
-          <div className="h-10 w-auto flex items-center justify-start shrink-0">
+        <a href="/" className="flex items-center gap-2 sm:gap-3.5 group shrink-0">
+          <div className="h-8 w-auto sm:h-10 flex items-center justify-start shrink-0">
             {navConfig?.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img 
@@ -163,12 +163,12 @@ export default function Navbar({ activeSection, config }) {
             )}
           </div>
           <div className="flex flex-col justify-center select-none font-outfit">
-            <span className={`text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
+            <span className={`text-[13px] sm:text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
               scrolled ? "text-white" : "text-[#2e5090]"
             }`}>
               {navConfig?.companyName || "YUNAWISE"}
             </span>
-            <span className={`text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 ${
+            <span className={`text-[7.5px] sm:text-[8.5px] font-black tracking-[0.15em] sm:tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 hidden min-[360px]:block ${
               scrolled ? "text-sky-400" : "text-[#2e5090]/90"
             }`}>
               {navConfig?.companySubName || "TECHSOLVE LLP"}
@@ -320,6 +320,7 @@ export default function Navbar({ activeSection, config }) {
 
         {/* Mobile Menu Trigger */}
         <button
+          suppressHydrationWarning
           onClick={() => setIsOpen(!isOpen)}
           className={`p-2 -mr-2 lg:hidden transition-colors ${
             scrolled ? "text-slate-200 hover:text-primary" : "text-slate-700 hover:text-primary"
@@ -347,7 +348,7 @@ export default function Navbar({ activeSection, config }) {
                       Services
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileServicesOpen ? "rotate-180 text-primary" : ""}`} />
                     </button>
-                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-55 rounded-2xl ${
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
                       mobileServicesOpen ? "max-h-80 overflow-y-auto p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
                     }`}>
                       <a
@@ -388,7 +389,7 @@ export default function Navbar({ activeSection, config }) {
                       Solutions
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${mobileSolutionsOpen ? "rotate-180 text-primary" : ""}`} />
                     </button>
-                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-55 rounded-2xl ${
+                    <div className={`flex flex-col gap-2 overflow-hidden transition-all duration-300 w-full bg-slate-50 rounded-2xl ${
                       mobileSolutionsOpen ? "max-h-80 overflow-y-auto p-4 border border-slate-100 mt-2 opacity-100" : "max-h-0 opacity-0"
                     }`}>
                       {solutionsDropdownItems.map((sol) => (

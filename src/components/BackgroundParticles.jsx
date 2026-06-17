@@ -7,6 +7,9 @@ export default function BackgroundParticles() {
   const mouseCurrent = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      return;
+    }
     const handleMouseMove = (e) => {
       // Coordinate delta from screen center, scaled to map to pixels
       mouseTarget.current.x = (e.clientX - window.innerWidth / 2) * 0.15;
@@ -58,7 +61,7 @@ export default function BackgroundParticles() {
       `}} />
       <div
         ref={containerRef}
-        className="fixed inset-0 overflow-hidden pointer-events-none z-[-1] opacity-75"
+        className="fixed inset-0 overflow-hidden pointer-events-none z-[-1] opacity-75 hidden lg:block"
         style={{
           "--mouse-x": "0px",
           "--mouse-y": "0px",

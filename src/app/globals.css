@@ -29,6 +29,10 @@
 }
 
 /* Base Body Styles with Elegant Aurora Light Background Glows */
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   background-color: #f3f9fc;
   background-image: 
@@ -36,7 +40,6 @@ body {
     radial-gradient(at 100% 0%, rgba(209, 250, 229, 0.5) 0px, transparent 50%),
     radial-gradient(at 50% 100%, rgba(224, 242, 254, 0.4) 0px, transparent 50%);
   color: #0f1e2d;
-  overflow-x: hidden;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
@@ -96,7 +99,7 @@ html:not(.preloader-seen) footer {
 }
 
 /* --- Section-Specific Scroll Entrance Animations (High Impact, Premium & Bold) --- */
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
   /* ==========================================
      1. ABOUT SECTION (#about) -> DRAMATIC SWEEP FROM LEFT
      ========================================== */
@@ -627,57 +630,77 @@ html:not(.preloader-seen) footer {
   pointer-events: none;
   z-index: -10;
   opacity: 0;
-  transform: scale(0.9) translate3d(0, 0, 0);
-  transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  transition: opacity 1s ease;
+}
+
+@media (min-width: 1024px) {
+  .hero-section::before, 
+  #about::before, 
+  #services::before, 
+  #technologies::before, 
+  #works::before, 
+  #testimonials::before, 
+  #blog::before, 
+  #contact::before {
+    transform: scale(0.9) translate3d(0, 0, 0);
+    transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
 }
 
 .hero-section.hero-ready::before {
   opacity: 0.65;
-  transform: scale(1);
   background: radial-gradient(circle at 75% 35%, hsla(210, 95%, 88%, 0.5) 0%, transparent 65%);
 }
 
 #about.active::before {
   opacity: 0.7;
-  transform: scale(1.04);
   background: radial-gradient(circle at 15% 45%, hsla(270, 85%, 86%, 0.5) 0%, transparent 68%); /* Luxurious Orchid Violet */
 }
 
 #services.active::before {
   opacity: 0.65;
-  transform: scale(1.04);
   background: radial-gradient(circle at 85% 55%, hsla(180, 80%, 86%, 0.48) 0%, transparent 68%); /* Aurora Ocean Teal */
 }
 
 #technologies.active::before {
   opacity: 0.7;
-  transform: scale(1.04);
   background: radial-gradient(circle at 50% 35%, hsla(140, 80%, 88%, 0.5) 0%, transparent 68%); /* Electric Mint Green */
 }
 
 #works.active::before {
   opacity: 0.65;
-  transform: scale(1.04);
   background: radial-gradient(circle at 15% 65%, hsla(330, 85%, 88%, 0.48) 0%, transparent 68%); /* Vivid Rose Pink */
 }
 
 #testimonials.active::before {
   opacity: 0.7;
-  transform: scale(1.04);
   background: radial-gradient(circle at 85% 45%, hsla(42, 95%, 86%, 0.5) 0%, transparent 68%); /* Golden Amber Sunshine */
 }
 
 #blog.active::before {
   opacity: 0.65;
-  transform: scale(1.04);
   background: radial-gradient(circle at 50% 55%, hsla(15, 95%, 88%, 0.45) 0%, transparent 68%); /* Sunset Coral */
 }
 
 #contact.active::before {
   opacity: 0.75;
-  transform: scale(1.04);
   background: radial-gradient(circle at 35% 75%, hsla(270, 85%, 88%, 0.45) 0%, hsla(165, 85%, 88%, 0.45) 50%, transparent 70%);
+}
+
+@media (min-width: 1024px) {
+  .hero-section.hero-ready::before {
+    transform: scale(1);
+  }
+  #about.active::before,
+  #services.active::before,
+  #technologies.active::before,
+  #works.active::before,
+  #testimonials.active::before,
+  #blog.active::before,
+  #contact.active::before {
+    transform: scale(1.04);
+  }
 }
 
 
