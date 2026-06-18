@@ -91,11 +91,8 @@ export default function Navbar({ activeSection, config }) {
           label: doc.data().name,
           href: `/services/${doc.data().slug}`,
           showInNavbar: doc.data().showInNavbar || false,
-        })).sort((a, b) => {
-          if (a.showInNavbar && !b.showInNavbar) return -1;
-          if (!a.showInNavbar && b.showInNavbar) return 1;
-          return 0;
-        });
+          order: doc.data().order ?? 0,
+        })).sort((a, b) => a.order - b.order);
         setServicesDropdownItems(srvs);
 
         const solutionsSnapshot = await getDocs(collection(db, "solutions"));
@@ -103,11 +100,8 @@ export default function Navbar({ activeSection, config }) {
           label: doc.data().name,
           href: `/solutions/${doc.data().slug}`,
           showInNavbar: doc.data().showInNavbar || false,
-        })).sort((a, b) => {
-          if (a.showInNavbar && !b.showInNavbar) return -1;
-          if (!a.showInNavbar && b.showInNavbar) return 1;
-          return 0;
-        });
+          order: doc.data().order ?? 0,
+        })).sort((a, b) => a.order - b.order);
         setSolutionsDropdownItems(sols);
       } catch (e) {
         console.error("Error fetching nav dynamic items:", e);
@@ -203,31 +197,53 @@ export default function Navbar({ activeSection, config }) {
                   <div 
                     onMouseLeave={() => setShowAllServices(false)}
                     className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
-                      ${showAllServices && servicesDropdownItems.length > 6 ? "max-h-[380px] overflow-y-auto" : ""}
+                      ${showAllServices && servicesDropdownItems.length > 5 ? "max-h-[380px] overflow-y-auto" : ""}
                       ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {(showAllServices || servicesDropdownItems.length <= 6
-                      ? servicesDropdownItems
-                      : servicesDropdownItems.slice(0, 5)
-                    ).map((srv) => (
-                      <a
-                        key={srv.href}
-                        href={srv.href}
-                        className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                      >
-                        {srv.label}
-                      </a>
-                    ))}
-                    {!showAllServices && servicesDropdownItems.length > 6 && (
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowAllServices(true);
-                        }}
-                        className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30"
-                      >
-                        + Show {servicesDropdownItems.length - 5} More
-                      </button>
+                    {servicesDropdownItems.length >= 8 ? (
+                      <>
+                        {servicesDropdownItems.slice(0, 5).map((srv) => (
+                          <a
+                            key={srv.href}
+                            href={srv.href}
+                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                          >
+                            {srv.label}
+                          </a>
+                        ))}
+                        <a
+                          href="/services"
+                          className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 font-sans"
+                        >
+                          View All Services
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        {(showAllServices || servicesDropdownItems.length <= 5
+                          ? servicesDropdownItems
+                          : servicesDropdownItems.slice(0, 5)
+                        ).map((srv) => (
+                          <a
+                            key={srv.href}
+                            href={srv.href}
+                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                          >
+                            {srv.label}
+                          </a>
+                        ))}
+                        {servicesDropdownItems.length > 5 && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setShowAllServices(!showAllServices);
+                            }}
+                            className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 cursor-pointer"
+                          >
+                            {showAllServices ? "- Show Less" : `+ Show ${servicesDropdownItems.length - 5} More`}
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -255,31 +271,53 @@ export default function Navbar({ activeSection, config }) {
                   <div 
                     onMouseLeave={() => setShowAllSolutions(false)}
                     className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
-                      ${showAllSolutions && solutionsDropdownItems.length > 6 ? "max-h-[380px] overflow-y-auto" : ""}
+                      ${showAllSolutions && solutionsDropdownItems.length > 5 ? "max-h-[380px] overflow-y-auto" : ""}
                       ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {(showAllSolutions || solutionsDropdownItems.length <= 6
-                      ? solutionsDropdownItems
-                      : solutionsDropdownItems.slice(0, 5)
-                    ).map((sol) => (
-                      <a
-                        key={sol.href}
-                        href={sol.href}
-                        className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                      >
-                        {sol.label}
-                      </a>
-                    ))}
-                    {!showAllSolutions && solutionsDropdownItems.length > 6 && (
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowAllSolutions(true);
-                        }}
-                        className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30"
-                      >
-                        + Show {solutionsDropdownItems.length - 5} More
-                      </button>
+                    {solutionsDropdownItems.length >= 8 ? (
+                      <>
+                        {solutionsDropdownItems.slice(0, 5).map((sol) => (
+                          <a
+                            key={sol.href}
+                            href={sol.href}
+                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                          >
+                            {sol.label}
+                          </a>
+                        ))}
+                        <a
+                          href="/solutions"
+                          className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 font-sans"
+                        >
+                          View All Solutions
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        {(showAllSolutions || solutionsDropdownItems.length <= 5
+                          ? solutionsDropdownItems
+                          : solutionsDropdownItems.slice(0, 5)
+                        ).map((sol) => (
+                          <a
+                            key={sol.href}
+                            href={sol.href}
+                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                          >
+                            {sol.label}
+                          </a>
+                        ))}
+                        {solutionsDropdownItems.length > 5 && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setShowAllSolutions(!showAllSolutions);
+                            }}
+                            className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 cursor-pointer"
+                          >
+                            {showAllSolutions ? "- Show Less" : `+ Show ${solutionsDropdownItems.length - 5} More`}
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

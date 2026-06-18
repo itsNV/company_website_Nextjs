@@ -20,7 +20,7 @@ export default function ServicesPage() {
         const fetched = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }));
+        })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         setServices(fetched);
       } catch (err) {
         console.error("Error reading services:", err);

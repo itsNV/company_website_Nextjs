@@ -44,11 +44,8 @@ export default function Footer({ config }) {
           label: doc.data().name,
           href: `/services/${doc.data().slug}`,
           showInNavbar: doc.data().showInNavbar || false,
-        })).sort((a, b) => {
-          if (a.showInNavbar && !b.showInNavbar) return -1;
-          if (!a.showInNavbar && b.showInNavbar) return 1;
-          return 0;
-        });
+          order: doc.data().order ?? 0,
+        })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         setFocusItems(srvs);
       } catch (e) {
         console.error("Error loading footer focus services:", e);

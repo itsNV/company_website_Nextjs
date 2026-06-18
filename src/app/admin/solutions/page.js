@@ -40,6 +40,7 @@ export default function SolutionsAdminPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [showInNavbar, setShowInNavbar] = useState(false);
+  const [order, setOrder] = useState(0);
 
   // Page builder blocks
   const [blocks, setBlocks] = useState([]);
@@ -104,6 +105,7 @@ export default function SolutionsAdminPage() {
     setName("");
     setSlug("");
     setShowInNavbar(false);
+    setOrder(0);
     setBlocks(getDefaultPageBlocks());
     setEditingSolutionId(null);
   };
@@ -127,6 +129,7 @@ export default function SolutionsAdminPage() {
         name,
         slug,
         showInNavbar,
+        order: Number(order) || 0,
         updatedAt: new Date().toISOString()
       };
 
@@ -157,6 +160,7 @@ export default function SolutionsAdminPage() {
     setName(solution.name || "");
     setSlug(solution.slug || "");
     setShowInNavbar(solution.showInNavbar || false);
+    setOrder(solution.order || 0);
     
     // Parse layout payload back into visual drag-and-drop blocks array
     const mappedBlocks = pagePayloadToBlocks(solution);
@@ -248,7 +252,7 @@ export default function SolutionsAdminPage() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Solution Name</label>
                     <input
@@ -270,6 +274,17 @@ export default function SolutionsAdminPage() {
                       value={slug}
                       onChange={(e) => setSlug(generateSlug(e.target.value))}
                       className="w-full h-11 px-4 bg-slate-100 border border-slate-200 text-slate-500 rounded-xl text-xs outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Sort Order</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 0"
+                      value={order}
+                      onChange={(e) => setOrder(e.target.value)}
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
