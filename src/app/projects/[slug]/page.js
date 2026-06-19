@@ -19,6 +19,28 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
+function RevealImage({ src, alt, className = "" }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <div className="relative w-full h-full min-h-[220px] overflow-hidden bg-slate-100/50 rounded-2xl">
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100/80 animate-pulse">
+          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        className={`${className} w-full h-full object-cover transition-all duration-700 ease-out ${
+          loaded ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-95 blur-md"
+        }`}
+      />
+    </div>
+  );
+}
+
 export default function ProjectDetailsPage({ params }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
@@ -148,6 +170,17 @@ export default function ProjectDetailsPage({ params }) {
                 {project.tagline}
               </p>
 
+              {/* Main Image */}
+              {project.image_url && (
+                <div className="mt-8 w-full rounded-2xl overflow-hidden border border-slate-200/60 shadow-md">
+                  <RevealImage 
+                    src={project.image_url} 
+                    alt={project.title} 
+                    className="max-h-[400px]"
+                  />
+                </div>
+              )}
+
               {/* Action Buttons */}
               <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
                 {project.live_url && (
@@ -191,84 +224,141 @@ export default function ProjectDetailsPage({ params }) {
           </div>
         </section>
 
-        {/* Project Overview & Core Details (mirroring Focus Areas) */}
-        <section className="py-16 bg-white/40 border-y border-[#eae6fa]/25">
-          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 mb-6">Project Parameters</h2>
-              <div className="reveal-stagger flex flex-col gap-4">
-                <div className="flex gap-3.5 items-start">
-                  <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-                  <span className="text-slate-700 font-semibold text-sm md:text-base">
-                    Platform Architecture: {project.platform_type}
-                  </span>
-                </div>
-                <div className="flex gap-3.5 items-start">
-                  <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-                  <span className="text-slate-700 font-semibold text-sm md:text-base">
-                    Deployment Status: {project.live_url ? "Public Production Node" : "Internal Corporate Sandbox"}
-                  </span>
-                </div>
-                <div className="flex gap-3.5 items-start">
-                  <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
-                  <span className="text-slate-700 font-semibold text-sm md:text-base">
-                    Accessibility Status: {project.live_url ? "Open Web Access" : "Encrypted Confidential Contract"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Business Impact Spotlight card */}
-            {project.business_impact && (
-              <div className="p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-500/20 to-transparent rounded-bl-[100px]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-purple-400 bg-purple-950/50 px-3 py-1 rounded-md inline-block mb-4">
-                  Impact Delivered
-                </span>
-                <h3 className="text-xl font-bold font-outfit text-white mb-4 leading-relaxed">
-                  "{project.business_impact}"
-                </h3>
-                <p className="text-slate-400 text-xs">
-                  Measurable corporate outcome engineered directly through smart architecture integration.
-                </p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Challenge & Solution (mirroring What You Get / Features Section) */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="reveal-item text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-4">Engineering Scope</h2>
-            <p className="reveal-item text-slate-500 text-center max-w-xl mx-auto mb-16">Deep dive into the problem definition and targeted programmatic response.</p>
-            
-            <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              
-              {/* Problem Card */}
-              {project.problem && (
-                <div className="hover-box group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-rose-100 bg-rose-50 text-rose-600 mb-6 font-black font-outfit">
-                    01
+       
+        {/* The Challenge Section (Phase 1) */}
+        {project.problem && (
+          <section className="py-20 bg-slate-50/40 border-b border-[#eae6fa]/10">
+            <div className="max-w-7xl mx-auto px-6">
+              {project.challenge_image_url ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="lg:order-1 flex flex-col justify-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                      Phase 1: The Challenge
+                    </span>
+                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                      Problem Identification
+                    </h3>
+                    <p className="text-slate-600 text-base leading-relaxed font-medium">
+                      {project.problem}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold font-outfit text-slate-900 mb-3">The Challenge</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{project.problem}</p>
+                  <div className="lg:order-2 w-full">
+                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                      <RevealImage 
+                        src={project.challenge_image_url} 
+                        alt="The Challenge" 
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4">
+                    Phase 1: The Challenge
+                  </span>
+                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                    Problem Identification
+                  </h3>
+                  <p className="text-slate-600 text-base leading-relaxed font-medium">
+                    {project.problem}
+                  </p>
                 </div>
               )}
+            </div>
+          </section>
+        )}
 
-              {/* Solution Card */}
-              {project.solution && (
-                <div className="hover-box group p-8 rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center border border-purple-100 bg-purple-50 text-purple-600 mb-6 font-black font-outfit">
-                    02
+        {/* Our Solution Section (Phase 2) */}
+        {project.solution && (
+          <section className="py-20 border-b border-[#eae6fa]/10">
+            <div className="max-w-7xl mx-auto px-6">
+              {project.solution_image_url ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="lg:order-2 flex flex-col justify-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                      Phase 2: Our Solution
+                    </span>
+                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                      Engineering Response
+                    </h3>
+                    <p className="text-slate-600 text-base leading-relaxed font-medium">
+                      {project.solution}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold font-outfit text-slate-900 mb-3">Our Solution</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{project.solution}</p>
+                  <div className="lg:order-1 w-full">
+                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                      <RevealImage 
+                        src={project.solution_image_url} 
+                        alt="Our Solution" 
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
+                    Phase 2: Our Solution
+                  </span>
+                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                    Engineering Response
+                  </h3>
+                  <p className="text-slate-600 text-base leading-relaxed font-medium">
+                    {project.solution}
+                  </p>
                 </div>
               )}
-
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* Business Impact Section (Phase 3) */}
+        {project.business_impact && (
+          <section className="py-20">
+            <div className="max-w-7xl mx-auto px-6">
+              {project.business_impact_image_url ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div className="lg:order-1 flex flex-col justify-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                      Phase 3: Business Impact
+                    </span>
+                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                      Delivering Measurable Value
+                    </h3>
+                    <p className="text-slate-600 text-base leading-relaxed mb-6 font-medium">
+                      {project.business_impact}
+                    </p>
+                    <p className="text-slate-400 text-xs">
+                      Measurable corporate outcome engineered directly through smart architecture integration.
+                    </p>
+                  </div>
+                  <div className="lg:order-2 w-full">
+                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                      <RevealImage 
+                        src={project.business_impact_image_url} 
+                        alt="Business Impact" 
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
+                    Phase 3: Business Impact
+                  </span>
+                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                    Delivering Measurable Value
+                  </h3>
+                  <p className="text-slate-600 text-base leading-relaxed mb-6 font-medium">
+                    {project.business_impact}
+                  </p>
+                  <p className="text-slate-400 text-xs">
+                    Measurable corporate outcome engineered directly through smart architecture integration.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Bottom Call to Action Section (mirroring standard styling) */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
