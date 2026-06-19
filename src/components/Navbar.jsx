@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpRight, Menu, X, ArrowRight, ChevronDown } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.jpg";
+import logo from "@/app/icon.png";
 import { usePathname } from "next/navigation";     
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";

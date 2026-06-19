@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { BookOpen, LogOut, LayoutDashboard, Laptop, Cpu, Globe, Settings, Menu, X } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.jpg";
+import logo from "../app/icon.png";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/auth";
 import { useRouter, usePathname } from "next/navigation";

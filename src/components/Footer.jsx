@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUp, Mail, MapPin, ExternalLink } from "lucide-react";
 import Image from "next/image";
-import logo from "@/app/Yunawise_logo.jpg";
+import logo from "@/app/icon.png";
 import Link from "next/link";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
