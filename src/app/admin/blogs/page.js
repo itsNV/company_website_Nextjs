@@ -15,7 +15,7 @@ import {
 import { collection, setDoc, getDocs, doc, query, orderBy, deleteDoc } from "firebase/firestore";
 import { db, storage } from "@/lib/firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import BlogPageBuilder from "@/components/admin/BlogPageBuilder";
+import BlogPageBuilder from "../_components/BlogPageBuilder";
 import {
   getDefaultBlocks,
   blogToBlocks,

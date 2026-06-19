@@ -17,8 +17,8 @@ import {
   createBlock,
   getDefaultBlocks,
 } from "@/lib/blogBlocks";
-import { BlogBlockPreview, PaletteIcon } from "@/components/admin/BlogBlockPreview";
-import BlogBlockEditor from "@/components/admin/BlogBlockEditor";
+import { BlogBlockPreview, PaletteIcon } from "./BlogBlockPreview";
+import BlogBlockEditor from "./BlogBlockEditor";
 
 const DRAG_NEW = "blog-block-new";
 const DRAG_REORDER = "blog-block-reorder";

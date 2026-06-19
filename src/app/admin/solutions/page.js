@@ -15,7 +15,7 @@ import {
 import { db, storage } from "@/lib/firebase/firebase";
 import { collection, setDoc, getDocs, doc, deleteDoc, query } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import AdminPageBuilder from "@/components/admin/AdminPageBuilder";
+import AdminPageBuilder from "../_components/AdminPageBuilder";
 import { 
   getDefaultPageBlocks, 
   pagePayloadToBlocks, 
