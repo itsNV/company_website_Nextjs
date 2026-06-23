@@ -201,6 +201,10 @@ export default function Navbar({ activeSection, config }) {
 
             if (link.label === "Solutions") {
               const isSolutionsActive = pathname.startsWith("/solutions/");
+              const colCount = navConfig?.solutionsGridCols ? Number(navConfig.solutionsGridCols) : 4;
+              const isGrid = colCount > 1 && solutionsDropdownItems.length > 0;
+              const dropdownWidth = colCount === 1 ? "240px" : `${colCount * 170 + 40}px`;
+
               return (
                 <div key={idx} className="relative group/dropdown py-1.5">
                   <button
@@ -218,17 +222,23 @@ export default function Navbar({ activeSection, config }) {
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </button>
                   <div 
+                    style={isGrid ? {
+                      width: dropdownWidth,
+                      display: "grid",
+                      gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
+                    } : {}}
                     className={`absolute top-full mt-2 rounded-2xl bg-white border border-slate-200/60 shadow-xl transition-all duration-300 z-50 overflow-y-auto
-                      ${solutionsDropdownItems.length > 5 
-                        ? "w-[720px] max-h-[420px] p-4 grid grid-cols-4 gap-2.5 left-1/2 -translate-x-1/2" 
+                      ${isGrid 
+                        ? "max-h-[420px] p-4 gap-2.5 left-1/2 -translate-x-1/2" 
                         : "w-64 max-h-[380px] p-2 flex flex-col gap-0.5 left-0 translate-x-0"
                       }
-                      ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
+                      ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}
+                  >
                     {solutionsDropdownItems.map((sol) => (
                       <a
                         key={sol.href}
                         href={sol.href}
-                        className={solutionsDropdownItems.length > 5
+                        className={isGrid
                           ? "block px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors text-center border border-slate-100 hover:border-primary/20 bg-slate-50/50 hover:bg-white"
                           : "block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
                         }

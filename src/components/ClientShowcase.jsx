@@ -166,10 +166,10 @@ export default function ClientShowcase() {
               key={idx}
               className="group flex flex-col items-center justify-center gap-3.5 px-6 py-6 rounded-2xl border border-slate-200/50 bg-white/60 backdrop-blur-sm shadow-sm hover:shadow-lg hover:border-slate-300/80 hover:bg-white/95 transition-all duration-300 transform hover:-translate-y-1.5 w-48 sm:w-56 text-center select-none"
             >
-              <div className="flex items-center justify-center h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm group-hover:bg-white group-hover:shadow-md transition-all duration-300 p-1">
+              <div className="flex items-center justify-center h-16 w-16 rounded-xl bg-slate-50 border border-slate-100 shadow-sm group-hover:bg-white group-hover:shadow-md transition-all duration-300 p-2 overflow-hidden">
                 {client.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={client.imageUrl} alt={client.name} className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-110" />
+                  <img src={client.imageUrl} alt={client.name} className="h-full w-full object-contain rounded-lg transition-transform duration-300 group-hover:scale-110" />
                 ) : (
                   client.logo
                 )}

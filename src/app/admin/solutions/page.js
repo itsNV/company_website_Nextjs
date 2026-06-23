@@ -10,10 +10,11 @@ import {
   X, 
   Trash2,
   AlertCircle,
-  Laptop
+  Laptop,
+  Grid
 } from "lucide-react";
 import { db, storage } from "@/lib/firebase/firebase";
-import { collection, setDoc, getDocs, doc, deleteDoc, query } from "firebase/firestore";
+import { collection, setDoc, getDocs, doc, deleteDoc, query, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import AdminPageBuilder from "../_components/AdminPageBuilder";
 import { 
@@ -29,6 +30,9 @@ export default function SolutionsAdminPage() {
   const [activeTab, setActiveTab] = useState("create"); // "create" or "edit"
   const [editingSolutionId, setEditingSolutionId] = useState(null);
   
+  // Grid Columns State
+  const [gridCols, setGridCols] = useState(4);
+
   // Message feedback
   const [message, setMessage] = useState({ type: "", text: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -99,7 +103,39 @@ export default function SolutionsAdminPage() {
   useEffect(() => {
     fetchSolutions();
     setBlocks(getDefaultPageBlocks());
+
+    // Fetch dynamic grid layout columns settings
+    async function loadGridSettings() {
+      try {
+        const docRef = doc(db, "settings", "homepage");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().solutionsGridCols) {
+          setGridCols(Number(docSnap.data().solutionsGridCols) || 4);
+        }
+      } catch (e) {
+        console.error("Error loading grid settings:", e);
+      }
+    }
+    loadGridSettings();
   }, []);
+
+  const handleSaveGridCols = async (val) => {
+    setGridCols(val);
+    try {
+      const docRef = doc(db, "settings", "homepage");
+      const docSnap = await getDoc(docRef);
+      const currentData = docSnap.exists() ? docSnap.data() : {};
+      await setDoc(docRef, {
+        ...currentData,
+        solutionsGridCols: Number(val),
+        updatedAt: new Date().toISOString()
+      });
+      setMessage({ type: "success", text: `Solutions dropdown grid columns updated to ${val}x${val} successfully!` });
+    } catch (err) {
+      console.error("Failed to save grid columns:", err);
+      setMessage({ type: "error", text: "Failed to update solutions grid column layout configurations." });
+    }
+  };
 
   const resetForm = () => {
     setName("");
@@ -243,6 +279,36 @@ export default function SolutionsAdminPage() {
 
           {activeTab === "create" ? (
             <div className="space-y-6">
+              {/* Solutions Grid Menu Layout Settings */}
+              <div className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-xl max-w-4xl mx-auto">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                  <Grid className="w-5 h-5 text-blue-600" />
+                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider font-outfit">
+                    Solutions Menu Dropdown Grid Settings
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider font-outfit">Dropdown Layout Grid Columns</label>
+                    <select
+                      value={gridCols}
+                      onChange={(e) => handleSaveGridCols(Number(e.target.value))}
+                      className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500 cursor-pointer font-semibold"
+                    >
+                      <option value={1}>1 Column List</option>
+                      <option value={2}>2 Columns Grid</option>
+                      <option value={3}>3 Columns Grid</option>
+                      <option value={4}>4 Columns Grid (Default 4x4)</option>
+                      <option value={5}>5 Columns Grid</option>
+                      <option value={6}>6 Columns Grid</option>
+                    </select>
+                  </div>
+                  <div className="text-[11px] font-semibold text-slate-500 leading-relaxed">
+                    Set how many columns the Solutions dropdown menu uses when listing solutions on the navigation bar. Choose between a standard list or a multi-column grid layout.
+                  </div>
+                </div>
+              </div>
+
               {/* Basic configuration box */}
               <div className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-xl max-w-4xl mx-auto">
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
