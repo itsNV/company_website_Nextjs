@@ -91,15 +91,16 @@ export default function Services({ config }) {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       
-      // Calculate scroll progress of our 350vh parent container relative to window height
+      // Calculate scroll progress of our parent container relative to window height
       const totalScrollableHeight = rect.height - window.innerHeight;
       const scrolledDistance = -rect.top;
       
       // Clamp progress between 0 and 1
       const progress = Math.min(Math.max(scrolledDistance / totalScrollableHeight, 0), 0.99);
       
-      // Map scroll progress to the active card index
-      const newIndex = Math.floor(progress * serviceList.length);
+      // Map scroll progress to the active card index with an adjusted scale so the final card stays visible longer
+      const adjustedProgress = progress * (serviceList.length + 0.8);
+      const newIndex = Math.min(Math.floor(adjustedProgress), serviceList.length - 1);
       setActiveIndex(newIndex);
     };
 
@@ -114,8 +115,8 @@ export default function Services({ config }) {
   }, [serviceList.length]);
 
   return (
-    /* The parent height is set to 400vh to create scroll track padding for the viewport lock on desktop */
-    <section ref={containerRef} id="services" className="relative lg:h-[400vh] h-auto py-16 lg:py-0 bg-transparent">
+    /* The parent height is set to 500vh to create scroll track padding for the viewport lock on desktop */
+    <section ref={containerRef} id="services" className="relative lg:h-[500vh] h-auto py-16 lg:py-0 bg-transparent">
       
       {/* Sticky viewport container covering 100vh only on desktop */}
       <div className="lg:sticky lg:top-0 lg:left-0 lg:right-0 lg:h-screen w-full lg:overflow-hidden flex items-center justify-center">
@@ -128,7 +129,11 @@ export default function Services({ config }) {
               {srvConfig?.servicesSubtitle || "Our Services"}
             </span>
             <h2 className="text-3xl lg:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
-              {srvConfig?.servicesTitle || "Innovative digital solutions, built to scale."}
+              {srvConfig?.servicesTitle ? (
+                srvConfig.servicesTitle
+              ) : (
+                <>Innovative digital solutions, <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">built to scale</span>.</>
+              )}
             </h2>
             <p className="hidden lg:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
               Scroll down to overlay services • Card {activeIndex + 1} of {serviceList.length}

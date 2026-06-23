@@ -30,7 +30,7 @@
 
 /* Base Body Styles with Elegant Aurora Light Background Glows */
 html, body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -96,6 +96,22 @@ html:not(.preloader-seen) footer {
 .reveal-item.active {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Premium section header text reveal clip-path mask animation */
+.reveal-item h2 {
+  opacity: 0;
+  transform: translateY(30px);
+  clip-path: inset(100% 0 0 0);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-item.active h2 {
+  opacity: 1;
+  transform: translateY(0);
+  clip-path: inset(0 0 0 0);
 }
 
 /* --- Section-Specific Scroll Entrance Animations (High Impact, Premium & Bold) --- */

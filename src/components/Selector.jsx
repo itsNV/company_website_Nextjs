@@ -62,7 +62,7 @@ export default function Selector() {
             Interactive Architecture Tool
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            Find your ideal CMS &amp; Web architecture.
+            Find your ideal <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">CMS &amp; Web architecture</span>.
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
             Choose your project details below. Our reactive configurator will instantly calculate the ultimate CMS and database stack matching your specifications.

@@ -37,7 +37,7 @@ export default function Projects() {
             Featured Projects
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            Innovative work crafted to deliver results.
+            Innovative <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">work</span> crafted to deliver results.
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
             Take a look at some of our top-featured enterprise applications, e-commerce stores, and high-performance software setups.

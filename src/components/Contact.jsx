@@ -74,7 +74,7 @@ export default function Contact({ config }) {
               Contact Us
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 leading-tight mb-6">
-              Let's talk about your next project.
+              Let's talk about <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">your next project</span>.
             </h2>
             <p className="text-lg text-slate-600 leading-relaxed mb-10">
               Have an idea for a web portal, headless CMS stack, or mobile app? Send us a message or schedule a direct architectural audit with our engineering team.

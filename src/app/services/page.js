@@ -132,7 +132,7 @@ export default function ServicesPage() {
         {/* Call to action section */}
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
           <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold font-outfit bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
               Ready to construct your next digital asset?
             </h2>
             <p className="text-slate-600 leading-relaxed max-w-xl mx-auto mb-8">

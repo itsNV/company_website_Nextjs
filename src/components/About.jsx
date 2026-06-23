@@ -105,7 +105,11 @@ export default function About({ config }) {
             {config?.aboutWorkflowSubtitle || "How We Work"}
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            {config?.aboutWorkflowTitle || "Ways we build high-performance products."}
+            {config?.aboutWorkflowTitle ? (
+              config.aboutWorkflowTitle
+            ) : (
+              <>Ways we build <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">high-performance</span> products.</>
+            )}
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
             {config?.aboutWorkflowDesc || "Yunawise is a full-service digital studio delivering strategy, design, and development under one roof. We structure our lifecycle to ensure efficiency and speed."}

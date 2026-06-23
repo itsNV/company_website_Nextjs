@@ -330,7 +330,9 @@ export default function Hero({ config }) {
                   <span className="split-line-text">Softwares and tailor-made</span>
                 </span>
                 <span className="split-line-mask block mt-1">
-                  <span className="split-line-text">digital solutions.</span>
+                  <span className="split-line-text">
+                    <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">digital solutions.</span>
+                  </span>
                 </span>
               </>
             )}

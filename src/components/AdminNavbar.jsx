@@ -80,10 +80,10 @@ export default function AdminNavbar() {
   return (
     <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 md:px-8 transition-all duration-300">
       <div
-        className={`w-full max-w-7xl rounded-full flex items-center justify-between border transition-all duration-300 relative ${
+        className={`w-full max-w-7xl rounded-full flex items-center justify-between border bg-white/70 backdrop-blur-xl border-slate-200/30 shadow-sm transition-all duration-300 relative ${
           scrolled
-            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
-            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-8 py-4 shadow-sm"
+            ? "px-6 py-3"
+            : "px-8 py-4"
         }`}
       >
         {/* Brand logo */}
@@ -94,33 +94,21 @@ export default function AdminNavbar() {
               <img 
                 src={config.logoUrl} 
                 alt="Yunawise Logo" 
-                className={`h-full w-auto object-contain transition-all duration-300 ${
-                  scrolled 
-                    ? "invert brightness-200 mix-blend-screen" 
-                    : "mix-blend-multiply"
-                }`} 
+                className="h-full w-auto object-contain transition-all duration-300 mix-blend-multiply" 
               />
             ) : (
               <Image 
                 src={logo} 
                 alt="Yunawise Logo" 
-                className={`h-full w-auto object-contain transition-all duration-300 ${
-                  scrolled 
-                    ? "invert brightness-200 mix-blend-screen" 
-                    : "mix-blend-multiply"
-                }`} 
+                className="h-full w-auto object-contain transition-all duration-300 mix-blend-multiply" 
               />
             )}
           </div>
           <div className="flex flex-col justify-center select-none font-outfit">
-            <span className={`text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
-              scrolled ? "text-white" : "text-[#2e5090]"
-            }`}>
+            <span className="text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 text-[#2e5090]">
               {config?.companyName || "YUNAWISE"}
             </span>
-            <span className={`text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 ${
-              scrolled ? "text-sky-400" : "text-[#2e5090]/90"
-            }`}>
+            <span className="text-[8.5px] font-black tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 text-[#2e5090]/90">
               {config?.companySubName || "TECHSOLVE LLP"}
             </span>
           </div>
@@ -137,12 +125,8 @@ export default function AdminNavbar() {
                 href={link.href}
                 className={`flex items-center gap-1.5 text-xs font-outfit font-extrabold uppercase tracking-wider transition-all py-1.5 px-3 rounded-full border ${
                   isActive
-                    ? scrolled
-                      ? "bg-white text-slate-900 border-white shadow-md"
-                      : "bg-slate-900 text-white border-slate-900 shadow-md"
-                    : scrolled
-                      ? "border-transparent text-slate-400 hover:text-white"
-                      : "border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-slate-900 text-white border-slate-900 shadow-md"
+                    : "border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -156,20 +140,14 @@ export default function AdminNavbar() {
         <div className="flex items-center gap-2.5 sm:gap-4">
           <Link 
             href="/" 
-            className={`hidden sm:inline-flex items-center gap-1.5 text-xs font-outfit font-extrabold uppercase tracking-wider transition-colors ${
-              scrolled ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-900"
-            }`}
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-outfit font-extrabold uppercase tracking-wider transition-colors text-slate-500 hover:text-slate-900"
           >
             <Globe className="w-3.5 h-3.5" />
             <span className="hidden xl:inline">View Site</span>
           </Link>
           <button
             onClick={handleLogout}
-            className={`inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 rounded-full transition-colors text-xs font-outfit font-bold uppercase tracking-wider cursor-pointer shadow-sm ${
-              scrolled
-                ? "bg-white hover:bg-slate-100 text-slate-900"
-                : "bg-slate-950 hover:bg-slate-800 text-white"
-            }`}
+            className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 rounded-full transition-colors text-xs font-outfit font-bold uppercase tracking-wider cursor-pointer shadow-sm bg-slate-950 hover:bg-slate-800 text-white"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden xl:inline">Sign Out</span>
@@ -184,9 +162,7 @@ export default function AdminNavbar() {
               e.nativeEvent.stopImmediatePropagation();
               setIsOpen(!isOpen);
             }}
-            className={`p-2 -mr-2 lg:hidden transition-colors cursor-pointer z-50 relative ${
-              scrolled ? "text-slate-200 hover:text-white" : "text-slate-700 hover:text-slate-900"
-            }`}
+            className="p-2 -mr-2 lg:hidden transition-colors cursor-pointer z-50 relative text-slate-700 hover:text-slate-900"
             aria-label="Toggle navigation menu"
           >
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

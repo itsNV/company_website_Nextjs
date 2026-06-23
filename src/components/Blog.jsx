@@ -58,7 +58,7 @@ export default function Blog() {
             Insights &amp; News
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            Read our latest articles.
+            Read our <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">latest articles</span>.
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
             Stay up to date with modern web standards, application cost guides, and strategic marketing tips from our senior engineering team.

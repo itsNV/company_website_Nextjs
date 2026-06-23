@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, Quote, ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const reviews = [
+  const [reviews, setReviews] = useState([
     {
       text: "Yunawise did an excellent job developing our website aakarpublication.com. The design is clean, professional, and truly represents our brand. We are very satisfied with their work and support.",
       author: "Suresh Prajapati",
@@ -60,7 +59,24 @@ export default function Testimonials() {
       textColor: "text-emerald-950",
       badgeColor: "text-emerald-700 bg-emerald-100/60"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        const res = await fetch("/api/testimonials");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reviews && data.reviews.length > 0) {
+            setReviews(data.reviews);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load live testimonials, falling back to manual reviews.", err);
+      }
+    }
+    fetchReviews();
+  }, []);
 
   // Chunk reviews into groups of 3 for each slide
   const slides = [];
@@ -90,7 +106,7 @@ export default function Testimonials() {
             Client Reviews
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold font-outfit text-slate-900 mt-4 mb-6">
-            People are talking about us.
+            People are <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">talking</span> about us.
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
             Read verified recommendations from founders and executives who partnered with Yunawise Techsolve LLP.

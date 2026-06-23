@@ -105,7 +105,7 @@ export default function Technologies() {
             Tech Stack
           </div>
           <h2 className="text-3xl md:text-4xl font-black font-outfit text-slate-900 leading-tight">
-            Technology we use
+            Technology <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">we use</span>
           </h2>
           <p className="mt-3 text-slate-500 text-sm md:text-base max-w-lg mx-auto">
             Modern tools that power fast, scalable products.

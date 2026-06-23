@@ -5,7 +5,7 @@ import AdminGuard from "@/components/AdminGuard";
 import AdminNavbar from "@/components/AdminNavbar";
 import { Save, Loader2, AlertCircle, X, Settings, Image as ImageIcon, Sparkles } from "lucide-react";
 import { db, storage } from "@/lib/firebase/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 export default function SettingsAdminPage() {
@@ -59,6 +59,173 @@ export default function SettingsAdminPage() {
   const [instagramUrl, setInstagramUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
+
+  // Clients state
+  const [clients, setClients] = useState([]);
+  const [clientLoading, setClientLoading] = useState(false);
+  const [clientForm, setClientForm] = useState({ id: "", name: "", domain: "", file: null, imageUrl: "" });
+  const [clientSubmitLoading, setClientSubmitLoading] = useState(false);
+  const [clientMessage, setClientMessage] = useState({ type: "", text: "" });
+
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+
+  const fetchClients = async () => {
+    setClientLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "clients"));
+      const list = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setClients(list);
+    } catch (e) {
+      console.error("Error loading clients:", e);
+    } finally {
+      setClientLoading(false);
+    }
+  };
+
+  const handleClientSubmit = async (e) => {
+    e.preventDefault();
+    if (!clientForm.name.trim()) {
+      setClientMessage({ type: "error", text: "Client name is required." });
+      return;
+    }
+    
+    setClientSubmitLoading(true);
+    setClientMessage({ type: "", text: "" });
+
+    try {
+      const slug = generateSlug(clientForm.name);
+      let finalImageUrl = clientForm.imageUrl;
+
+      const deleteStorageFile = async (url) => {
+        if (!url || !url.includes("firebasestorage.googleapis.com")) return;
+        try {
+          const fileRef = ref(storage, url);
+          await deleteObject(fileRef);
+        } catch (e) {
+          console.warn("Failed to delete client logo from Storage:", e);
+        }
+      };
+
+      if (clientForm.id) {
+        // --- UPDATE MODE ---
+        const oldClient = clients.find(c => c.id === clientForm.id);
+        const oldSlug = oldClient.id;
+        const newSlug = slug;
+
+        if (clientForm.file) {
+          // New image uploaded
+          if (oldClient.imageUrl) {
+            await deleteStorageFile(oldClient.imageUrl);
+          }
+          const extension = clientForm.file.name.split('.').pop();
+          const storageRef = ref(storage, `client_logos/${newSlug}.${extension}`);
+          const snapshot = await uploadBytes(storageRef, clientForm.file);
+          finalImageUrl = await getDownloadURL(snapshot.ref);
+        } else if (newSlug !== oldSlug) {
+          // Slug changed, but no new file uploaded -> Rename file in storage by downloading blob & re-uploading
+          if (oldClient.imageUrl) {
+            try {
+              const response = await fetch(oldClient.imageUrl);
+              const blob = await response.blob();
+              const oldExt = oldClient.imageUrl.split('?')[0].split('.').pop() || 'png';
+              const storageRef = ref(storage, `client_logos/${newSlug}.${oldExt}`);
+              const snapshot = await uploadBytes(storageRef, blob);
+              finalImageUrl = await getDownloadURL(snapshot.ref);
+              await deleteStorageFile(oldClient.imageUrl);
+            } catch (err) {
+              console.error("Failed to migrate image to new slug name:", err);
+            }
+          }
+        }
+
+        // If the slug changed, delete the old document and create a new one
+        if (newSlug !== oldSlug) {
+          await deleteDoc(doc(db, "clients", oldSlug));
+        }
+
+        await setDoc(doc(db, "clients", newSlug), {
+          name: clientForm.name,
+          slug: newSlug,
+          imageUrl: finalImageUrl,
+          domain: clientForm.domain || "",
+          updatedAt: new Date().toISOString()
+        });
+
+        setClientMessage({ type: "success", text: "Client updated successfully!" });
+      } else {
+        // --- ADD MODE ---
+        if (!clientForm.file) {
+          setClientMessage({ type: "error", text: "Logo image file is required to add a client." });
+          setClientSubmitLoading(false);
+          return;
+        }
+
+        // Check if slug already exists
+        const existsRef = doc(db, "clients", slug);
+        const existsSnap = await getDoc(existsRef);
+        if (existsSnap.exists()) {
+          setClientMessage({ type: "error", text: `A client with the slug '${slug}' already exists.` });
+          setClientSubmitLoading(false);
+          return;
+        }
+
+        const extension = clientForm.file.name.split('.').pop();
+        const storageRef = ref(storage, `client_logos/${slug}.${extension}`);
+        const snapshot = await uploadBytes(storageRef, clientForm.file);
+        finalImageUrl = await getDownloadURL(snapshot.ref);
+
+        await setDoc(doc(db, "clients", slug), {
+          name: clientForm.name,
+          slug,
+          imageUrl: finalImageUrl,
+          domain: clientForm.domain || "",
+          createdAt: new Date().toISOString()
+        });
+
+        setClientMessage({ type: "success", text: "Client added successfully!" });
+      }
+
+      setClientForm({ id: "", name: "", domain: "", file: null, imageUrl: "" });
+      fetchClients();
+    } catch (err) {
+      console.error("Error in handleClientSubmit:", err);
+      setClientMessage({ type: "error", text: err.message || "Failed to save client." });
+    } finally {
+      setClientSubmitLoading(false);
+    }
+  };
+
+  const handleClientDelete = async (client) => {
+    if (!window.confirm(`Are you sure you want to delete ${client.name}?`)) return;
+    
+    try {
+      if (client.imageUrl) {
+        const fileRef = ref(storage, client.imageUrl);
+        try {
+          await deleteObject(fileRef);
+        } catch (e) {
+          console.warn("Image file not found or couldn't be deleted from Storage:", e);
+        }
+      }
+
+      await deleteDoc(doc(db, "clients", client.id));
+      
+      setClientMessage({ type: "success", text: "Client deleted successfully!" });
+      fetchClients();
+    } catch (err) {
+      setClientMessage({ type: "error", text: err.message || "Failed to delete client." });
+    }
+  };
 
   const fetchSettings = async () => {
     setLoading(true);
@@ -116,6 +283,7 @@ export default function SettingsAdminPage() {
 
   useEffect(() => {
     fetchSettings();
+    fetchClients();
   }, []);
 
   const handleSave = async (e) => {
@@ -333,7 +501,7 @@ export default function SettingsAdminPage() {
                   <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50 p-4 transition-colors text-center">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                       onChange={(e) => setLogoFile(e.target.files[0])}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
@@ -359,7 +527,7 @@ export default function SettingsAdminPage() {
                   <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50 p-4 transition-colors text-center">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                       onChange={(e) => setFaviconFile(e.target.files[0])}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
@@ -646,6 +814,167 @@ export default function SettingsAdminPage() {
                     placeholder="Instagram Page URL"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Client Showcase Management Section */}
+            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-blue-600" />
+                  <h2 className="text-base font-black text-slate-900 uppercase tracking-wider font-outfit">
+                    Client Showcase Partners
+                  </h2>
+                </div>
+                <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  {clients.length} Partners
+                </span>
+              </div>
+
+              {clientMessage.text && (
+                <div className={`p-4 rounded-xl text-xs flex items-start gap-2.5 border ${
+                  clientMessage.type === "success" 
+                    ? "bg-teal-50 border-teal-200 text-teal-700" 
+                    : "bg-rose-50 border-rose-200 text-rose-700"
+                }`}>
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span className="font-semibold">{clientMessage.text}</span>
+                  <button type="button" className="ml-auto text-slate-400 hover:text-slate-600" onClick={() => setClientMessage({type: "", text: ""})}>
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Form Row */}
+              <div className="bg-slate-50 border border-slate-200/50 rounded-2xl p-5 space-y-4">
+                <h3 className="text-xs font-black uppercase text-slate-700 tracking-wider">
+                  {clientForm.id ? "Update Showcase Client" : "Add New Showcase Client"}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Client Name</label>
+                    <input
+                      type="text"
+                      value={clientForm.name}
+                      onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
+                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                      placeholder="e.g. Satcure"
+                    />
+                    {clientForm.name && (
+                      <p className="text-[10px] text-slate-400 font-medium italic">
+                        Slug: <span className="font-mono text-blue-600">{generateSlug(clientForm.name)}</span>
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Client Website Domain</label>
+                    <input
+                      type="text"
+                      value={clientForm.domain}
+                      onChange={(e) => setClientForm({ ...clientForm, domain: e.target.value })}
+                      className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-blue-500"
+                      placeholder="e.g. satcuree.com"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Client Logo/Image</label>
+                    <div className="relative border border-slate-200 hover:border-blue-500 rounded-xl bg-white h-11 flex items-center justify-center cursor-pointer overflow-hidden px-4">
+                      <input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                        onChange={(e) => setClientForm({ ...clientForm, file: e.target.files[0] })}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <span className="text-xs text-slate-500 font-semibold truncate">
+                        {clientForm.file ? clientForm.file.name : (clientForm.imageUrl ? "Keep current logo" : "Choose Image")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2.5 pt-2">
+                  {clientForm.id && (
+                    <button
+                      type="button"
+                      onClick={() => setClientForm({ id: "", name: "", domain: "", file: null, imageUrl: "" })}
+                      className="h-10 px-5 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl text-xs uppercase font-bold tracking-wider transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleClientSubmit}
+                    disabled={clientSubmitLoading}
+                    className="h-10 px-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs uppercase font-bold tracking-wider transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    {clientSubmitLoading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...
+                      </>
+                    ) : (
+                      clientForm.id ? "Update Client" : "Add Client"
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* List View */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-black uppercase text-slate-700 tracking-wider">
+                  Partner Directory
+                </h3>
+                {clientLoading ? (
+                  <div className="flex justify-center py-6">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                  </div>
+                ) : clients.length === 0 ? (
+                  <p className="text-xs text-slate-400 font-medium italic text-center py-6">
+                    No custom clients found. Site will fall back to default marquee list.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {clients.map((client) => (
+                      <div
+                        key={client.id}
+                        className="flex items-center justify-between gap-3 p-4 bg-white border border-slate-150 rounded-2xl shadow-sm hover:border-slate-300 hover:shadow transition-all"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center shrink-0">
+                            {client.imageUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={client.imageUrl} alt={client.name} className="h-full w-full object-contain" />
+                            ) : (
+                              <ImageIcon className="w-5 h-5 text-slate-300" />
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-slate-800 font-outfit">{client.name}</span>
+                            <span className="text-[9px] text-slate-400 font-mono leading-none mt-0.5">{client.domain || "no domain"}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setClientForm({ id: client.id, name: client.name, domain: client.domain || "", file: null, imageUrl: client.imageUrl || "" })}
+                            className="p-1.5 bg-slate-50 border border-slate-150 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors"
+                            title="Edit"
+                          >
+                            <Settings className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleClientDelete(client)}
+                            className="p-1.5 bg-slate-50 border border-slate-150 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-colors"
+                            title="Delete"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

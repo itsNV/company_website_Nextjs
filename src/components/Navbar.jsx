@@ -123,10 +123,10 @@ export default function Navbar({ activeSection, config }) {
       className="fixed top-3 sm:top-6 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 md:px-8 transition-all duration-300"
     >
       <div
-        className={`w-full max-w-7xl rounded-full flex items-center justify-between border transition-all duration-300 relative ${
+        className={`w-full max-w-7xl rounded-full flex items-center justify-between border bg-white/70 backdrop-blur-xl border-slate-200/30 shadow-sm transition-all duration-300 relative ${
           scrolled
-            ? "bg-slate-900/90 backdrop-blur-xl border-slate-700/30 px-3.5 py-2.5 sm:px-6 sm:py-3 shadow-[0_8px_32px_rgba(0,0,0,0.15)]"
-            : "bg-white/70 backdrop-blur-xl border-slate-200/30 px-4 py-3 sm:px-8 sm:py-4 shadow-sm"
+            ? "px-3.5 py-2.5 sm:px-6 sm:py-3"
+            : "px-4 py-3 sm:px-8 sm:py-4"
         }`}
       >
         
@@ -138,33 +138,21 @@ export default function Navbar({ activeSection, config }) {
               <img 
                 src={navConfig.logoUrl} 
                 alt="Yunawise Logo" 
-                className={`h-full w-auto object-contain transition-all duration-300 ${
-                  scrolled 
-                    ? "invert brightness-200 mix-blend-screen" 
-                    : "mix-blend-multiply"
-                }`} 
+                className="h-full w-auto object-contain transition-all duration-300 mix-blend-multiply" 
               />
             ) : (
               <Image 
                 src={logo} 
                 alt="Yunawise Logo" 
-                className={`h-full w-auto object-contain transition-all duration-300 ${
-                  scrolled 
-                    ? "invert brightness-200 mix-blend-screen" 
-                    : "mix-blend-multiply"
-                }`} 
+                className="h-full w-auto object-contain transition-all duration-300 mix-blend-multiply" 
               />
             )}
           </div>
           <div className="flex flex-col justify-center select-none font-outfit">
-            <span className={`text-[13px] sm:text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 ${
-              scrolled ? "text-white" : "text-[#2e5090]"
-            }`}>
+            <span className="text-[13px] sm:text-[15px] font-black tracking-wider leading-[1.1] transition-all duration-300 text-[#2e5090]">
               {navConfig?.companyName || "YUNAWISE"}
             </span>
-            <span className={`text-[7.5px] sm:text-[8.5px] font-black tracking-[0.15em] sm:tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 hidden min-[360px]:block ${
-              scrolled ? "text-sky-400" : "text-[#2e5090]/90"
-            }`}>
+            <span className="text-[7.5px] sm:text-[8.5px] font-black tracking-[0.15em] sm:tracking-[0.18em] leading-none mt-0.5 transition-all duration-300 hidden min-[360px]:block text-[#2e5090]/90">
               {navConfig?.companySubName || "TECHSOLVE LLP"}
             </span>
           </div>
@@ -187,64 +175,25 @@ export default function Navbar({ activeSection, config }) {
                     }}
                     className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
                       isServicesActive
-                        ? scrolled ? "text-white" : "text-black"
-                        : scrolled ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                        ? "text-black"
+                        : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Services
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </a>
                   <div 
-                    onMouseLeave={() => setShowAllServices(false)}
-                    className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
-                      ${showAllServices && servicesDropdownItems.length > 5 ? "max-h-[380px] overflow-y-auto" : ""}
+                    className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-64 flex flex-col gap-0.5 max-h-[380px] overflow-y-auto
                       ${desktopServicesOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {servicesDropdownItems.length >= 8 ? (
-                      <>
-                        {servicesDropdownItems.slice(0, 5).map((srv) => (
-                          <a
-                            key={srv.href}
-                            href={srv.href}
-                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                          >
-                            {srv.label}
-                          </a>
-                        ))}
-                        <a
-                          href="/services"
-                          className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 font-sans"
-                        >
-                          View All Services
-                        </a>
-                      </>
-                    ) : (
-                      <>
-                        {(showAllServices || servicesDropdownItems.length <= 5
-                          ? servicesDropdownItems
-                          : servicesDropdownItems.slice(0, 5)
-                        ).map((srv) => (
-                          <a
-                            key={srv.href}
-                            href={srv.href}
-                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                          >
-                            {srv.label}
-                          </a>
-                        ))}
-                        {servicesDropdownItems.length > 5 && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setShowAllServices(!showAllServices);
-                            }}
-                            className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 cursor-pointer"
-                          >
-                            {showAllServices ? "- Show Less" : `+ Show ${servicesDropdownItems.length - 5} More`}
-                          </button>
-                        )}
-                      </>
-                    )}
+                    {servicesDropdownItems.map((srv) => (
+                      <a
+                        key={srv.href}
+                        href={srv.href}
+                        className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                      >
+                        {srv.label}
+                      </a>
+                    ))}
                   </div>
                 </div>
               );
@@ -261,64 +210,32 @@ export default function Navbar({ activeSection, config }) {
                     }}
                     className={`text-[13px] font-semibold tracking-wide flex items-center gap-1 cursor-pointer transition-colors ${
                       isSolutionsActive
-                        ? scrolled ? "text-white" : "text-black"
-                        : scrolled ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                        ? "text-black"
+                        : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Solutions
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover/dropdown:rotate-180" />
                   </button>
                   <div 
-                    onMouseLeave={() => setShowAllSolutions(false)}
-                    className={`absolute top-full left-0 mt-2 rounded-2xl bg-white border border-slate-200/60 p-2 shadow-xl transition-all duration-300 z-50 w-60 flex flex-col gap-0.5
-                      ${showAllSolutions && solutionsDropdownItems.length > 5 ? "max-h-[380px] overflow-y-auto" : ""}
+                    className={`absolute top-full mt-2 rounded-2xl bg-white border border-slate-200/60 shadow-xl transition-all duration-300 z-50 overflow-y-auto
+                      ${solutionsDropdownItems.length > 5 
+                        ? "w-[720px] max-h-[420px] p-4 grid grid-cols-4 gap-2.5 left-1/2 -translate-x-1/2" 
+                        : "w-64 max-h-[380px] p-2 flex flex-col gap-0.5 left-0 translate-x-0"
+                      }
                       ${desktopSolutionsOpen ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:visible"}`}>
-                    {solutionsDropdownItems.length >= 8 ? (
-                      <>
-                        {solutionsDropdownItems.slice(0, 5).map((sol) => (
-                          <a
-                            key={sol.href}
-                            href={sol.href}
-                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                          >
-                            {sol.label}
-                          </a>
-                        ))}
-                        <a
-                          href="/solutions"
-                          className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 font-sans"
-                        >
-                          View All Solutions
-                        </a>
-                      </>
-                    ) : (
-                      <>
-                        {(showAllSolutions || solutionsDropdownItems.length <= 5
-                          ? solutionsDropdownItems
-                          : solutionsDropdownItems.slice(0, 5)
-                        ).map((sol) => (
-                          <a
-                            key={sol.href}
-                            href={sol.href}
-                            className="block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
-                          >
-                            {sol.label}
-                          </a>
-                        ))}
-                        {solutionsDropdownItems.length > 5 && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setShowAllSolutions(!showAllSolutions);
-                            }}
-                            className="block w-full text-center px-4 py-2.5 mt-1 rounded-xl text-xs font-black text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 hover:text-indigo-700 transition-colors border-t border-indigo-100/30 cursor-pointer"
-                          >
-                            {showAllSolutions ? "- Show Less" : `+ Show ${solutionsDropdownItems.length - 5} More`}
-                          </button>
-                        )}
-                      </>
-                    )}
+                    {solutionsDropdownItems.map((sol) => (
+                      <a
+                        key={sol.href}
+                        href={sol.href}
+                        className={solutionsDropdownItems.length > 5
+                          ? "block px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors text-center border border-slate-100 hover:border-primary/20 bg-slate-50/50 hover:bg-white"
+                          : "block px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors"
+                        }
+                      >
+                        {sol.label}
+                      </a>
+                    ))}
                   </div>
                 </div>
               );
@@ -330,12 +247,8 @@ export default function Navbar({ activeSection, config }) {
                 href={link.href}
                 className={`text-[13px] font-semibold tracking-wide transition-colors relative py-1.5 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-transform after:duration-300 ${
                   isActive
-                  ?
-                  scrolled
-                    ?
-                    "text-white after:scale-x-100 after:bg-gradient-to-r after:from-indigo-600 after:via-sky-500 after:to-emerald-400"
-                    : "text-black after:scale-x-100 after:bg-gradient-to-r after:from-indigo-600 after:via-sky-500 after:to-emerald-400"
-                    : "text-slate-500  after:scale-x-0 hover:after:scale-x-100 after:bg-blue-600"
+                    ? "text-black after:scale-x-100 after:bg-gradient-to-r after:from-indigo-600 after:via-sky-500 after:to-emerald-400"
+                    : "text-slate-500 after:scale-x-0 hover:after:scale-x-100 after:bg-blue-600"
                 }`}
               >
                 {link.label}
@@ -348,8 +261,7 @@ export default function Navbar({ activeSection, config }) {
         <div className="hidden lg:flex items-center gap-4">
           <a
             href="/contact"
-            className={`hover-btn px-4.5 py-1.5 rounded-full hover:bg-primary text-[12px] font-extrabold tracking-wider uppercase flex items-center gap-1 shadow-sm transition-all
-              ${ scrolled ? "bg-white text-slate-900 hover:bg-primary/90" : "bg-slate-900 text-white hover:bg-primary" }`}
+            className="hover-btn px-4.5 py-1.5 rounded-full text-[12px] font-extrabold tracking-wider uppercase flex items-center gap-1 shadow-sm transition-all bg-slate-900 text-white hover:bg-primary"
           >
             Get in Touch
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -360,9 +272,7 @@ export default function Navbar({ activeSection, config }) {
         <button
           suppressHydrationWarning
           onClick={() => setIsOpen(!isOpen)}
-          className={`p-2 -mr-2 lg:hidden transition-colors ${
-            scrolled ? "text-slate-200 hover:text-primary" : "text-slate-700 hover:text-primary"
-          }`}
+          className="p-2 -mr-2 lg:hidden transition-colors text-slate-700 hover:text-primary"
           aria-label="Toggle navigation menu"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

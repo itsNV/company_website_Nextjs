@@ -119,7 +119,7 @@ export default function BlogPage() {
         <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] border-t border-[#eae6fa]/40">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 mb-12 text-center">
-              All Publications
+              All <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">Publications</span>
             </h2>
             
             {loading ? (

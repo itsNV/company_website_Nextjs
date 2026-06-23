@@ -702,7 +702,7 @@ export default function AdminPageBuilder({
                     <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50 p-4 transition-colors">
                       <input
                         type="file"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                         onChange={(e) => {
                           const file = e.target.files[0];
                           if (file) {
@@ -804,7 +804,7 @@ export default function AdminPageBuilder({
                     <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50/50 p-4 transition-colors">
                       <input
                         type="file"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                         onChange={(e) => {
                           const file = e.target.files[0];
                           if (file) {
@@ -978,7 +978,7 @@ export default function AdminPageBuilder({
                     <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50/50 p-4 transition-colors">
                       <input
                         type="file"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
                         onChange={(e) => {
                           const file = e.target.files[0];
                           if (file) {
