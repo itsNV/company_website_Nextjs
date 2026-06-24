@@ -108,7 +108,7 @@ export default function BlogBlockEditor({ block, categories, onChange, onSizeCha
     <div className="relative border-2 border-dashed border-slate-200 rounded-xl p-3">
       <input
         type="file"
-        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
         onChange={(e) => imageUpload(e.target.files?.[0])}
         className="absolute inset-0 opacity-0 cursor-pointer"
       />

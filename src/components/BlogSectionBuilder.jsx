@@ -209,7 +209,7 @@ export default function BlogSectionBuilder({ sections, onChange }) {
             <div className="relative border-2 border-dashed border-slate-200 hover:border-purple-400 rounded-2xl bg-white p-3 transition-colors">
               <input
                 type="file"
-                accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) handleSectionImageChange(sectionIndex, file);

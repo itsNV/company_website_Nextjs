@@ -4,11 +4,12 @@ import Link from "next/link";
 import { Lock, ExternalLink, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-
-
 export function ProjectCard({ project, index }) {
-    // Stagger up to 6 cards on initial load, then cap delay so later cards appear immediately
-    const delay = Math.min(index, 5) * 100;
+    // Generate upper-case categories combining platform type and tech stack
+    const categories = [
+        project.platform_type,
+        ...(project.tech_stack || []).slice(0, 2)
+    ].filter(Boolean).join(" / ").toUpperCase();
 
     return (
         <motion.div
@@ -16,67 +17,63 @@ export function ProjectCard({ project, index }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.6, delay: Math.min(index, 5) * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="group relative flex flex-col w-full bg-white border border-neutral-100 rounded-3xl overflow-hidden hover:shadow-[0_20px_40px_-15px_rgba(45,212,191,0.25)] hover:-translate-y-2 transition-all duration-300"
+            className="group relative flex flex-col justify-end w-full aspect-[4/3] min-h-[340px] bg-slate-900 rounded-[28px] overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(37,99,235,0.25)] hover:-translate-y-2 transition-all duration-500 border border-slate-800/10"
         >
             {/* Top accent line on hover */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 to-teal-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyan-400 to-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-20" />
 
-            <div className="p-6 sm:p-8 md:p-9 flex flex-col flex-1 min-h-[320px] justify-between">
-                <div>
-                    {/* Header row */}
-                    <div className="flex items-center justify-between mb-6">
-                        <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400">
-                            {project.platform_type}
-                        </span>
-                        {!project.live_url ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-neutral-400 bg-neutral-50 border border-neutral-100 rounded-lg px-2.5 py-1">
-                                <Lock className="w-2.5 h-2.5" /> Confidential
-                            </span>
-                        ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 rounded-lg px-2.5 py-1">
-                                <ExternalLink className="w-2.5 h-2.5" /> Live
-                            </span>
-                        )}
-                    </div>
+            {/* Background Image */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+                {project.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img 
+                    src={project.image_url} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 text-slate-500 font-bold uppercase tracking-wider text-xs">
+                    No Preview Available
+                  </div>
+                )}
+            </div>
 
-                    {/* Title */}
-                    <h3 className="text-xl sm:text-2xl font-black tracking-tight font-heading text-neutral-900 group-hover:text-blue-600 transition-colors duration-200 leading-[1.2] mb-3">
+            {/* Bottom Dark Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500 z-10 pointer-events-none" />
+
+            {/* Info and Action Contents */}
+            <div className="relative z-20 p-6 md:p-8 flex items-end justify-between gap-6 w-full">
+                {/* Left side text items */}
+                <div className="space-y-2 flex-grow max-w-[70%]">
+                    {categories && (
+                        <p className="text-[10px] font-black tracking-widest text-cyan-400 font-outfit uppercase leading-relaxed line-clamp-1">
+                            {categories}
+                        </p>
+                    )}
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight font-outfit text-white group-hover:text-cyan-300 transition-colors duration-300 leading-tight">
                         <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0">
                             {project.title}
                         </Link>
                     </h3>
-
-                    {/* Tagline */}
-                    <p className="text-[15px] text-neutral-500 leading-relaxed mb-6 font-medium">
-                        {project.tagline}
-                    </p>
-
-                    {/* Impact snippet */}
-                    {project.business_impact && (
-                        <div className="bg-blue-50/50 border-l-[3px] border-blue-600 rounded-r-xl pl-4 pr-5 py-3.5 mb-6">
-                            <p className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">Impact</p>
-                            <p className="text-[13px] font-semibold text-neutral-700 leading-snug line-clamp-2">
-                                {project.business_impact}
-                            </p>
-                        </div>
-                    )}
                 </div>
 
-                {/* Footer */}
-                <div className="border-t border-neutral-100 pt-6 flex items-center justify-between gap-4">
-                    <div className="flex flex-wrap gap-1.5 max-w-[85%]">
-                        {project.tech_stack?.slice(0, 4).map((tag) => (
-                            <span key={tag} className="text-[11px] font-bold text-neutral-400 px-2 py-1 bg-neutral-50 rounded-md border border-neutral-100">
-                                {tag}
-                            </span>
-                        ))}
-                        {(project.tech_stack?.length ?? 0) > 4 && (
-                            <span className="text-[11px] font-bold text-neutral-400 px-2 py-1">
-                                +{(project.tech_stack?.length ?? 0) - 4}
-                            </span>
-                        )}
+                {/* Right side status and action elements */}
+                <div className="flex flex-col items-end gap-4 shrink-0 z-30">
+                    {/* Status badge pill */}
+                    {!project.live_url ? (
+                        <span className="inline-flex items-center gap-1.5 text-[9px] font-extrabold text-slate-300 bg-slate-900/60 backdrop-blur-sm border border-slate-700/40 rounded-full px-3 py-1 shadow-sm">
+                            <Lock className="w-2.5 h-2.5" /> Confidential
+                        </span>
+                    ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[9px] font-extrabold text-white bg-blue-950/60 backdrop-blur-sm border border-blue-800/40 rounded-full px-3 py-1 shadow-sm">
+                            <ExternalLink className="w-2.5 h-2.5 text-blue-400" /> Live
+                        </span>
+                    )}
+
+                    {/* Action circle button */}
+                    <div className="w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-105 transition-all duration-300">
+                        <ArrowRight className="w-5 h-5 text-white" />
                     </div>
-                    <ArrowRight className="w-4 h-4 text-neutral-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
                 </div>
             </div>
         </motion.div>

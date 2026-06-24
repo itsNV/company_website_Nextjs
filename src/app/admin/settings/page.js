@@ -501,7 +501,7 @@ export default function SettingsAdminPage() {
                   <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50 p-4 transition-colors text-center">
                     <input
                       type="file"
-                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                       onChange={(e) => setLogoFile(e.target.files[0])}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
@@ -527,7 +527,7 @@ export default function SettingsAdminPage() {
                   <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl bg-slate-50 p-4 transition-colors text-center">
                     <input
                       type="file"
-                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                       onChange={(e) => setFaviconFile(e.target.files[0])}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
@@ -881,7 +881,7 @@ export default function SettingsAdminPage() {
                     <div className="relative border border-slate-200 hover:border-blue-500 rounded-xl bg-white h-11 flex items-center justify-center cursor-pointer overflow-hidden px-4">
                       <input
                         type="file"
-                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                         onChange={(e) => setClientForm({ ...clientForm, file: e.target.files[0] })}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       />
