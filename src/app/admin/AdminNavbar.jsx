@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Laptop, LogOut, LayoutDashboard } from "lucide-react";
+import { BookOpen, Laptop, LogOut, LayoutDashboard, Cpu, Briefcase, Settings } from "lucide-react";
 import Image from "next/image";
 import logo from "../icon.png";
 import { signOut } from "firebase/auth";
@@ -41,7 +41,11 @@ export default function AdminNavbar() {
 
   const navLinks = [
     { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    
+    { label: "Blogs", href: "/admin/blogs", icon: BookOpen },
+    { label: "Services", href: "/admin/services", icon: Laptop },
+    { label: "Solutions", href: "/admin/solutions", icon: Cpu },
+    { label: "Projects", href: "/admin/projects", icon: Briefcase },
+    { label: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (

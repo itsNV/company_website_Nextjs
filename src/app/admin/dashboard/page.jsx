@@ -2,7 +2,7 @@
 
 import AdminGuard from "@/components/AdminGuard";
 import Link from "next/link";
-import { BookOpen, Laptop, Cpu, ArrowRight, Activity, ShieldCheck, Database, Calendar, Settings } from "lucide-react";
+import { BookOpen, Laptop, Cpu, ArrowRight, Activity, ShieldCheck, Database, Calendar, Settings, Briefcase } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
 
 
@@ -34,6 +34,15 @@ export default function Dashboard() {
       color: "from-emerald-500/5 to-teal-500/5 hover:border-emerald-500/30",
       iconColor: "text-emerald-600 bg-emerald-50 border-emerald-100",
       badge: "Enterprise",
+    },
+    {
+      title: "Projects Showcase",
+      description: "Build client project portfolios, challenge case studies, solution diagrams, and impact spotlights.",
+      icon: Briefcase,
+      href: "/admin/projects",
+      color: "from-rose-500/5 to-orange-500/5 hover:border-rose-500/30",
+      iconColor: "text-rose-600 bg-rose-50 border-rose-100",
+      badge: "Showcase",
     },
     {
       title: "Global Settings",

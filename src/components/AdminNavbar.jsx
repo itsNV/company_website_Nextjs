@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, LogOut, LayoutDashboard, Laptop, Cpu, Globe, Settings, Menu, X } from "lucide-react";
+import { BookOpen, LogOut, LayoutDashboard, Laptop, Cpu, Globe, Settings, Menu, X, Briefcase } from "lucide-react";
 import Image from "next/image";
 import logo from "../app/icon.png";
 import { signOut } from "firebase/auth";
@@ -74,6 +74,7 @@ export default function AdminNavbar() {
     { label: "Blogs", href: "/admin/blogs", icon: BookOpen, color: "text-purple-600 hover:text-purple-700" },
     { label: "Services", href: "/admin/services", icon: Laptop, color: "text-blue-600 hover:text-blue-700" },
     { label: "Solutions", href: "/admin/solutions", icon: Cpu, color: "text-emerald-600 hover:text-emerald-700" },
+    { label: "Projects", href: "/admin/projects", icon: Briefcase, color: "text-rose-600 hover:text-rose-700" },
     { label: "Settings", href: "/admin/settings", icon: Settings, color: "text-slate-600 hover:text-slate-900" },
   ];
 

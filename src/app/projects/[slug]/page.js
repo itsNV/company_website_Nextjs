@@ -225,139 +225,282 @@ export default function ProjectDetailsPage({ params }) {
         </section>
 
        
-        {/* The Challenge Section (Phase 1) */}
-        {project.problem && (
-          <section className="py-20 bg-slate-50/40 border-b border-[#eae6fa]/10">
-            <div className="max-w-7xl mx-auto px-6">
-              {project.challenge_image_url ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div className="lg:order-1 flex flex-col justify-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
-                      Phase 1: The Challenge
-                    </span>
-                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                      Problem Identification
-                    </h3>
-                    <p className="text-slate-600 text-base leading-relaxed font-medium">
-                      {project.problem}
-                    </p>
-                  </div>
-                  <div className="lg:order-2 w-full">
-                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
-                      <RevealImage 
-                        src={project.challenge_image_url} 
-                        alt="The Challenge" 
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4">
-                    Phase 1: The Challenge
-                  </span>
-                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                    Problem Identification
-                  </h3>
-                  <p className="text-slate-600 text-base leading-relaxed font-medium">
-                    {project.problem}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
+        {/* Project Sections Rendering */}
+        {project.blocks && project.blocks.length > 0 ? (
+          (() => {
+            return project.blocks.map((block, idx) => {
+              const d = block.data || {};
+              const pos = d.image_position || "right";
+              
+              let badgeText = "";
+              let badgeClass = "";
+              let defaultTitle = "";
+              let desc = "";
+              let imgUrl = "";
+              let sectionBg = "py-20 border-b border-[#eae6fa]/10";
+              let extra = null;
 
-        {/* Our Solution Section (Phase 2) */}
-        {project.solution && (
-          <section className="py-20 border-b border-[#eae6fa]/10">
-            <div className="max-w-7xl mx-auto px-6">
-              {project.solution_image_url ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div className="lg:order-2 flex flex-col justify-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
-                      Phase 2: Our Solution
-                    </span>
-                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                      Engineering Response
-                    </h3>
-                    <p className="text-slate-600 text-base leading-relaxed font-medium">
-                      {project.solution}
-                    </p>
-                  </div>
-                  <div className="lg:order-1 w-full">
-                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
-                      <RevealImage 
-                        src={project.solution_image_url} 
-                        alt="Our Solution" 
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
-                    Phase 2: Our Solution
-                  </span>
-                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                    Engineering Response
-                  </h3>
-                  <p className="text-slate-600 text-base leading-relaxed font-medium">
-                    {project.solution}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* Business Impact Section (Phase 3) */}
-        {project.business_impact && (
-          <section className="py-20">
-            <div className="max-w-7xl mx-auto px-6">
-              {project.business_impact_image_url ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <div className="lg:order-1 flex flex-col justify-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
-                      Phase 3: Business Impact
-                    </span>
-                    <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                      Delivering Measurable Value
-                    </h3>
-                    <p className="text-slate-600 text-base leading-relaxed mb-6 font-medium">
-                      {project.business_impact}
-                    </p>
-                    <p className="text-slate-400 text-xs">
-                      Measurable corporate outcome engineered directly through smart architecture integration.
-                    </p>
-                  </div>
-                  <div className="lg:order-2 w-full">
-                    <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
-                      <RevealImage 
-                        src={project.business_impact_image_url} 
-                        alt="Business Impact" 
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
-                    Phase 3: Business Impact
-                  </span>
-                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
-                    Delivering Measurable Value
-                  </h3>
-                  <p className="text-slate-600 text-base leading-relaxed mb-6 font-medium">
-                    {project.business_impact}
-                  </p>
-                  <p className="text-slate-400 text-xs">
+              if (block.type === "challenge") {
+                badgeText = "Phase 1: The Challenge";
+                badgeClass = "text-rose-600 bg-rose-50";
+                defaultTitle = "Problem Identification";
+                desc = d.problem || "";
+                imgUrl = d.challenge_image_url || "";
+                sectionBg = "py-20 bg-slate-50/40 border-b border-[#eae6fa]/10";
+              } else if (block.type === "solution") {
+                badgeText = "Phase 2: Our Solution";
+                badgeClass = "text-purple-600 bg-purple-50";
+                defaultTitle = "Engineering Response";
+                desc = d.solution || "";
+                imgUrl = d.solution_image_url || "";
+              } else if (block.type === "business_impact") {
+                badgeText = "Phase 3: Business Impact";
+                badgeClass = "text-purple-600 bg-purple-50";
+                defaultTitle = "Delivering Measurable Value";
+                desc = d.business_impact || "";
+                imgUrl = d.business_impact_image_url || "";
+                sectionBg = "py-20 border-b border-[#eae6fa]/10 last:border-b-0";
+                extra = (
+                  <p className="text-slate-400 text-xs mt-4">
                     Measurable corporate outcome engineered directly through smart architecture integration.
                   </p>
+                );
+              }
+
+              const blockTitle = d.title || defaultTitle;
+              const hasImage = !!imgUrl;
+
+              // Left/Right split layout order logic:
+              const descOrder = pos === "left" ? "lg:order-2" : "lg:order-1";
+              const imgOrder = pos === "left" ? "lg:order-1" : "lg:order-2";
+
+              const textElement = (
+                <div className="flex flex-col justify-center">
+                  <span className={`text-xs font-bold uppercase tracking-wider ${badgeClass} px-3 py-1 rounded-md inline-block mb-4 w-fit`}>
+                    {badgeText}
+                  </span>
+                  <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                    {blockTitle}
+                  </h3>
+                  <p className="text-slate-655 text-base leading-relaxed font-medium">
+                    {desc}
+                  </p>
+                  {extra}
                 </div>
-              )}
-            </div>
-          </section>
+              );
+
+              const imageElement = hasImage ? (
+                <div className="w-full">
+                  <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                    <RevealImage 
+                      src={imgUrl} 
+                      alt={blockTitle} 
+                    />
+                  </div>
+                </div>
+              ) : null;
+
+              return (
+                <section key={block.id || idx} className={sectionBg}>
+                  <div className="max-w-7xl mx-auto px-6">
+                    {!hasImage ? (
+                      <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                        <span className={`text-xs font-bold uppercase tracking-wider ${badgeClass} px-3 py-1 rounded-md inline-block mb-4`}>
+                          {badgeText}
+                        </span>
+                        <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                          {blockTitle}
+                        </h3>
+                        <p className="text-slate-600 text-base leading-relaxed font-medium">
+                          {desc}
+                        </p>
+                        {extra}
+                      </div>
+                    ) : pos === "above" ? (
+                      <div className="flex flex-col gap-10 max-w-4xl mx-auto items-center text-center">
+                        <div className="w-full max-w-2xl">{imageElement}</div>
+                        <div className="flex flex-col items-center">
+                          <span className={`text-xs font-bold uppercase tracking-wider ${badgeClass} px-3 py-1 rounded-md inline-block mb-4`}>
+                            {badgeText}
+                          </span>
+                          <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                            {blockTitle}
+                          </h3>
+                          <p className="text-slate-600 text-base leading-relaxed font-medium">
+                            {desc}
+                          </p>
+                          {extra}
+                        </div>
+                      </div>
+                    ) : pos === "bottom" ? (
+                      <div className="flex flex-col gap-10 max-w-4xl mx-auto items-center text-center">
+                        <div className="flex flex-col items-center">
+                          <span className={`text-xs font-bold uppercase tracking-wider ${badgeClass} px-3 py-1 rounded-md inline-block mb-4`}>
+                            {badgeText}
+                          </span>
+                          <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                            {blockTitle}
+                          </h3>
+                          <p className="text-slate-600 text-base leading-relaxed font-medium">
+                            {desc}
+                          </p>
+                          {extra}
+                        </div>
+                        <div className="w-full max-w-2xl">{imageElement}</div>
+                      </div>
+                    ) : (
+                      // "left" or "right" split layout
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div className={`${descOrder} flex flex-col justify-center`}>
+                          {textElement}
+                        </div>
+                        <div className={`${imgOrder} w-full`}>
+                          {imageElement}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              );
+            });
+          })()
+        ) : (
+          <>
+            {/* The Challenge Section (Phase 1) */}
+            {project.problem && (
+              <section className="py-20 bg-slate-50/40 border-b border-[#eae6fa]/10">
+                <div className="max-w-7xl mx-auto px-6">
+                  {project.challenge_image_url ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                      <div className="lg:order-1 flex flex-col justify-center">
+                        <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                          Phase 1: The Challenge
+                        </span>
+                        <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                          Problem Identification
+                        </h3>
+                        <p className="text-slate-600 text-base leading-relaxed font-medium">
+                          {project.problem}
+                        </p>
+                      </div>
+                      <div className="lg:order-2 w-full">
+                        <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                          <RevealImage 
+                            src={project.challenge_image_url} 
+                            alt="The Challenge" 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                      <span className="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-md inline-block mb-4">
+                        Phase 1: The Challenge
+                      </span>
+                      <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                        Problem Identification
+                      </h3>
+                      <p className="text-slate-600 text-base leading-relaxed font-medium">
+                        {project.problem}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Our Solution Section (Phase 2) */}
+            {project.solution && (
+              <section className="py-20 border-b border-[#eae6fa]/10">
+                <div className="max-w-7xl mx-auto px-6">
+                  {project.solution_image_url ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                      <div className="lg:order-2 flex flex-col justify-center">
+                        <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                          Phase 2: Our Solution
+                        </span>
+                        <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                          Engineering Response
+                        </h3>
+                        <p className="text-slate-600 text-base leading-relaxed font-medium">
+                          {project.solution}
+                        </p>
+                      </div>
+                      <div className="lg:order-1 w-full">
+                        <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                          <RevealImage 
+                            src={project.solution_image_url} 
+                            alt="Our Solution" 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                      <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
+                        Phase 2: Our Solution
+                      </span>
+                      <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                        Engineering Response
+                      </h3>
+                      <p className="text-slate-600 text-base leading-relaxed font-medium">
+                        {project.solution}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Business Impact Section (Phase 3) */}
+            {project.business_impact && (
+              <section className="py-20">
+                <div className="max-w-7xl mx-auto px-6">
+                  {project.business_impact_image_url ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                      <div className="lg:order-1 flex flex-col justify-center">
+                        <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4 w-fit">
+                          Phase 3: Business Impact
+                        </span>
+                        <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                          Delivering Measurable Value
+                        </h3>
+                        <p className="text-slate-600 text-base leading-relaxed font-medium">
+                          {project.business_impact}
+                        </p>
+                        <p className="text-slate-400 text-xs">
+                          Measurable corporate outcome engineered directly through smart architecture integration.
+                        </p>
+                      </div>
+                      <div className="lg:order-2 w-full">
+                        <div className="overflow-hidden rounded-3xl border border-slate-200/60 shadow-xl max-h-[400px]">
+                          <RevealImage 
+                            src={project.business_impact_image_url} 
+                            alt="Business Impact" 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+                      <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3 py-1 rounded-md inline-block mb-4">
+                        Phase 3: Business Impact
+                      </span>
+                      <h3 className="text-3xl font-black font-outfit text-slate-900 mb-6 leading-tight">
+                        Delivering Measurable Value
+                      </h3>
+                      <p className="text-slate-600 text-base leading-relaxed font-medium">
+                        {project.business_impact}
+                      </p>
+                      <p className="text-slate-400 text-xs">
+                        Measurable corporate outcome engineered directly through smart architecture integration.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+          </>
         )}
 
         {/* Bottom Call to Action Section (mirroring standard styling) */}
