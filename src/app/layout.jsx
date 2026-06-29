@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 import Preloader from "@/components/Preloader";
 import BackgroundParticles from "@/components/BackgroundParticles";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -50,7 +51,7 @@ export default function RootLayout({ children }) {
           <Preloader />
           <BackgroundParticles />
         {children}
-        
+        <ChatbotWidget />
       </body>
     </html>
   );

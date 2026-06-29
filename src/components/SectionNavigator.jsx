@@ -10,10 +10,18 @@ const SECTIONS = [
   { id: "contact", label: "Contact" },
 ];
 
-export default function SectionNavigator() {
+export default function SectionNavigator({ activeSection }) {
   const [activeId, setActiveId] = useState("home");
+  const [hoveredId, setHoveredId] = useState(null);
 
   useEffect(() => {
+    if (activeSection) {
+      setActiveId(activeSection);
+    }
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (activeSection) return; // Skip internal observer if activeSection prop is provided
     const elements = SECTIONS.map((s) => document.getElementById(s.id)).filter(Boolean);
     if (!elements.length) return;
 
@@ -31,25 +39,25 @@ export default function SectionNavigator() {
 
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [activeSection]);
 
   // Find index of current active section to draw the line up to this exact dot
   const activeIdx = SECTIONS.findIndex((s) => s.id === activeId);
   const activeIdxSafe = activeIdx !== -1 ? activeIdx : 0;
-
+ 
   // 5 segments * sqrt(20^2 + 40^2) = 5 * 44.72136 = 223.6px total path length
   const pathLength = 223.6;
   const strokeDashoffset = pathLength - activeIdxSafe * 44.72136;
-
+ 
   return (
     <nav
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block w-10 h-[220px]"
+      className="fixed right-6 top-1/2 -translate-y-1/2 z-[999] hidden lg:block w-[60px] h-[220px] pointer-events-none"
       aria-label="Page sections"
     >
       {/* SVG Zigzag Tracks */}
       <svg 
         className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" 
-        viewBox="0 0 40 220"
+        viewBox="0 0 60 220"
         fill="none"
       >
         <defs>
@@ -63,10 +71,10 @@ export default function SectionNavigator() {
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
- 
+  
         {/* Faint Background Zigzag Line */}
         <path
-          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210"
+          d="M 20 10 L 40 50 L 20 90 L 40 130 L 20 170 L 40 210"
           stroke="rgba(148, 163, 184, 0.2)"
           strokeWidth="2"
           strokeLinecap="round"
@@ -75,7 +83,7 @@ export default function SectionNavigator() {
  
         {/* Glowing Active Scroll Progress Line */}
         <path
-          d="M 10 10 L 30 50 L 10 90 L 30 130 L 10 170 L 30 210"
+          d="M 20 10 L 40 50 L 20 90 L 40 130 L 20 170 L 40 210"
           stroke="url(#navGradient)"
           strokeWidth="2.5"
           strokeLinecap="round"
@@ -86,45 +94,66 @@ export default function SectionNavigator() {
           className="transition-all duration-150 ease-out"
         />
       </svg>
-
+ 
       {/* Navigation Staggered Dots */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full pointer-events-none">
         {SECTIONS.map((section, idx) => {
           const isActive = activeId === section.id;
-          const x = idx % 2 === 0 ? 10 : 30;
+          const x = idx % 2 === 0 ? 20 : 40;
           const y = 10 + idx * 40;
-
+ 
           return (
-            <a
+            <button
               key={section.id}
-              href={`#${section.id}`}
+              onClick={() => {
+                try {
+                  const id = section.id;
+                  if (id === "home") {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    window.history.pushState(null, "", "#");
+                    return;
+                  }
+                  const targetEl = document.getElementById(id);
+                  if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                    window.history.pushState(null, "", `#${id}`);
+                  }
+                } catch (error) {
+                  console.error("Scroll error:", error);
+                }
+              }}
+              onMouseEnter={() => setHoveredId(section.id)}
+              onMouseLeave={() => setHoveredId(null)}
               style={{
                 left: `${x}px`,
                 top: `${y}px`,
-                transform: "translate(-50%, -50%)",
+                transform: `translate(-50%, -50%) scale(${hoveredId === section.id ? 1.15 : 1})`,
               }}
-              className="absolute section-nav-dot group flex items-center justify-center w-6 h-6 transition-transform duration-300 ease-out hover:scale-110 z-10"
+              className="absolute section-nav-dot group flex items-center justify-center w-6 h-6 transition-transform duration-300 ease-out z-10 cursor-pointer border-none bg-transparent p-0 pointer-events-auto"
               aria-label={section.label}
               aria-current={isActive ? "true" : undefined}
             >
               {/* Tooltip Label */}
               <span
-                className={`absolute right-8 text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full bg-white border border-slate-200/60 shadow-sm text-slate-500 opacity-0 translate-x-2 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 ${
+                style={{
+                  right: `${x + 16}px`,
+                }}
+                className={`absolute text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full bg-white border border-slate-200/60 shadow-sm text-slate-500 opacity-0 translate-x-2 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 ${
                   isActive ? "opacity-100 translate-x-0 text-slate-900 border-slate-300 font-black shadow-md" : ""
                 }`}
               >
                 {section.label}
               </span>
-
+ 
               {/* Dynamic Concentric Dot */}
               <span
                 className={`block transition-all duration-300 ease-out rounded-full ${
                   isActive
-                    ? "w-4.5 h-4.5 bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-400 border-2 border-white shadow-md shadow-sky-400/40"
-                    : "w-2.5 h-2.5 bg-slate-300/80 group-hover:w-3.5 group-hover:h-3.5 group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-sky-400 group-hover:border group-hover:border-white"
+                    ? "w-[18px] h-[18px] bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-400 border-2 border-white shadow-md shadow-sky-400/40"
+                    : "w-[10px] h-[10px] bg-slate-300/80 group-hover:w-[14px] group-hover:h-[14px] group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-sky-400 group-hover:border group-hover:border-white"
                 }`}
               />
-            </a>
+            </button>
           );
         })}
       </div>
