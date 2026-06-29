@@ -31,6 +31,11 @@
 /* Base Body Styles with Elegant Aurora Light Background Glows */
 html, body {
   overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 100px;
 }
 
 body {
@@ -43,17 +48,19 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Hide website main content, header, and footer during preloader phase unless already seen in session */
+/* Hide website main content, header, footer, and navigation sidebar during preloader phase unless already seen in session */
 html:not(.preloader-seen) body.is-loading main, 
 html:not(.preloader-seen) body.is-loading header, 
-html:not(.preloader-seen) body.is-loading footer {
+html:not(.preloader-seen) body.is-loading footer,
+html:not(.preloader-seen) body.is-loading nav {
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
 html:not(.preloader-seen) main, 
 html:not(.preloader-seen) header, 
-html:not(.preloader-seen) footer {
+html:not(.preloader-seen) footer,
+html:not(.preloader-seen) nav {
   transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
