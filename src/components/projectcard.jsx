@@ -47,7 +47,7 @@ export function ProjectCard({ project, index }) {
                 {/* Left side text items */}
                 <div className="space-y-2 flex-grow max-w-[70%]">
                     {categories && (
-                        <p className="text-[10px] font-black tracking-widest text-cyan-400 font-outfit uppercase leading-relaxed line-clamp-1">
+                        <p className="text-[10px] font-black tracking-widest text-cyan-400 font-outfit uppercase leading-relaxed line-clamp-1"> 
                             {categories}
                         </p>
                     )}

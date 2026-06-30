@@ -3,6 +3,7 @@ import "./globals.css";
 import Preloader from "@/components/Preloader";
 import BackgroundParticles from "@/components/BackgroundParticles";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import Script from "next/script";
 
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -32,7 +33,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        <script
+        <Script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Script from "next/script";
 
-const WIDGET_ID = "4b2ec337-ae96-4d84-a10b-fb4982218f5e"; 
+const WIDGET_ID = process.env.NEXT_PUBLIC_WIDGE_ID; 
 
 const fallbackReviews = [
   {
@@ -19,7 +19,7 @@ const fallbackReviews = [
     rating: 5,
     text: "Excellent web design and seamless CMS integration. Our website traffic has grown by 150% since we launched the new layout. Highly recommended!",
     date: "1 month ago"
-  },
+  }, 
   {
     name: "Sneha Sharma",
     role: "Marketing Head, Aakar Publication",
@@ -35,7 +35,7 @@ export default function Testimonials() {
   // Ensure we don't duplicate the prefix if WIDGET_ID is pasted with "elfsight-app-"
   const widgetClass = WIDGET_ID.startsWith("elfsight-app-") 
     ? WIDGET_ID 
-    : `elfsight-app-${WIDGET_ID}`;
+    : `elfsight-app-${WIDGET_ID}`;  
 
   useEffect(() => {
     // Dynamic MutationObserver to search inside shadowroots and hide branding
