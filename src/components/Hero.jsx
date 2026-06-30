@@ -2,16 +2,19 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, Zap, Sparkles } from "lucide-react";
 
-export default function Hero({ config }) {
+export default function Hero({ config, onLoad }) {
   const [heroReady, setHeroReady] = useState(false);
   const [angleOffset, setAngleOffset] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [dimensions, setDimensions] = useState({ rx: 500, ry: 295 });
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setHeroReady(true));
+    const id = requestAnimationFrame(() => {
+      setHeroReady(true);
+      if (onLoad) onLoad();
+    });
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [onLoad]);
 
   // SSR-safe responsive ellipse dimensions
   useEffect(() => {

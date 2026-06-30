@@ -1,12 +1,72 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { Laptop, Smartphone, Settings, ShoppingBag, TrendingUp, ShieldCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { db } from "@/lib/firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { serviceIconMap } from "@/lib/serviceIcons";
+
+const SERVICE_THEMES = [
+  {
+    text: "text-indigo-600",
+    bg: "bg-indigo-50",
+    border: "border-indigo-100/50",
+    gradient: "from-indigo-500 to-indigo-600",
+    shadow: "shadow-indigo-100",
+    hoverBg: "hover:bg-indigo-600",
+    accentBorder: "border-l-indigo-600"
+  },
+  {
+    text: "text-purple-600",
+    bg: "bg-purple-50",
+    border: "border-purple-100/50",
+    gradient: "from-purple-500 to-purple-600",
+    shadow: "shadow-purple-100",
+    hoverBg: "hover:bg-purple-600",
+    accentBorder: "border-l-purple-600"
+  },
+  {
+    text: "text-pink-600",
+    bg: "bg-pink-50",
+    border: "border-pink-100/50",
+    gradient: "from-pink-500 to-pink-600",
+    shadow: "shadow-pink-100",
+    hoverBg: "hover:bg-pink-600",
+    accentBorder: "border-l-pink-600"
+  },
+  {
+    text: "text-rose-600",
+    bg: "bg-rose-50",
+    border: "border-rose-100/50",
+    gradient: "from-rose-500 to-rose-600",
+    shadow: "shadow-rose-100",
+    hoverBg: "hover:bg-rose-600",
+    accentBorder: "border-l-rose-600"
+  },
+  {
+    text: "text-sky-600",
+    bg: "bg-sky-50",
+    border: "border-sky-100/50",
+    gradient: "from-sky-500 to-sky-600",
+    shadow: "shadow-sky-100",
+    hoverBg: "hover:bg-sky-600",
+    accentBorder: "border-l-sky-600"
+  },
+  {
+    text: "text-emerald-600",
+    bg: "bg-emerald-50",
+    border: "border-emerald-100/50",
+    gradient: "from-emerald-500 to-emerald-600",
+    shadow: "shadow-emerald-100",
+    hoverBg: "hover:bg-emerald-600",
+    accentBorder: "border-l-emerald-600"
+  }
+];
 
 export default function Services({ config }) {
-  const containerRef = useRef(null);
+  const [services, setServices] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [srvConfig, setSrvConfig] = useState(config || null);
 
   useEffect(() => {
@@ -28,207 +88,260 @@ export default function Services({ config }) {
     loadConfig();
   }, [config]);
 
-  const serviceList = [
-    {
-      title: "Web Design & Development",
-      category: "Development",
-      description: "Scalable websites built using modern frameworks. Specializing in Headless CMS architectures (Sanity, Strapi, Contentful) and high-performance traditional CMS layouts.",
-      icon: Laptop,
-      color: "from-indigo-500 to-indigo-600 shadow-indigo-100",
-      accent: "text-indigo-600",
-      bgClass: "bg-indigo-50/90 border-indigo-100/80",
-    },
-    {
-      title: "Mobile App Development",
-      category: "Development",
-      description: "Custom native and hybrid mobile apps (iOS & Android) designed with fluid UI and seamless database integrations for supreme performance.",
-      icon: Smartphone,
-      color: "from-purple-500 to-purple-600 shadow-purple-100",
-      accent: "text-purple-600",
-      bgClass: "bg-purple-50/90 border-purple-100/80",
-    },
-    {
-      title: "Custom Software Solutions",
-      category: "Solutions",
-      description: "Tailor-made software to optimize your business operations. Expert development of lightweight, robust CRM and ERP architectures in Ahmedabad.",
-      icon: Settings,
-      color: "from-pink-500 to-pink-600 shadow-pink-100",
-      accent: "text-pink-600",
-      bgClass: "bg-pink-50/70 border-pink-100/80",
-    },
-    {
-      title: "e-Commerce Development",
-      category: "Development",
-      description: "Conversion-centric online storefronts with secure payment processors, automated logistics syncing, and lightning-fast product directories.",
-      icon: ShoppingBag,
-      color: "from-rose-500 to-rose-600 shadow-rose-100",
-      accent: "text-rose-600",
-      bgClass: "bg-rose-50/70 border-rose-100/80",
-    },
-    {
-      title: "Digital & Social Media Marketing",
-      category: "Marketing",
-      description: "Data-driven SEO, SEM, and PPC marketing strategies designed to increase brand presence, capture targeted leads, and maximize your ROI.",
-      icon: TrendingUp,
-      color: "from-sky-500 to-sky-600 shadow-sky-100",
-      accent: "text-sky-600",
-      bgClass: "bg-sky-50/70 border-sky-100/80",
-    },
-    {
-      title: "Branding & Identity Design",
-      category: "Creative",
-      description: "Best-in-class brand experience strategy. We craft unified corporate identities, creative brochures, and visual materials that capture customer trust.",
-      icon: ShieldCheck,
-      color: "from-emerald-500 to-emerald-600 shadow-emerald-100",
-      accent: "text-emerald-600",
-      bgClass: "bg-emerald-50/70 border-emerald-100/80",
-    },
-  ];
-
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 1024) return;
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      
-      // Calculate scroll progress of our parent container relative to window height
-      const totalScrollableHeight = rect.height - window.innerHeight;
-      const scrolledDistance = -rect.top;
-      
-      // Clamp progress between 0 and 1
-      const progress = Math.min(Math.max(scrolledDistance / totalScrollableHeight, 0), 0.99);
-      
-      // Map scroll progress to the active card index with an adjusted scale so the final card stays visible longer
-      const adjustedProgress = progress * (serviceList.length + 0.8);
-      const newIndex = Math.min(Math.floor(adjustedProgress), serviceList.length - 1);
-      setActiveIndex(newIndex);
-    };
+    async function fetchServices() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        const fetched = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setServices(fetched);
+      } catch (err) {
+        console.error("Error reading services:", err);
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchServices();
+  }, []);
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleScroll);
-    handleScroll(); // Run initially
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [serviceList.length]);
+  const activeService = services[activeIndex] || null;
+  const activeTheme = SERVICE_THEMES[activeIndex % SERVICE_THEMES.length] || SERVICE_THEMES[0];
 
   return (
-    /* The parent height is set to 500vh to create scroll track padding for the viewport lock on desktop */
-    <section ref={containerRef} id="services" className="relative lg:h-[500vh] h-auto py-16 lg:py-0 bg-transparent">
-      
-      {/* Sticky viewport container covering 100vh only on desktop */}
-      <div className="lg:sticky lg:top-0 lg:left-0 lg:right-0 lg:h-screen w-full lg:overflow-hidden flex items-center justify-center">
+    <section id="services" className="relative py-24 bg-transparent overflow-hidden">
+      {/* Dynamic inline styles for smooth scrollbar */}
+      <style>{`
+        .services-scrollbar::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        .services-scrollbar::-webkit-scrollbar-track {
+          background: rgba(148, 163, 184, 0.05);
+          border-radius: 10px;
+        }
+        .services-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(148, 163, 184, 0.2);
+          border-radius: 10px;
+          transition: background 0.3s ease;
+        }
+        .services-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(99, 102, 241, 0.4);
+        }
+      `}</style>
+
+      {/* Floating decorative elements */}
+      <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-indigo-100/30 blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute bottom-1/4 left-0 w-[400px] h-[400px] rounded-full bg-blue-100/20 blur-3xl -z-10 pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
-        <div className="max-w-4xl w-full px-6 flex flex-col items-center relative justify-center">
-          
-          {/* Static Title Header floating over cards */}
-          <div className="reveal-item text-center max-w-3xl mx-auto mb-10 shrink-0 relative z-20 pt-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3.5 py-1.5 rounded-full">
-              {srvConfig?.servicesSubtitle || "Our Services"}
-            </span>
-            <h2 className="text-3xl lg:text-5xl font-extrabold font-outfit text-slate-900 mt-3 mb-2">
-              {srvConfig?.servicesTitle ? (
-                srvConfig.servicesTitle
-              ) : (
-                <>Innovative digital solutions, <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">built to scale</span>.</>
-              )}
-            </h2>
-            <p className="hidden lg:block text-xs md:text-sm text-slate-500 font-semibold tracking-wider uppercase font-outfit">
-              Scroll down to overlay services • Card {activeIndex + 1} of {serviceList.length}
-            </p>
-          </div>
+        {/* Title Header */}
+        <div className="reveal-item text-center max-w-3xl mx-auto mb-16">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/60 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-4">
+            <Sparkles className="w-3.5 h-3.5" />
+            {srvConfig?.servicesSubtitle || "Our Services"}
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold font-outfit text-slate-900 leading-tight">
+            {srvConfig?.servicesTitle ? (
+              srvConfig.servicesTitle
+            ) : (
+              <>Innovative digital solutions, <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600">built to scale</span>.</>
+            )}
+          </h2>
+        </div>
 
-          {/* Desktop Cards viewport deck */}
-          <div className="hidden lg:flex relative w-full max-w-3xl h-[340px] items-center justify-center z-10">
-            {serviceList.map((srv, idx) => {
-              const Icon = srv.icon;
-              
-              // Animation calculations based on current active card index
-              const isPast = idx < activeIndex;
-              const isActive = idx === activeIndex;
-
-              let transformStyle = "translateY(100vh) scale(0.9)"; // Hidden in future
-              let opacity = 0;
-              let zIndex = idx;
-
-              if (isActive) {
-                transformStyle = "translateY(0) scale(1) rotateX(0deg)";
-                opacity = 1;
-                zIndex = 50; // Active card on top
-              } else if (isPast) {
-                // Stacked neatly behind with scaling depth
-                const depth = activeIndex - idx;
-                transformStyle = `translateY(-${depth * 14}px) scale(${1 - depth * 0.04}) rotateX(${depth * 2}deg)`;
-                opacity = 0.85 - depth * 0.15;
-                zIndex = idx;
-              }
-
-              return (
-                <div
-                  key={idx}
-                  className="absolute inset-0 w-full h-full transition-all duration-700 ease-out will-change-transform"
-                  style={{
-                    transform: transformStyle,
-                    opacity: opacity,
-                    zIndex: zIndex,
-                    transformStyle: "preserve-3d",
-                  }}
-                >
-                  <div className="hover-box w-full h-full p-8 lg:p-12 rounded-[32px] border bg-white shadow-xl shadow-slate-200/30 flex flex-col lg:flex-row gap-8 items-start lg:items-center border-slate-200/60">
-                    {/* Left Side: Icon */}
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-lg`}>
-                      <Icon className="w-8 h-8" />
-                    </div>
-
-                    {/* Right Side: Copy */}
-                    <div className="flex-grow">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full mb-3 inline-block">
-                        {srv.category}
-                      </span>
-                      <h3 className="text-2xl font-bold font-outfit text-slate-900 mb-4 leading-tight">
-                        {srv.title}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed text-sm">
-                        {srv.description}
-                      </p>
-                    </div>
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-pulse">
+            {/* Left list skeleton (Desktop only) */}
+            <div className="hidden lg:flex lg:col-span-3 flex-col gap-4">
+              <div className="h-3 w-28 bg-slate-200 rounded mb-2" />
+              <div className="flex flex-col gap-2.5">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="h-16 bg-slate-100/50 border border-slate-200/30 rounded-2xl flex items-center p-4 gap-3.5">
+                    <div className="w-9 h-9 bg-slate-200 rounded-xl shrink-0" />
+                    <div className="h-3 bg-slate-200 rounded w-2/3" />
                   </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Middle image skeleton */}
+            <div className="lg:col-span-5 flex flex-col justify-center">
+              <div className="w-full h-[300px] sm:h-[400px] lg:h-[480px] rounded-[32px] bg-slate-100 border-4 border-white shadow-xl" />
+            </div>
+
+            {/* Right details skeleton */}
+            <div className="lg:col-span-4 flex flex-col justify-between py-2 gap-8">
+              <div className="flex flex-col gap-6">
+                <div className="h-5 w-24 bg-slate-200 rounded-full" />
+                <div className="space-y-3">
+                  <div className="h-7 w-3/4 bg-slate-200 rounded" />
+                  <div className="h-3.5 w-full bg-slate-200 rounded" />
+                  <div className="h-3.5 w-5/6 bg-slate-200 rounded" />
                 </div>
-              );
-            })}
+                <div className="space-y-3 pt-4">
+                  <div className="h-2.5 w-32 bg-slate-200 rounded mb-4" />
+                  {[1, 2, 3].map((n) => (
+                    <div key={n} className="flex gap-2.5 items-center">
+                      <div className="w-4 h-4 bg-slate-200 rounded-full shrink-0" />
+                      <div className="h-2.5 bg-slate-200 rounded w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="h-11 w-48 bg-slate-200 rounded-full mt-6" />
+            </div>
           </div>
+        ) : services.length === 0 ? (
+          <div className="text-center py-16 text-slate-500 font-medium">
+            No services configured in the system.
+          </div>
+        ) : (
+          <div>
+            {/* Mobile / Tablet Horizontal Navigation Tap-Bar */}
+            <div className="lg:hidden w-full overflow-x-auto pb-4 mb-8 flex gap-3 services-scrollbar snap-x">
+              {services.map((srv, idx) => {
+                const Icon = serviceIconMap[srv.icon] || serviceIconMap.Laptop;
+                const isActive = idx === activeIndex;
+                return (
+                  <button
+                    key={srv.id}
+                    onClick={() => setActiveIndex(idx)}
+                    className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl border text-sm font-bold tracking-wide shrink-0 snap-center transition-all duration-300 ${
+                      isActive
+                        ? "bg-slate-900 text-white border-slate-900 shadow-md"
+                        : "bg-white/60 text-slate-600 border-slate-200/60 hover:bg-white hover:text-slate-900"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span>{srv.name}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* Mobile Cards flow list */}
-          <div className="flex lg:hidden flex-col gap-6 w-full z-10">
-            {serviceList.map((srv, idx) => {
-              const Icon = srv.icon;
-              return (
-                <div
-                  key={idx}
-                  className="hover-box w-full p-6 rounded-3xl border bg-white shadow-md border-slate-200/60 flex flex-col gap-5 items-start"
-                >
-                  <div className={`w-12 h-12 shrink-0 rounded-xl bg-gradient-to-tr ${srv.color} text-white flex items-center justify-center shadow-md`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
+            {/* Main Interactive Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+              
+              {/* LEFT COLUMN: Service List Selector (Desktop Only) */}
+              <div className="hidden lg:flex lg:col-span-3 flex-col gap-4">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">
+                  Service Directory ({services.length})
+                </span>
+                
+                {/* Scrollable list optimized for arbitrary growth */}
+                <div className="flex flex-col gap-2.5 max-h-[480px] overflow-y-auto pr-2 services-scrollbar">
+                  {services.map((srv, idx) => {
+                    const Icon = serviceIconMap[srv.icon] || serviceIconMap.Laptop;
+                    const isActive = idx === activeIndex;
+                    const theme = SERVICE_THEMES[idx % SERVICE_THEMES.length] || SERVICE_THEMES[0];
+                    return (
+                      <button
+                        key={srv.id}
+                        onClick={() => setActiveIndex(idx)}
+                        className={`w-full text-left flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-300 group ${
+                          isActive
+                            ? `bg-white border-slate-900 shadow-md shadow-slate-100 border-l-4 ${theme.accentBorder} scale-[1.02]`
+                            : "bg-white/40 border-slate-200/50 text-slate-500 hover:bg-white hover:border-slate-300 hover:text-slate-900"
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors shrink-0 ${
+                          isActive ? `${theme.bg} ${theme.text}` : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <span className={`text-[13px] font-extrabold tracking-wide line-clamp-1 transition-colors ${
+                          isActive ? "text-slate-900" : "text-slate-600"
+                        }`}>
+                          {srv.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 flex flex-col justify-center relative">
+                {/* Glowing backlight matching the active theme */}
+                <div className={`absolute -inset-4 bg-gradient-to-tr ${activeTheme.gradient} opacity-15 blur-3xl -z-10 rounded-[32px] transition-all duration-700`} />
+                
+                <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[480px] rounded-[32px] overflow-hidden shadow-2xl border-4 border-white bg-slate-50 group">
+                  {activeService?.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={activeService.id} // Forces re-render and plays default browser entry animation
+                      src={activeService.imageUrl}
+                      alt={activeService.name}
+                      className="w-full h-full object-cover transition-all duration-700 ease-out transform scale-100 group-hover:scale-105 animate-fade-in"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400 gap-2">
+                      <Sparkles className="w-8 h-8 opacity-40 animate-pulse" />
+                      <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Yunawise Tech</span>
+                    </div>
+                  )}
+                  {/* Subtle decorative linear gradient overlay at bottom */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: Description & Key Features */}
+              <div className="lg:col-span-4 flex flex-col justify-between py-2">
+                <div className="flex flex-col gap-6">
+                  {/* Badge Category Tag */}
                   <div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded mb-2 inline-block">
-                      {srv.category}
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${activeTheme.text} ${activeTheme.bg} border ${activeTheme.border} px-3 py-1 rounded-full`}>
+                      Capability Profile
                     </span>
-                    <h3 className="text-xl font-bold font-outfit text-slate-900 mb-2 leading-tight">
-                      {srv.title}
+                  </div>
+
+                  {/* Service Title & Desc */}
+                  <div>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold font-outfit text-slate-900 mb-4 tracking-tight leading-tight">
+                      {activeService?.name}
                     </h3>
-                    <p className="text-slate-600 leading-relaxed text-xs">
-                      {srv.description}
+                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                      {activeService?.heroDescription || activeService?.overviewDescription}
                     </p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
 
-        </div>
+                  {/* Bullet features list */}
+                  {activeService?.benefits && activeService.benefits.length > 0 && (
+                    <div className="pt-2">
+                      <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3.5">
+                        Key Features & benefits
+                      </h4>
+                      <ul className="flex flex-col gap-3">
+                        {activeService.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex gap-2.5 items-start text-xs font-semibold text-slate-700">
+                            <CheckCircle2 className={`w-4 h-4 ${activeTheme.text} shrink-0 mt-0.5`} />
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {/* Call-to-action details link */}
+                <div className="pt-8">
+                  <Link
+                    href={`/services/${activeService?.slug}`}
+                    className={`hover-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-slate-900 text-white text-xs font-bold tracking-wide ${activeTheme.hoverBg} transition-colors shadow-lg shadow-slate-100 hover:${activeTheme.shadow}`}
+                  >
+                    Explore Service Architecture
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        )}
 
       </div>
     </section>

@@ -10,7 +10,7 @@ const SECTIONS = [
   { id: "contact", label: "Contact" },
 ];
 
-export default function SectionNavigator({ activeSection }) {
+export default function SectionNavigator({ activeSection, visible }) {
   const [activeId, setActiveId] = useState("home");
   const [hoveredId, setHoveredId] = useState(null);
 
@@ -51,7 +51,9 @@ export default function SectionNavigator({ activeSection }) {
  
   return (
     <nav
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-[999] hidden lg:block w-[60px] h-[220px] pointer-events-none"
+      className={`fixed right-6 top-1/2 -translate-y-1/2 z-[999] hidden lg:block w-[60px] h-[220px] pointer-events-none transition-all duration-700 ${
+        visible ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+      }`}
       aria-label="Page sections"
     >
       {/* SVG Zigzag Tracks */}

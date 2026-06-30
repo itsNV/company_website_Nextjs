@@ -20,10 +20,11 @@ export function ProjectCard({ project, index }) {
             className="group relative flex flex-col justify-end w-full aspect-[4/3] min-h-[340px] bg-slate-900 rounded-[28px] overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(37,99,235,0.25)] hover:-translate-y-2 transition-all duration-500 border border-slate-800/10"
         >
             {/* Top accent line on hover */}
+        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyan-400 to-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-20" />
 
             {/* Background Image */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+            <div className="absolute inset-0 w-full h-[65%] overflow-hidden z-0">
                 {project.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img 
@@ -39,7 +40,7 @@ export function ProjectCard({ project, index }) {
             </div>
 
             {/* Bottom Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500 z-10 pointer-events-none" />
+            {/* <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500 z-10 pointer-events-none" /> */}
 
             {/* Info and Action Contents */}
             <div className="relative z-20 p-6 md:p-8 flex items-end justify-between gap-6 w-full">
@@ -51,9 +52,7 @@ export function ProjectCard({ project, index }) {
                         </p>
                     )}
                     <h3 className="text-xl sm:text-2xl font-black tracking-tight font-outfit text-white group-hover:text-cyan-300 transition-colors duration-300 leading-tight">
-                        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0">
-                            {project.title}
-                        </Link>
+                        {project.title}
                     </h3>
                 </div>
 
@@ -71,11 +70,12 @@ export function ProjectCard({ project, index }) {
                     )}
 
                     {/* Action circle button */}
-                    <div className="w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-105 transition-all duration-300">
+                    <div className="w-11 h-11 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-105 group-hover:bg-green-500 transition-all duration-300">
                         <ArrowRight className="w-5 h-5 text-white" />
                     </div>
                 </div>
             </div>
+        </Link>
         </motion.div>
     );
 }
