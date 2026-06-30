@@ -14,7 +14,7 @@ export default function ChatbotWidget() {
 
   if (!mounted) return null;
 
-  const chatbotId = process.env.NEXT_PUBLIC_CHATBOT_ID || "bzJ3KB-g9xX9GC3yX4IXh";
+  const chatbotId = process.env.NEXT_PUBLIC_CHATBOT_ID;
   const iframeUrl = `https://www.chatbase.co/chatbot-iframe/${chatbotId}`;
 
   return (
