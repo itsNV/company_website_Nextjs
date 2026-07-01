@@ -14,12 +14,12 @@ export async function POST(request) {
 
     // Set up nodemailer transport (we read credentials from process.env)
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: parseInt(process.env.SMTP_PORT || "587", 10),
-      secure: process.env.SMTP_SECURE === "true", // true for port 465, false for other ports
+      host: process.env.NEXT_PUBLIC_SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.NEXT_PUBLIC_SMTP_PORT || "587", 10),
+      secure: process.env.NEXT_PUBLIC_SMTP_SECURE === "true", // true for port 465, false for other ports
       auth: {
-        user: process.env.SMTP_USER, // e.g. inquiry@yunawise.com or smtp user
-        pass: process.env.SMTP_PASS, // smtp password
+        user: process.env.NEXT_PUBLIC_SMTP_USER, // e.g. inquiry@yunawise.com or smtp user
+        pass: process.env.NEXT_PUBLIC_SMTP_PASS, // smtp password
       },
     });
 
@@ -53,12 +53,12 @@ ${msg}
     };
 
     // If SMTP credentials aren't set up, log the details so local development succeeds
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    if (!process.env.NEXT_PUBLIC_SMTP_USER || !process.env.NEXT_PUBLIC_SMTP_PASS) {
       console.warn("SMTP credentials are not configured in environment variables. Logging mail details locally:", mailOptions);
       return NextResponse.json({
         success: true,
         mocked: true,
-        message: "Inquiry logged locally. Configure SMTP_USER and SMTP_PASS to send real emails."
+        message: "Inquiry logged locally. Configure NEXT_PUBLIC_SMTP_USER and NEXT_PUBLIC_SMTP_PASS to send real emails."
       });
     }
 
