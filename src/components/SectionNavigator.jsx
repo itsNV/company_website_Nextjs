@@ -106,6 +106,7 @@ export default function SectionNavigator({ activeSection, visible }) {
  
           return (
             <button
+              suppressHydrationWarning
               key={section.id}
               onClick={() => {
                 try {

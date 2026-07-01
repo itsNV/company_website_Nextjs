@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Sparkles, ChevronDown } from "lucide-react";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { serviceIconMap } from "@/lib/serviceIcons";
@@ -68,6 +68,7 @@ export default function Services({ config }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [srvConfig, setSrvConfig] = useState(config || null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (config) {
@@ -201,26 +202,62 @@ export default function Services({ config }) {
           </div>
         ) : (
           <div>
-            {/* Mobile / Tablet Horizontal Navigation Tap-Bar */}
-            <div className="lg:hidden w-full overflow-x-auto pb-4 mb-8 flex gap-3 services-scrollbar snap-x">
-              {services.map((srv, idx) => {
-                const Icon = serviceIconMap[srv.icon] || serviceIconMap.Laptop;
-                const isActive = idx === activeIndex;
-                return (
-                  <button
-                    key={srv.id}
-                    onClick={() => setActiveIndex(idx)}
-                    className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl border text-sm font-bold tracking-wide shrink-0 snap-center transition-all duration-300 ${
-                      isActive
-                        ? "bg-slate-900 text-white border-slate-900 shadow-md"
-                        : "bg-white/60 text-slate-600 border-slate-200/60 hover:bg-white hover:text-slate-900"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{srv.name}</span>
-                  </button>
-                );
-              })}
+            {/* Mobile / Tablet Custom Dropdown Selector */}
+            <div className="lg:hidden w-full mb-8 relative">
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="w-full flex items-center justify-between gap-3 px-5 py-4 rounded-2xl border bg-white/80 backdrop-blur-md text-slate-800 border-slate-200/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3">
+                  {(() => {
+                    const CurrentIcon = serviceIconMap[activeService?.icon] || serviceIconMap.Laptop;
+                    return (
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeTheme.bg} ${activeTheme.text}`}>
+                        <CurrentIcon className="w-4 h-4 shrink-0" />
+                      </div>
+                    );
+                  })()}
+                  <span className="text-sm font-bold tracking-wide text-slate-900">{activeService?.name}</span>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${dropdownOpen ? "rotate-180 text-indigo-600" : ""}`} />
+              </button>
+
+              {dropdownOpen && (
+                <>
+                  {/* Backdrop overlay to close when clicking outside */}
+                  <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
+                  <div className="absolute left-0 right-0 mt-2 p-2 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 max-h-[300px] overflow-y-auto services-scrollbar animate-in fade-in slide-in-from-top-2 duration-200">
+                    {services.map((srv, idx) => {
+                      const Icon = serviceIconMap[srv.icon] || serviceIconMap.Laptop;
+                      const isActive = idx === activeIndex;
+                      const theme = SERVICE_THEMES[idx % SERVICE_THEMES.length] || SERVICE_THEMES[0];
+                      return (
+                        <button
+                          key={srv.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveIndex(idx);
+                            setDropdownOpen(false);
+                          }}
+                          className={`w-full text-left flex items-center gap-3.5 p-3 rounded-xl transition-all duration-200 ${
+                            isActive
+                              ? "bg-slate-50 text-slate-900 font-bold"
+                              : "text-slate-600 hover:bg-slate-50/60 hover:text-slate-900"
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0 ${
+                            isActive ? `${theme.bg} ${theme.text}` : "bg-slate-50 text-slate-400"
+                          }`}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <span className="text-xs font-semibold tracking-wide">{srv.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Main Interactive Grid */}

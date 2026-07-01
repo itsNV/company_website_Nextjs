@@ -208,6 +208,7 @@ export default function Navbar({ activeSection, config }) {
               return (
                 <div key={idx} className="relative group/dropdown py-1.5">
                   <button
+                    suppressHydrationWarning
                     onClick={(e) => {
                       e.preventDefault();
                       setDesktopSolutionsOpen(!desktopSolutionsOpen);
