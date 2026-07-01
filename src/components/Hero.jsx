@@ -189,7 +189,7 @@ export default function Hero({ config, onLoad }) {
   return (
     <section
       id="home"
-      className={`hero-section relative min-h-screen pt-32 pb-20 flex items-center overflow-hidden bg-transparent ${heroReady ? "hero-ready" : ""}`}
+      className={`hero-section relative min-h-screen pt-20 lg:pt-32 pb-10 lg:pb-20 flex items-center overflow-hidden bg-transparent ${heroReady ? "hero-ready" : ""}`}
     >
       <style>{`
         .orbit-item {
@@ -391,7 +391,7 @@ export default function Hero({ config, onLoad }) {
         </div>
 
         {/* Refactored Horizontal Capabilities Grid */}
-        <div className="hero-enter hero-enter-delay-6 w-full max-w-6xl mt-16 pt-10 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div className="hero-enter hero-enter-delay-6 w-full max-w-6xl md:mt-16 mt-6 md:pt-10 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
           <div className="flex gap-4 items-start">
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center shrink-0 shadow-sm border border-slate-200/20">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

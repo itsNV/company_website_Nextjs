@@ -215,7 +215,7 @@ export default function BlogDetailsPage({ params }) {
       <Navbar activeSection="blog" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
 
-      <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10 reveal-container">
+      <main className="flex-grow pt-25 sm:pt-25 lg:pt-28 pb-10 lg:pb-16 bg-transparent relative z-10 reveal-container">
         
         {/* Breadcrumb — always visible */}
         <div className="max-w-7xl mx-auto px-6 mb-4">
@@ -230,7 +230,7 @@ export default function BlogDetailsPage({ params }) {
 
         {/* Legacy Hero — only when no block layout */}
         {!blog.blocks?.length && (
-        <section className="py-12 reveal-item">
+        <section className="md:py-12 py-10 reveal-item">
           <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-8 flex flex-col items-center lg:items-start">
               <div className="flex items-center gap-4 text-xs text-slate-400 font-bold mb-6">
@@ -280,7 +280,7 @@ export default function BlogDetailsPage({ params }) {
           <>
         {/* Legacy: Challenge & Technical Solution */}
         {(blog.problem || blog.solution) && (
-          <section className="py-20 bg-white/40 border-y border-[#eae6fa]/25">
+          <section className="py-10 md:py-12 lg:py-16 bg-white/40 border-y border-[#eae6fa]/25">
             <div className="max-w-7xl mx-auto px-6">
               <h2 className="reveal-item text-3xl font-extrabold font-outfit text-slate-900 text-center mb-16">Deep Analysis</h2>
               <div className="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -314,7 +314,7 @@ export default function BlogDetailsPage({ params }) {
 
         {/* Tech Stack Spotlight — only for legacy blogs without blocks */}
         {!blog.blocks?.length && blog.tech_stack?.length > 0 && (
-          <section className="py-16">
+          <section className="py-10 md:py-12">
             <div className="max-w-3xl mx-auto px-6 text-center">
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center justify-center gap-1.5">
                 <Cpu className="w-4 h-4 text-purple-600" /> Technologies Addressed
@@ -332,7 +332,7 @@ export default function BlogDetailsPage({ params }) {
 
         {/* FAQs — only for legacy blogs without blocks */}
         {!blog.blocks?.length && blog.faqs?.length > 0 && (
-          <section className="py-20">
+          <section className="py-10 md:py-12 lg:py-16">
             <div className="max-w-3xl mx-auto px-6">
               <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
               <div className="flex flex-col gap-4">
@@ -365,7 +365,7 @@ export default function BlogDetailsPage({ params }) {
 
         {/* Related Articles — same category */}
         {relatedBlogs.length > 0 && (
-          <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] border-t border-[#eae6fa]/40">
+          <section className="py-10 md:py-12 lg:py-16 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] border-t border-[#eae6fa]/40">
             <div className="max-w-7xl mx-auto px-6">
               <div className="reveal-item flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
                 <div>

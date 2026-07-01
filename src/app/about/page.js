@@ -40,11 +40,11 @@ export default function AboutPage() {
       <Navbar activeSection="about" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       
-      <main className="flex-grow reveal-container relative z-[1] pt-28">
+      <main className="flex-grow reveal-container relative z-[1] pt-16 sm:pt-20 lg:pt-28">
         {/* <BackgroundParticles activeSection="about" /> */}
         
         {/* Split Hero Block: About Yunawise */}
-        <section className="py-20 bg-transparent relative overflow-hidden">
+        <section className="py-10 md:py-12 lg:py-16 bg-transparent relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Column: Copy */}
@@ -120,7 +120,7 @@ export default function AboutPage() {
         </section>
 
         {/* Section 2: Digital Experience & Services */}
-        <section className="py-20 bg-transparent relative overflow-hidden border-t border-[#eae6fa]/25">
+        <section className="py-10 md:py-12 lg:py-16 bg-transparent relative overflow-hidden border-t border-[#eae6fa]/25">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Column: Heading & Intro */}
@@ -211,7 +211,7 @@ export default function AboutPage() {
         
 
         {/* Call to action section */}
-        <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
+        <section className="py-10 md:py-12 lg:py-16 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
           <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold font-outfit bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
               Ready to construct your next digital asset?

@@ -64,7 +64,7 @@ export default function Contact({ config }) {
   };
 
   return (
-    <section id="contact" className="py-24 bg-transparent relative">
+    <section id="contact" className="py-4 md:py-12 lg:py-16 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           

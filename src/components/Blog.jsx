@@ -49,7 +49,7 @@ export default function Blog() {
   };
 
   return (
-    <section id="blog" className="py-24 bg-transparent border-y border-[#eae6fa]/20 relative overflow-hidden">
+    <section id="blog" className="py-10 md:py-12 lg:py-16 bg-transparent border-y border-[#eae6fa]/20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Title */}

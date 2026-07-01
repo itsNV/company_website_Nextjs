@@ -96,7 +96,7 @@ export default function About({ config }) {
   };
 
   return (
-    <section id="about" ref={containerRef} className="py-16 md:py-20 bg-transparent border-y border-[#eae6fa]/20 relative overflow-hidden">
+    <section id="about" ref={containerRef} className="py-0 md:py-12 lg:py-16 bg-transparent border-y border-[#eae6fa]/20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Workflow Title */}

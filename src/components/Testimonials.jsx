@@ -99,7 +99,7 @@ export default function Testimonials() {
   }, [widgetClass]);
 
   return (
-    <section id="testimonials" className="py-20 bg-transparent relative z-10">
+    <section id="testimonials" className="py-8 md:py-12 lg:py-16 bg-transparent relative z-10">
       {/* Hide Elfsight branding / watermark / tabs */}
       <style>{`
         /* Targeted rules to hide Elfsight branding watermarks and floating banner tabs */

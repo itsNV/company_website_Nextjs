@@ -39,9 +39,9 @@ export default async function ProjectsPage({ searchParams }) {
             <Navbar />
             <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
             
-            <main className="flex-grow reveal-container relative z-[1] pt-28 bg-slate-50/30">
+            <main className="flex-grow reveal-container relative z-[1] pt-16 sm:pt-20 lg:pt-28 bg-slate-50/30">
                 {/* Hero Section */}
-                <section className="py-20 bg-transparent relative overflow-hidden">
+                <section className="py-10 md:py-12 lg:py-16 bg-transparent relative overflow-hidden">
                     <div className="max-w-7xl mx-auto px-6 text-center">
                         <FadeIn delay={0.1} className="max-w-3xl mx-auto flex flex-col items-center">
                             <Link href="/" className="group inline-flex items-center text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-3.5 py-1.5 rounded-full mb-8 hover:bg-purple-100 transition-colors">

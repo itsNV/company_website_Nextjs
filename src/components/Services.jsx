@@ -112,7 +112,7 @@ export default function Services({ config }) {
   const activeTheme = SERVICE_THEMES[activeIndex % SERVICE_THEMES.length] || SERVICE_THEMES[0];
 
   return (
-    <section id="services" className="relative py-24 bg-transparent overflow-hidden">
+    <section id="services" className="relative py-10 md:py-12 lg:py-16 bg-transparent overflow-hidden">
       {/* Dynamic inline styles for smooth scrollbar */}
       <style>{`
         .services-scrollbar::-webkit-scrollbar {

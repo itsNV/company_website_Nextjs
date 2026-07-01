@@ -42,7 +42,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
   const hasHeroBlock = blocks.some((b) => b.type === "hero");
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-10 md:space-y-12 lg:space-y-16">
       {blocks.map((block) => {
         const IconComponent = block.data?.sectionIcon ? getIconComponent(block.data.sectionIcon) : null;
         switch (block.type) {
@@ -51,7 +51,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
             const benefitsBlock = blocks.find((b) => b.type === "benefits");
             const hasBenefits = benefitsBlock && benefitsBlock.data?.items?.length > 0;
             return (
-              <section key={block.id} className="py-20 reveal-item">
+              <section key={block.id} className="md:py-20 py-12 reveal-item">
                 <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                   <div className={(imgUrl || hasBenefits) ? "lg:col-span-7 flex flex-col items-center lg:items-start" : "lg:col-span-12 flex flex-col items-center text-center"}>
                     {block.data.badge && (
@@ -140,7 +140,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "overview": {
             return (
-              <section key={block.id} className="py-16 bg-white/40 border-y border-slate-200/30 reveal-item">
+              <section key={block.id} className="md:py-16 bg-white/40 border-y border-slate-200/30 reveal-item">
                 <div className="max-w-5xl mx-auto px-6 text-center">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 mb-6 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-6 h-6 text-emerald-600 shrink-0" />}
@@ -283,7 +283,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "features": {
             return (
-              <section key={block.id} className="py-20 reveal-item">
+              <section key={block.id} className="md:py-20 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
                   <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-8 h-8 text-emerald-600 shrink-0" />}
@@ -309,7 +309,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "process": {
             return (
-              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
+              <section key={block.id} className="md:py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
@@ -332,7 +332,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "faqs": {
             return (
-              <section key={block.id} className="py-20 reveal-item">
+              <section key={block.id} className="md:py-20 reveal-item">
                 <div className="max-w-4xl mx-auto px-6">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
@@ -368,7 +368,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "pricing": {
             return (
-              <section key={block.id} className="py-20 bg-gradient-to-b from-transparent to-emerald-50/10 reveal-item">
+              <section key={block.id} className="md:py-20 bg-gradient-to-b from-transparent to-emerald-50/10 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-7 h-7 text-emerald-600 shrink-0" />}
@@ -409,7 +409,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
           }
           case "industries": {
             return (
-              <section key={block.id} className="py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
+              <section key={block.id} className="md:py-20 bg-slate-50/50 border-t border-slate-200/40 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
                   <h2 className="text-3xl font-extrabold font-outfit text-slate-900 text-center mb-4 flex items-center justify-center gap-2">
                     {IconComponent && <IconComponent className="w-7 h-7 text-slate-600 shrink-0" />}
@@ -545,7 +545,7 @@ export default function DynamicSolutionPage({ params }) {
         />
       )}
 
-      <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10 reveal-container font-sans text-slate-800">
+      <main className="flex-grow pt-16 sm:pt-20 lg:pt-28 pb-10 lg:pb-16 bg-transparent relative z-10 reveal-container font-sans text-slate-800">
         {hasBlocks ? (
           <RenderPageBlocks 
             blocks={solution.blocks} 
@@ -555,7 +555,7 @@ export default function DynamicSolutionPage({ params }) {
         ) : (
           <>
             {/* Fallback legacy layout aligned with service dynamic design schema */}
-            <section className="py-20 reveal-item">
+            <section className="py-10 md:py-12 lg:py-16 reveal-item">
               <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className={solution.benefits?.length > 0 ? "lg:col-span-8 flex flex-col items-center lg:items-start" : "lg:col-span-12 flex flex-col items-center text-center"}>
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-6">
@@ -612,7 +612,7 @@ export default function DynamicSolutionPage({ params }) {
             )}
 
             {solution.features?.length > 0 && (
-              <section className="py-20 reveal-item">
+              <section className="py-10 md:py-12 lg:py-16 reveal-item">
                 <div className="max-w-7xl mx-auto px-6">
                   <h2 className="text-3xl md:text-4xl font-extrabold font-outfit text-slate-900 text-center mb-12 flex items-center justify-center gap-2">
                     <LucideIcons.Cpu className="w-8 h-8 text-emerald-600 shrink-0" />

@@ -22,7 +22,7 @@ export default function ContactPage() {
       <Navbar activeSection="contact" />
       {/* Premium Top Satin Gradient Vignette Mask */}
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
-      <main className="flex-grow reveal-container relative z-[1] pt-24">
+      <main className="flex-grow reveal-container relative z-[1] pt-16 sm:pt-20 lg:pt-24">
        
         <Contact />
       </main>

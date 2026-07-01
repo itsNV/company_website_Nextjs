@@ -28,7 +28,7 @@ export default function Projects() {
     .slice(0, 3);
 
   return (
-    <section id="works" className="py-24 bg-transparent border-y border-[#eae6fa]/20 relative">
+    <section id="works" className="py-4 md:py-12 lg:py-16 bg-transparent border-y border-[#eae6fa]/20 relative">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="reveal-item text-center max-w-3xl mx-auto mb-16">

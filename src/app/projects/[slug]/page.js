@@ -130,10 +130,10 @@ export default function ProjectDetailsPage({ params }) {
       <Navbar activeSection="projects" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
 
-      <main className="flex-grow pt-28 pb-16 bg-transparent relative z-10 reveal-container">
+      <main className="flex-grow pt-16 sm:pt-20 lg:pt-28 pb-10 lg:pb-16 bg-transparent relative z-10 reveal-container">
         
         {/* Hero Section */}
-        <section className="py-20 reveal-item">
+        <section className="py-10 md:py-12 lg:py-16 reveal-item">
           <div className="max-w-7xl mx-auto px-6 text-center lg:text-left grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-8 flex flex-col items-center lg:items-start">
               
@@ -237,7 +237,7 @@ export default function ProjectDetailsPage({ params }) {
               let defaultTitle = "";
               let desc = "";
               let imgUrl = "";
-              let sectionBg = "py-20 border-b border-[#eae6fa]/10";
+              let sectionBg = "py-10 md:py-12 lg:py-16 border-b border-[#eae6fa]/10";
               let extra = null;
 
               if (block.type === "challenge") {
@@ -246,7 +246,7 @@ export default function ProjectDetailsPage({ params }) {
                 defaultTitle = "Problem Identification";
                 desc = d.problem || "";
                 imgUrl = d.challenge_image_url || "";
-                sectionBg = "py-20 bg-slate-50/40 border-b border-[#eae6fa]/10";
+                sectionBg = "py-10 md:py-12 lg:py-16 bg-slate-50/40 border-b border-[#eae6fa]/10";
               } else if (block.type === "solution") {
                 badgeText = "Phase 2: Our Solution";
                 badgeClass = "text-purple-600 bg-purple-50";
@@ -259,7 +259,7 @@ export default function ProjectDetailsPage({ params }) {
                 defaultTitle = "Delivering Measurable Value";
                 desc = d.business_impact || "";
                 imgUrl = d.business_impact_image_url || "";
-                sectionBg = "py-20 border-b border-[#eae6fa]/10 last:border-b-0";
+                sectionBg = "py-10 md:py-12 lg:py-16 border-b border-[#eae6fa]/10 last:border-b-0";
                 extra = (
                   <p className="text-slate-400 text-xs mt-4">
                     Measurable corporate outcome engineered directly through smart architecture integration.
@@ -368,7 +368,7 @@ export default function ProjectDetailsPage({ params }) {
           <>
             {/* The Challenge Section (Phase 1) */}
             {project.problem && (
-              <section className="py-20 bg-slate-50/40 border-b border-[#eae6fa]/10">
+              <section className="py-10 md:py-12 lg:py-16 bg-slate-50/40 border-b border-[#eae6fa]/10">
                 <div className="max-w-7xl mx-auto px-6">
                   {project.challenge_image_url ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -411,7 +411,7 @@ export default function ProjectDetailsPage({ params }) {
 
             {/* Our Solution Section (Phase 2) */}
             {project.solution && (
-              <section className="py-20 border-b border-[#eae6fa]/10">
+              <section className="py-10 md:py-12 lg:py-16 border-b border-[#eae6fa]/10">
                 <div className="max-w-7xl mx-auto px-6">
                   {project.solution_image_url ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -454,7 +454,7 @@ export default function ProjectDetailsPage({ params }) {
 
             {/* Business Impact Section (Phase 3) */}
             {project.business_impact && (
-              <section className="py-20">
+              <section className="py-10 md:py-12 lg:py-16">
                 <div className="max-w-7xl mx-auto px-6">
                   {project.business_impact_image_url ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -504,7 +504,7 @@ export default function ProjectDetailsPage({ params }) {
         )}
 
         {/* Bottom Call to Action Section (mirroring standard styling) */}
-        <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
+        <section className="py-10 md:py-12 lg:py-16 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
           <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-6 mx-auto">
               <Rocket className="w-6 h-6" />

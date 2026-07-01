@@ -7,7 +7,7 @@ export default function BlogContentDisplay({ sections }) {
   if (!sections?.length) return null;
 
   return (
-    <section className="py-20">
+    <section className="py-6 md:py-12 lg:py-16">
       <div className="max-w-4xl mx-auto px-6 space-y-16">
         {sections.map((section, idx) => {
           const isHorizontal = section.imageUrl && (section.imagePosition === 'left' || section.imagePosition === 'right');
@@ -78,7 +78,7 @@ export default function BlogContentDisplay({ sections }) {
               </div>
 
               {idx < sections.length - 1 && (
-                <div className="mt-16 h-px bg-gradient-to-r from-transparent via-purple-200/50 to-transparent" />
+                <div className="md:mt-16 h-px bg-gradient-to-r from-transparent via-purple-200/50 to-transparent" />
               )}
             </article>
           );

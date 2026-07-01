@@ -96,7 +96,7 @@ export default function Technologies() {
     <section
       id="technologies"
       ref={sectionRef}
-      className="reveal-item py-16 md:py-20"
+      className="reveal-item py-10 md:py-12 lg:py-16"
     >
       <div className="max-w-4xl mx-auto px-6">
         <div className="reveal-item text-center mb-8">

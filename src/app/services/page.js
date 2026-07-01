@@ -74,10 +74,10 @@ export default function ServicesPage() {
       <Navbar activeSection="services" />
       <div className="fixed top-0 left-0 right-0 h-10 bg-gradient-to-b from-[#f3f9fc] via-[#f3f9fc]/90 to-transparent z-40 pointer-events-none" />
       
-      <main className="flex-grow reveal-container relative z-[1] pt-28 font-sans">
+      <main className="flex-grow reveal-container relative z-[1] pt-16 sm:pt-20 lg:pt-28 font-sans">
         
         {/* Services Page Hero */}
-        <section className="py-20 bg-transparent">
+        <section className="py-10 md:py-12 lg:py-16 bg-transparent">
           <div className="reveal-item max-w-7xl mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse-soft">
               <Sparkles className="w-3.5 h-3.5" />
@@ -95,7 +95,7 @@ export default function ServicesPage() {
         </section>
 
         {/* Services Grid */}
-        <section className="pb-20 bg-transparent">
+        <section className="pb-6 md:pb-12 lg:pb-16 bg-transparent">
           <div className="max-w-7xl mx-auto px-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -130,7 +130,7 @@ export default function ServicesPage() {
         </section>
 
         {/* Call to action section */}
-        <section className="py-20 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
+        <section className="py-6 md:py-12 lg:py-16 bg-gradient-to-tr from-[#fcfaff]/40 to-[#f4f2ff]/40 backdrop-blur-[6px] relative border-t border-[#eae6fa]/40">
           <div className="reveal-item max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold font-outfit bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
               Ready to construct your next digital asset?

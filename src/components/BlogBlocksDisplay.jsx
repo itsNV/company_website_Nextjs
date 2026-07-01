@@ -250,7 +250,7 @@ export default function BlogBlocksDisplay({ blocks, blogMeta }) {
 
           case "techStack":
             return (
-              <section key={block.id || idx} className="py-12 reveal-item">
+              <section key={block.id || idx} className="md:py-12 reveal-item">
                 <div className="max-w-3xl mx-auto px-6 text-center">
                   <BlockWrapper block={block}>
                     <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center justify-center gap-1.5">

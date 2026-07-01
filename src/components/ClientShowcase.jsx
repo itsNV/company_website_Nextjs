@@ -114,7 +114,7 @@ export default function ClientShowcase() {
   const marqueeClients = isScrollable ? [...clients, ...clients, ...clients] : clients;
 
   return (
-    <section className="py-20 bg-transparent overflow-hidden select-none relative z-10">
+    <section className="py-10 md:py-12 lg:py-16 bg-transparent overflow-hidden select-none relative z-10">
       {/* Global SVG Gradients Definition */}
       <svg className="absolute w-0 h-0 pointer-events-none" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <defs>
