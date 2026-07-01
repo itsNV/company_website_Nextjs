@@ -19,11 +19,11 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
-function RevealImage({ src, alt, className = "" }) {
+function RevealImage({ src, alt, className = "", aspectClassName = "aspect-video" }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative w-full h-full min-h-[220px] overflow-hidden bg-slate-100/50 rounded-2xl">
+    <div className={`relative w-full ${aspectClassName} overflow-hidden bg-slate-100/50 rounded-2xl`}>
       {!loaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100/80 animate-pulse">
           <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
@@ -176,7 +176,7 @@ export default function ProjectDetailsPage({ params }) {
                   <RevealImage 
                     src={project.image_url} 
                     alt={project.title} 
-                    className="max-h-[400px]"
+                    aspectClassName="aspect-video md:aspect-[21/9]"
                   />
                 </div>
               )}

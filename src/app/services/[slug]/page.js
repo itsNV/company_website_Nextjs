@@ -154,10 +154,8 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
             else if (style === "decimal") listClass = "list-decimal pl-6 space-y-2 text-slate-700 text-sm font-semibold";
 
             const imageStyle = block.data.imageUrl ? {
-              width: block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
-              height: block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto',
-              maxWidth: '100%',
-              objectFit: 'cover'
+              "--img-w": block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
+              "--img-h": block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto'
             } : null;
 
             const isHorizontal = block.data.imageUrl && (block.data.imagePosition === 'left' || block.data.imagePosition === 'right');
@@ -208,7 +206,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
                         src={block.data.imageUrl}
                         alt={block.data.sectionTitle || "Benefits image"}
                         style={imageStyle}
-                        className="rounded-3xl shadow-xl border border-slate-200/50"
+                        className="w-[var(--img-w)] max-w-full h-auto lg:h-[var(--img-h)] object-cover rounded-3xl shadow-xl border border-slate-200/50"
                       />
                     </div>
                   )}
@@ -221,10 +219,8 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
             const isHorizontal = block.data.imageUrl && (block.data.imagePosition === 'left' || block.data.imagePosition === 'right');
             const isReverse = block.data.imagePosition === 'left' || block.data.imagePosition === 'top';
             const imageStyle = block.data.imageUrl ? {
-              width: block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
-              height: block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto',
-              maxWidth: '100%',
-              objectFit: 'cover'
+              "--img-w": block.data.imageWidth ? `${block.data.imageWidth}px` : '100%',
+              "--img-h": block.data.imageHeight ? `${block.data.imageHeight}px` : 'auto'
             } : null;
 
             return (
@@ -265,7 +261,7 @@ function RenderPageBlocks({ blocks, openFaq, setOpenFaq }) {
                         src={block.data.imageUrl}
                         alt={block.data.sectionTitle || "Offerings image"}
                         style={imageStyle}
-                        className="rounded-3xl shadow-xl border border-slate-200/50"
+                        className="w-[var(--img-w)] max-w-full h-auto lg:h-[var(--img-h)] object-cover rounded-3xl shadow-xl border border-slate-200/50"
                       />
                     </div>
                   )}
